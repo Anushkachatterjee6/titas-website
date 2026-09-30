@@ -1,0 +1,232 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { approvedSlides } from "@/data/images";
+import { cn } from "@/lib/utils";
+
+const DURATION = 2000;
+const TRANSITION_MS = 600;
+const RESUME_AFTER = 8000;
+const EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
+
+/**
+ * Full-width hero slideshow using the five APPROVED TiTAS images, shown
+ * unmodified. The images carry their own typography, so nothing is layered
+ * over them. The frame matches the images' ~2.5:1 ratio so branding is never
+ * cropped, on desktop or mobile.
+ *
+ * True horizontal carousel track (no opacity/crossfade): all slides sit
+ * side by side and the track's transform slides left/right. A clone of the
+ * last slide is prepended and a clone of the first is appended so autoplay
+ * (and manual nav) can loop seamlessly — after the transition lands on a
+ * clone, the track snaps back to the matching real slide with transitions
+ * off for that one frame, so the loop is invisible.
+ */
+export function HeroSlideshow() {
+  const n = approvedSlides.length;
+  const extended = useMemo(
+    () => [approvedSlides[n - 1]!, ...approvedSlides, approvedSlides[0]!],
+    [n],
+  );
+  // trackIndex 0 = clone of last, 1..n = real slides, n+1 = clone of first
+  const [trackIndex, setTrackIndex] = useState(1);
+  const [transitionsOn, setTransitionsOn] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [inView, setInView] = useState(true);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchX = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  const realIndex = ((trackIndex - 1) % n + n) % n;
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const onChange = () => setReducedMotion(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // Autoplay (and its transition bookkeeping) only runs while the hero is
+  // actually on screen. Without this, scrolling away lets the interval keep
+  // firing — and since browsers can skip/merge transitions on an
+  // off-screen, GPU-decomposited layer, the track can drift out of sync
+  // with its own transitionend bookkeeping and come back not visibly
+  // updating until the next manual interaction.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => setInView(entry.isIntersecting)),
+      { threshold: 0.1 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const interact = useCallback(() => {
+    setPaused(true);
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => setPaused(false), RESUME_AFTER);
+  }, []);
+
+  const step = useCallback((delta: number) => {
+    setTransitionsOn(true);
+    setTrackIndex((i) => i + delta);
+  }, []);
+
+  const go = useCallback(
+    (targetRealIndex: number) => {
+      interact();
+      const target = ((targetRealIndex % n) + n) % n;
+      let delta = target - realIndex;
+      // shortest path around the loop
+      if (delta > n / 2) delta -= n;
+      if (delta < -n / 2) delta += n;
+      step(delta === 0 ? 0 : delta);
+    },
+    [interact, n, realIndex, step],
+  );
+
+  useEffect(() => {
+    if (paused || reducedMotion || !inView) return;
+    const t = setInterval(() => step(1), DURATION);
+    return () => clearInterval(t);
+  }, [paused, reducedMotion, inView, step]);
+
+  useEffect(() => () => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+  }, []);
+
+  // Land on a clone -> snap (no transition) to the matching real slide.
+  const handleTransitionEnd = useCallback(() => {
+    if (trackIndex === 0) {
+      setTransitionsOn(false);
+      setTrackIndex(n);
+    } else if (trackIndex === n + 1) {
+      setTransitionsOn(false);
+      setTrackIndex(1);
+    }
+  }, [trackIndex, n]);
+
+  // Re-enable transitions on the next frame after a snap.
+  useEffect(() => {
+    if (transitionsOn) return;
+    const id = requestAnimationFrame(() => setTransitionsOn(true));
+    return () => cancelAnimationFrame(id);
+  }, [transitionsOn]);
+
+  return (
+    <section
+      ref={sectionRef}
+      aria-label="TiTAS highlights"
+      aria-roledescription="carousel"
+      tabIndex={-1}
+      className="relative bg-accent/40 outline-none"
+      onKeyDown={(e) => {
+        if (e.key === "ArrowRight") go(realIndex + 1);
+        if (e.key === "ArrowLeft") go(realIndex - 1);
+      }}
+      onTouchStart={(e) => {
+        touchX.current = e.touches[0]?.clientX ?? null;
+        interact();
+      }}
+      onTouchEnd={(e) => {
+        if (touchX.current === null) return;
+        const dx = (e.changedTouches[0]?.clientX ?? touchX.current) - touchX.current;
+        if (Math.abs(dx) > 40) go(realIndex + (dx < 0 ? 1 : -1));
+        touchX.current = null;
+      }}
+    >
+      <div className="relative aspect-[1600/639] w-full overflow-hidden">
+        <div
+          onTransitionEnd={handleTransitionEnd}
+          className={cn(
+            "flex size-full",
+            transitionsOn && !reducedMotion ? "transition-transform ease-[var(--hero-ease)]" : "transition-none",
+          )}
+          style={{
+            transform: `translateX(${-trackIndex * 100}%)`,
+            transitionDuration: `${TRANSITION_MS}ms`,
+            willChange: "transform",
+            ["--hero-ease" as string]: EASE,
+          }}
+        >
+          {extended.map((slide, i) => (
+            <figure
+              key={`${slide.id}-${i}`}
+              aria-hidden={i !== trackIndex}
+              className="relative aspect-[1600/639] w-full shrink-0 grow-0 basis-full"
+            >
+              <img
+                src={slide.src}
+                alt={slide.alt}
+                loading="eager"
+                decoding="async"
+                className="size-full object-cover object-center"
+              />
+            </figure>
+          ))}
+        </div>
+
+        <HeroControl
+          label="Previous slide"
+          onClick={() => go(realIndex - 1)}
+          className="left-2 md:left-5"
+        >
+          <ChevronLeft className="size-4 md:size-5" aria-hidden="true" />
+        </HeroControl>
+        <HeroControl
+          label="Next slide"
+          onClick={() => go(realIndex + 1)}
+          className="right-2 md:right-5"
+        >
+          <ChevronRight className="size-4 md:size-5" aria-hidden="true" />
+        </HeroControl>
+      </div>
+
+      <div className="flex justify-center gap-2 py-3 md:py-4" role="tablist" aria-label="Slides">
+        {approvedSlides.map((slide, i) => (
+          <button
+            key={slide.id}
+            type="button"
+            role="tab"
+            aria-selected={i === realIndex}
+            aria-label={`Show slide ${i + 1}`}
+            onClick={() => go(i)}
+            className={cn(
+              "h-1.5 rounded-full transition-all duration-500",
+              i === realIndex ? "w-7 bg-primary" : "w-1.5 bg-ink/25 hover:bg-ink/45",
+            )}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HeroControl({
+  label,
+  onClick,
+  className,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={cn(
+        "absolute top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-ink shadow-lift backdrop-blur transition-colors hover:bg-card md:size-11",
+        className,
+      )}
+    >
+      {children}
+    </button>
+  );
+}

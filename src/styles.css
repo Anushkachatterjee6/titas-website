@@ -1,0 +1,374 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * TiTAS / SUJIT AQUA ENTERPRISE design system.
+ * Premium blue / white / aqua with subtle glass + water aesthetics.
+ * All colour values are oklch. Never hardcode colours in components.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Instrument Serif", ui-serif, Georgia, serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-aqua: var(--aqua);
+  --color-aqua-soft: var(--aqua-soft);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.375rem;
+
+  --background: oklch(0.994 0.004 230);
+  --foreground: oklch(0.243 0.062 262);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.243 0.062 262);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.243 0.062 262);
+
+  /* Brand blue, drawn from the TiTAS logo */
+  --primary: oklch(0.404 0.202 264);
+  --primary-foreground: oklch(0.995 0.004 230);
+
+  /* Deep navy ink, drawn from the logo seal */
+  --ink: oklch(0.31 0.084 262);
+  --ink-foreground: oklch(0.985 0.006 228);
+
+  /* Aqua highlight, drawn from the label wave */
+  --aqua: oklch(0.63 0.128 232);
+  --aqua-soft: oklch(0.93 0.032 226);
+
+  --secondary: oklch(0.958 0.016 232);
+  --secondary-foreground: oklch(0.31 0.084 262);
+  --muted: oklch(0.963 0.013 232);
+  --muted-foreground: oklch(0.518 0.041 258);
+  --accent: oklch(0.93 0.032 226);
+  --accent-foreground: oklch(0.31 0.084 262);
+
+  --surface: oklch(0.977 0.011 230);
+  --surface-strong: oklch(0.948 0.021 231);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0.006 228);
+
+  --border: oklch(0.905 0.017 236);
+  --input: oklch(0.888 0.02 236);
+  --ring: oklch(0.63 0.128 232);
+
+  --gradient-deep: linear-gradient(
+    140deg,
+    oklch(0.31 0.084 262) 0%,
+    oklch(0.378 0.163 264) 52%,
+    oklch(0.46 0.15 250) 100%
+  );
+  --gradient-light: linear-gradient(
+    180deg,
+    oklch(0.994 0.004 230) 0%,
+    oklch(0.948 0.028 228) 100%
+  );
+  --gradient-aqua: linear-gradient(
+    100deg,
+    oklch(0.63 0.128 232) 0%,
+    oklch(0.404 0.202 264) 100%
+  );
+
+  --shadow-lift: 0 1px 2px oklch(0.31 0.084 262 / 0.05),
+    0 18px 42px -22px oklch(0.31 0.084 262 / 0.22);
+  --shadow-float: 0 28px 70px -30px oklch(0.31 0.084 262 / 0.34);
+  --shadow-glass: inset 0 1px 0 oklch(1 0 0 / 0.5),
+    0 22px 50px -26px oklch(0.31 0.084 262 / 0.3);
+
+  --chart-1: oklch(0.404 0.202 264);
+  --chart-2: oklch(0.63 0.128 232);
+  --chart-3: oklch(0.31 0.084 262);
+  --chart-4: oklch(0.75 0.09 220);
+  --chart-5: oklch(0.86 0.05 224);
+
+  --sidebar: oklch(0.977 0.011 230);
+  --sidebar-foreground: oklch(0.243 0.062 262);
+  --sidebar-primary: oklch(0.404 0.202 264);
+  --sidebar-primary-foreground: oklch(0.995 0.004 230);
+  --sidebar-accent: oklch(0.93 0.032 226);
+  --sidebar-accent-foreground: oklch(0.31 0.084 262);
+  --sidebar-border: oklch(0.905 0.017 236);
+  --sidebar-ring: oklch(0.63 0.128 232);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--color-aqua-soft);
+    color: var(--color-ink);
+  }
+}
+
+/* ---------- Brand utilities ---------- */
+
+@utility surface-deep {
+  background-image: var(--gradient-deep);
+  color: var(--color-ink-foreground);
+}
+
+@utility surface-light {
+  background-image: var(--gradient-light);
+}
+
+@utility text-gradient-aqua {
+  background-image: var(--gradient-aqua);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility shadow-lift {
+  box-shadow: var(--shadow-lift);
+}
+
+@utility shadow-float {
+  box-shadow: var(--shadow-float);
+}
+
+@utility glass-panel {
+  background-color: oklch(1 0 0 / 0.72);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid oklch(1 0 0 / 0.55);
+  box-shadow: var(--shadow-glass);
+}
+
+@utility glass-panel-dark {
+  background-color: oklch(0.31 0.084 262 / 0.42);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid oklch(1 0 0 / 0.16);
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@utility script-accent {
+  font-family: var(--font-script);
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 82rem;
+  padding-inline: 1.25rem;
+
+  @media (width >= 768px) {
+    padding-inline: 2rem;
+  }
+
+  @media (width >= 1280px) {
+    padding-inline: 2.5rem;
+  }
+}
+
+@utility hairline-top {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Water-inspired motion, used sparingly */
+@utility animate-float-slow {
+  animation: titas-float 9s ease-in-out infinite;
+}
+
+@keyframes titas-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@utility animate-ripple {
+  animation: titas-ripple 2.6s ease-out infinite;
+}
+
+@keyframes titas-ripple {
+  0% {
+    transform: scale(0.72);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@utility animate-flow-dash {
+  animation: titas-flow-dash 7s linear infinite;
+}
+
+@keyframes titas-flow-dash {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+@utility animate-wave-drift {
+  animation: titas-wave-drift 14s ease-in-out infinite;
+}
+
+@utility animate-wave-drift-slow {
+  animation: titas-wave-drift 22s ease-in-out infinite reverse;
+}
+
+@keyframes titas-wave-drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-6%);
+  }
+}
+
+/* A very small, slow float for whole flattened compositions — reads as
+   "gently alive", never as bouncing. */
+@utility animate-float-tiny {
+  animation: titas-float-tiny 7.5s ease-in-out infinite;
+}
+
+@keyframes titas-float-tiny {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* A single diagonal light sweep across a glass surface, used once per
+   reveal rather than looping forever. */
+@utility animate-sweep-once {
+  animation: titas-sweep 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes titas-sweep {
+  from {
+    transform: translateX(-130%) skewX(-12deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  to {
+    transform: translateX(230%) skewX(-12deg);
+    opacity: 0;
+  }
+}
+
+/* Soft outward ripple + glow for the order-confirmed check state. */
+@utility animate-check-ripple {
+  animation: titas-check-ripple 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@keyframes titas-check-ripple {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

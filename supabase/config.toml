@@ -1,0 +1,6 @@
+project_id = "vjgwjmnuaoqyqizqsejl"
+
+[functions.chat-assistant]
+# The Edge Runtime rejects any request without a valid Supabase JWT before
+# our handler even runs — the primary authentication gate for the chatbot.
+verify_jwt = true
