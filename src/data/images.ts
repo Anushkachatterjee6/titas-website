@@ -2,7 +2,7 @@ import range from "@/assets/titas/1000156792.jpg";
 import everyDrop from "@/assets/titas/1000156793.jpg";
 import studio from "@/assets/titas/1000156794.jpg";
 import lifestyle from "@/assets/titas/1000156796.jpg";
-import doorstep from "@/assets/titas/ChatGPT Image Sep 28, 2026, 01_28_42 PM.png";
+import doorstep from "@/assets/titas/titas-slide-5-v2.png";
 // The original Logo (1).jpeg has a plain white square background baked in
 // (JPEGs can't carry transparency) — this is the same artwork, keyed and
 // cropped to a genuinely transparent PNG so it sits cleanly on any
