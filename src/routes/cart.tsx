@@ -36,7 +36,7 @@ function CartPage() {
           <Breadcrumbs items={[{ label: "Cart" }]} />
 
           <Reveal className="mt-6">
-            <h1 className="text-3xl leading-tight font-semibold text-ink md:text-4xl">Your Cart</h1>
+            <h1 className="text-[2rem] leading-tight font-bold text-ink md:text-[2.5rem]">Your Cart</h1>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Review your selected TiTAS products before checkout.
             </p>

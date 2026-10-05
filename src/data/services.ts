@@ -1,9 +1,19 @@
+import homeImg from "@/assets/titas/motion/TiTAS Home Delivery Splash.png";
+import officeImg from "@/assets/titas/motion/Modern TiTAS® Office Hydration Scene.png";
+import institutionalImg from "@/assets/titas/motion/TiTAS® Campus Hydration Campaign.png";
+import eventsImg from "@/assets/titas/motion/TiTAS Event Refreshment Showcase.png";
+import scheduledImg from "@/assets/titas/motion/TiTAS Scheduled Water Delivery.png";
+import wholesaleImg from "@/assets/titas/motion/TiTAS Water Delivery Showcase.png";
+import distributorImg from "@/assets/titas/motion/TiTAS Water Distribution Showcase.png";
+import bulkImg from "@/assets/titas/motion/TiTAS® Bulk Supply Consultation Scene.png";
+
 /** Approved services list. Wording taken from the approval document. */
 
 export type Service = {
   slug: string;
   title: string;
   description: string;
+  image: string;
 };
 
 export const services: Service[] = [
@@ -12,46 +22,54 @@ export const services: Service[] = [
     title: "Home & Residential Supply",
     description:
       "Packaged drinking water for household and everyday requirements.",
+    image: homeImg,
   },
   {
     slug: "office-commercial",
     title: "Office & Commercial Supply",
     description:
       "Regular or bulk supply for offices, hotels, restaurants, shops and other businesses.",
+    image: officeImg,
   },
   {
     slug: "institutional",
     title: "Institutional Supply",
     description: "Supply for schools, colleges, hospitals and other organisations.",
+    image: institutionalImg,
   },
   {
     slug: "events-bulk",
     title: "Events & Bulk Orders",
     description:
       "Packaged drinking water for weddings, parties, conferences, festivals and large gatherings.",
+    image: eventsImg,
   },
   {
     slug: "regular-scheduled",
     title: "Regular & Scheduled Supply",
     description:
       "Recurring supply arrangements for customers with regular requirements.",
+    image: scheduledImg,
   },
   {
     slug: "wholesale-retailer",
     title: "Wholesale & Retailer Supply",
     description: "Larger-volume supply for retailers and wholesale customers.",
+    image: wholesaleImg,
   },
   {
     slug: "distributor-dealer",
     title: "Distributor & Dealer Supply",
     description:
       "A dedicated business-partner service for distributors and dealers interested in selling TiTAS.",
+    image: distributorImg,
   },
   {
     slug: "custom-bulk",
     title: "Custom Bulk Enquiry / Business Supply",
     description:
       "Customers can request a quotation based on pack size, quantity, location and frequency.",
+    image: bulkImg,
   },
 ];
 
@@ -96,6 +114,16 @@ export const whyTitas = [
     title: "Bulk & Business Support",
     description:
       "Supply solutions for retailers, wholesalers, dealers, distributors, offices, institutions and event requirements.",
+  },
+  {
+    title: "Pure & Safe Water",
+    description:
+      "TiTAS is committed to providing quality-focused packaged drinking water through a carefully managed, multi-stage treatment process. From filtration and purification to UV treatment, ozonation, hygienic filling and packaging, attention is given to quality, hygiene and consistency throughout the process.",
+  },
+  {
+    title: "Affordable Price",
+    description:
+      "TiTAS believes quality packaged drinking water should be available at a practical and competitive price. With different pack sizes and flexible supply options, we aim to provide dependable value for households, retailers, offices, hotels, restaurants, institutions, events and bulk requirements.",
   },
 ];
 

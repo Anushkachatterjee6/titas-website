@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { Droplet, Send, X } from "lucide-react";
-import { useAuth } from "@/lib/auth";
 import { sendChatMessage, CHAT_MAX_MESSAGE_LENGTH, type ChatTurn } from "@/lib/chat";
 import { getScreenContent, type Screen, type ScreenButton } from "@/lib/chatWorkflows";
 import { useCart } from "@/lib/cart";
@@ -32,16 +30,13 @@ function welcomeMessage(): Message {
   };
 }
 
-/** Premium floating TiTAS Assistant — a water-inspired chat panel, gated
- *  behind login (Part 4): a logged-out visitor is sent to /login instead of
- *  the panel opening. Deterministic guided workflows (see
- *  src/lib/chatWorkflows.ts) handle the quick-action buttons without any
- *  Gemini call; free-typed questions still go through the existing
- *  Gemini-backed Edge Function exactly as before. */
+/** Premium floating TiTAS Assistant — a water-inspired chat panel, open to
+ *  every visitor regardless of login state. Deterministic guided workflows
+ *  (see src/lib/chatWorkflows.ts) handle the quick-action buttons without
+ *  any Gemini call; free-typed questions still go through the existing
+ *  Gemini-backed Edge Function exactly as before — it's informational only
+ *  and never touches account/order data either way. */
 export function ChatWidget() {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const cart = useCart();
 
   const [open, setOpen] = useState(false);
@@ -57,11 +52,6 @@ export function ChatWidget() {
   }, [messages, sending]);
 
   const handleToggle = () => {
-    if (loading) return;
-    if (!user) {
-      navigate({ to: "/login", search: { redirect: pathname } });
-      return;
-    }
     setOpen((v) => !v);
   };
 
@@ -176,7 +166,7 @@ export function ChatWidget() {
           <button
             type="button"
             onClick={handleToggle}
-            aria-label={user ? "Open TiTAS Assistant" : "Log in to use TiTAS Assistant"}
+            aria-label="Open TiTAS Assistant"
             className="relative flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-float transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink"
           >
             <span
@@ -201,7 +191,7 @@ export function ChatWidget() {
       )}
 
       {/* Panel */}
-      {open && user && (
+      {open && (
         <div
           role="dialog"
           aria-label="TiTAS Assistant"

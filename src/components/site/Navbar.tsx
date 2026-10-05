@@ -3,6 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronDown, Menu, Phone, ShoppingBag, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
+import { BrandRibbon } from "./BrandRibbon";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { company, telHref } from "@/data/company";
@@ -13,8 +14,8 @@ const navItems = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Products", to: "/products" },
-  { label: "Services", to: "/services" },
-  { label: "Quality", to: "/quality" },
+  { label: "Our Services", to: "/services" },
+  { label: "Quality & Process", to: "/quality" },
   { label: "Gallery", to: "/gallery" },
   { label: "FAQs", to: "/faqs" },
 ];
@@ -105,17 +106,17 @@ export function Navbar() {
             : "border-b border-transparent bg-background/85 backdrop-blur-sm",
         )}
       >
-        <div className="container-page flex h-[4.25rem] items-center justify-between gap-4 md:h-20">
-          <Logo />
+        <div className="container-page flex h-[4.25rem] items-center justify-between gap-3 md:h-20">
+          <Logo className="shrink-0" />
 
-          <nav aria-label="Main" className="hidden lg:block">
-            <ul className="flex items-center gap-1">
+          <nav aria-label="Main" className="hidden shrink-0 lg:block">
+            <ul className="flex flex-nowrap items-center gap-0.5 whitespace-nowrap">
               {navItems.map((item) => (
-                <li key={item.to}>
+                <li key={item.to} className="shrink-0">
                   <Link
                     to={item.to}
                     className={cn(
-                      "relative rounded-md px-3 py-2 text-[0.85rem] font-medium transition-colors",
+                      "relative rounded-md px-2.5 py-2 text-[0.94rem] font-semibold whitespace-nowrap transition-colors",
                       isActive(item.to)
                         ? "text-primary"
                         : "text-ink/75 hover:text-primary",
@@ -135,7 +136,7 @@ export function Navbar() {
 
               <li
                 ref={legalRef}
-                className="relative"
+                className="relative shrink-0"
                 onMouseEnter={() => setLegalOpen(true)}
                 onMouseLeave={() => setLegalOpen(false)}
                 onBlur={(e) => {
@@ -151,7 +152,7 @@ export function Navbar() {
                   onClick={() => setLegalOpen((v) => !v)}
                   onFocus={() => setLegalOpen(true)}
                   className={cn(
-                    "relative flex items-center gap-1 rounded-md px-3 py-2 text-[0.85rem] font-medium transition-colors",
+                    "relative flex flex-nowrap items-center gap-1 rounded-md px-2.5 py-2 text-[0.94rem] font-semibold whitespace-nowrap transition-colors",
                     isLegalActive ? "text-primary" : "text-ink/75 hover:text-primary",
                   )}
                 >
@@ -198,11 +199,11 @@ export function Navbar() {
                 </div>
               </li>
 
-              <li>
+              <li className="shrink-0">
                 <Link
                   to={contactItem.to}
                   className={cn(
-                    "relative rounded-md px-3 py-2 text-[0.85rem] font-medium transition-colors",
+                    "relative rounded-md px-2.5 py-2 text-[0.94rem] font-semibold whitespace-nowrap transition-colors",
                     isActive(contactItem.to) ? "text-primary" : "text-ink/75 hover:text-primary",
                   )}
                 >
@@ -219,7 +220,7 @@ export function Navbar() {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <Button
               asChild
               variant="ghost"
@@ -276,6 +277,8 @@ export function Navbar() {
           </div>
         </div>
       </header>
+
+      <BrandRibbon />
 
       {/* Mobile navigation */}
       <div

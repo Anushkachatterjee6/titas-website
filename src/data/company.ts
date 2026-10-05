@@ -54,14 +54,10 @@ export const company = {
     },
   ],
 
-  /**
-   * LinkedIn has not been supplied — leave empty so the icon stays an
-   * inactive placeholder rather than linking to a guessed profile.
-   */
   social: {
     facebookUrl: "https://www.facebook.com/TiTASPDW/",
     instagramUrl: "https://www.instagram.com/titas.pdw/",
-    linkedinUrl: "",
+    linkedinUrl: "https://www.linkedin.com/in/sujit-aqua-enterprise-493bb46a/?isSelfProfile=true",
   },
 
   delivery: {
@@ -85,3 +81,35 @@ export const company = {
 export const telHref = `tel:+91${company.phone}`;
 export const whatsappHref = `https://wa.me/91${company.whatsapp}`;
 export const mailHref = `mailto:${company.email}`;
+
+/** "Our Commitment" points shown on the About page, directly after Vision & Mission. */
+export const commitments = [
+  {
+    number: "01",
+    eyebrow: "Quality Commitment",
+    title: "Quality at Every Stage",
+    description:
+      "We focus on maintaining hygiene, consistency and quality throughout our water treatment, filling, packaging and handling processes.",
+  },
+  {
+    number: "02",
+    eyebrow: "Customer Commitment",
+    title: "Service You Can Depend On",
+    description:
+      "We aim to understand customer requirements and provide responsive, professional and dependable service for regular and bulk needs.",
+  },
+  {
+    number: "03",
+    eyebrow: "Supply Commitment",
+    title: "Reliable Distribution",
+    description:
+      "Our supply approach is designed to serve retailers, businesses, offices, hotels, restaurants, institutions, events and other customers efficiently.",
+  },
+  {
+    number: "04",
+    eyebrow: "Value Commitment",
+    title: "Quality with Practical Value",
+    description:
+      "We work to provide dependable packaged drinking water solutions with competitive pricing and flexible supply options for different customer requirements.",
+  },
+] as const;

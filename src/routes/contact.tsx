@@ -100,7 +100,7 @@ function ContactPage() {
                   <Input
                     value={form.topic}
                     onChange={(e) => setForm((f) => ({ ...f, topic: e.target.value }))}
-                    placeholder="Orders, bulk enquiry, delivery, dealer enquiry…"
+                    placeholder="Dealer / Distributor, Bulk Order, Delivery, Product, Career Enquiry, Feedback, Complaint"
                   />
                 </Field>
                 <Field label="Message" required>

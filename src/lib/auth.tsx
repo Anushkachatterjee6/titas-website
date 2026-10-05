@@ -23,6 +23,8 @@ export type SignUpDetails = {
   password: string;
 };
 
+export type OAuthProvider = "google" | "facebook";
+
 type AuthContextValue = {
   user: User | null;
   session: Session | null;
@@ -31,6 +33,13 @@ type AuthContextValue = {
    *  always returns an active session, ready to use immediately. */
   signUp: (details: SignUpDetails) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  /** Redirects the browser to the provider's consent screen via Supabase
+   *  Auth's own OAuth flow — no custom auth system, no credentials here.
+   *  Only resolves with an error if Supabase rejects the request before any
+   *  redirect happens (e.g. malformed call); a disabled/unconfigured
+   *  provider instead surfaces as an error page from Supabase itself after
+   *  the redirect, which this app can't intercept client-side. */
+  signInWithOAuth: (provider: OAuthProvider, redirectPath?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<{ error: string | null }>;
   updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
@@ -105,6 +114,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null };
   }, []);
 
+  const signInWithOAuth = useCallback(async (provider: OAuthProvider, redirectPath = "/account") => {
+    // Built from the current origin so this works unmodified on localhost,
+    // Vercel previews and the eventual production domain — never hardcoded.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      ...(typeof window !== "undefined"
+        ? {
+            options: {
+              redirectTo: `${window.location.origin}${redirectPath}`,
+              // Google only: force the account-chooser screen instead of
+              // silently reusing whichever Google account is already
+              // signed in on the device.
+              ...(provider === "google" ? { queryParams: { prompt: "select_account" } } : {}),
+            },
+          }
+        : {}),
+    });
+    if (error) return { error: friendlyAuthError(error.message) };
+    // On success the browser is already navigating to the provider's
+    // consent screen — there is nothing further to do here.
+    return { error: null };
+  }, []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
@@ -134,6 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         signUp,
         signIn,
+        signInWithOAuth,
         signOut,
         requestPasswordReset,
         updatePassword,

@@ -3,13 +3,14 @@ import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Logo } from "./Logo";
 import { SocialLinks } from "./SocialLinks";
 import { company, mailHref, telHref, whatsappHref } from "@/data/company";
+import pageSurfaceImg from "@/assets/titas/motion/page-surface-water-blue-v2.png";
 
 const quickLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Products", to: "/products" },
-  { label: "Services", to: "/services" },
-  { label: "Quality", to: "/quality" },
+  { label: "Our Services", to: "/services" },
+  { label: "Quality & Process", to: "/quality" },
   { label: "FAQs", to: "/faqs" },
   { label: "Contact", to: "/contact" },
 ];
@@ -31,29 +32,28 @@ const legalLinks = [
 
 export function Footer() {
   return (
-    <footer className="surface-deep relative overflow-hidden">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-36 left-1/3 size-[32rem] rounded-full bg-aqua/12 blur-3xl"
-      />
-      <div className="container-page relative py-16 md:py-20">
+    <footer
+      className="relative overflow-hidden bg-cover bg-bottom bg-no-repeat text-ink-foreground"
+      style={{ backgroundImage: `url(${pageSurfaceImg})` }}
+    >
+      <div className="container-page relative pt-16 pb-24 md:pt-20 md:pb-28">
         <div className="grid gap-12 lg:grid-cols-[1.15fr_2fr]">
           <div>
             <Logo variant="inverse" withTagline={false} />
-            <p className="script-accent mt-5 text-2xl text-aqua-soft">
+            <p className="script-accent mt-7 text-xl text-aqua-soft">
               {company.tagline}
             </p>
-            <p className="mt-2 text-sm text-ink-foreground/70">
+            <p className="mt-2 text-sm font-medium text-ink-foreground/85">
               {company.supportingLine}
             </p>
-            <p className="mt-1 text-sm text-ink-foreground/55">
+            <p className="mt-1 text-sm font-medium text-ink-foreground/70">
               Serving Since {company.since}
             </p>
-            <p className="mt-6 max-w-sm text-sm leading-relaxed text-ink-foreground/60">
+            <p className="mt-8 max-w-sm text-sm leading-relaxed font-medium text-ink-foreground/80">
               {company.legalName} — packaged drinking water for homes,
               businesses, institutions, events and bulk requirements.
             </p>
-            <SocialLinks className="mt-7" tone="inverse" />
+            <SocialLinks className="mt-8" tone="inverse" />
           </div>
 
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -62,12 +62,12 @@ export function Footer() {
             <FooterColumn title="Legal" links={legalLinks} />
 
             <div>
-              <h3 className="eyebrow text-aqua-soft/70">Contact</h3>
+              <h3 className="eyebrow text-ink-foreground/90">Contact</h3>
               <ul className="mt-5 space-y-3 text-sm">
                 <li>
                   <a
                     href={telHref}
-                    className="flex items-center gap-2.5 text-ink-foreground/70 transition-colors hover:text-ink-foreground"
+                    className="flex items-center gap-2.5 font-medium text-ink-foreground/85 transition-colors hover:text-ink-foreground"
                   >
                     <Phone className="size-3.5 shrink-0" aria-hidden="true" />
                     {company.phone}
@@ -78,7 +78,7 @@ export function Footer() {
                     href={whatsappHref}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="flex items-center gap-2.5 text-ink-foreground/70 transition-colors hover:text-ink-foreground"
+                    className="flex items-center gap-2.5 font-medium text-ink-foreground/85 transition-colors hover:text-ink-foreground"
                   >
                     <MessageCircle className="size-3.5 shrink-0" aria-hidden="true" />
                     {company.whatsapp}
@@ -87,14 +87,14 @@ export function Footer() {
                 <li>
                   <a
                     href={mailHref}
-                    className="flex items-start gap-2.5 break-words text-ink-foreground/70 transition-colors hover:text-ink-foreground"
+                    className="flex items-start gap-2.5 break-words font-medium text-ink-foreground/85 transition-colors hover:text-ink-foreground"
                   >
                     <Mail className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
                     {company.email}
                   </a>
                 </li>
               </ul>
-              <p className="mt-5 text-xs leading-relaxed text-ink-foreground/45">
+              <p className="mt-5 text-xs leading-relaxed text-ink-foreground/65">
                 {company.hours.weekdays}
                 <br />
                 {company.hours.closed}
@@ -106,8 +106,8 @@ export function Footer() {
         <div className="mt-14 grid gap-8 border-t border-ink-foreground/12 pt-10 sm:grid-cols-2">
           {company.locations.map((loc) => (
             <div key={loc.id}>
-              <h3 className="eyebrow text-aqua-soft/70">{loc.label}</h3>
-              <address className="mt-4 text-sm leading-relaxed text-ink-foreground/65 not-italic">
+              <h3 className="eyebrow text-ink-foreground/90">{loc.label}</h3>
+              <address className="mt-4 text-sm leading-relaxed font-medium text-ink-foreground/80 not-italic">
                 {loc.lines.join(", ")}
               </address>
               <a
@@ -123,8 +123,8 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 border-t border-ink-foreground/12 pt-7 text-xs text-ink-foreground/45">
-          <p>
+        <div className="mt-12 border-t border-ink-foreground/12 pt-7 text-xs font-medium text-ink-foreground/80">
+          <p className="[text-shadow:0_1px_4px_rgba(4,18,46,0.55)]">
             © {new Date().getFullYear()} {company.legalName}. All rights reserved.
           </p>
         </div>
@@ -142,13 +142,13 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h3 className="eyebrow text-aqua-soft/70">{title}</h3>
+      <h3 className="eyebrow text-ink-foreground/90">{title}</h3>
       <ul className="mt-5 space-y-3 text-sm">
         {links.map((link) => (
           <li key={`${title}-${link.label}`}>
             <Link
               to={link.to}
-              className="text-ink-foreground/70 transition-colors hover:text-ink-foreground"
+              className="font-medium text-ink-foreground/85 transition-colors hover:text-ink-foreground"
             >
               {link.label}
             </Link>

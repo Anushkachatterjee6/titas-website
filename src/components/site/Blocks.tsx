@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Accordion,
@@ -12,6 +13,7 @@ import { company, mailHref, telHref, whatsappHref } from "@/data/company";
 import type { Service } from "@/data/services";
 import type { Certification } from "@/data/quality";
 import { Reveal } from "./Reveal";
+import { ScriptAccent } from "./TiTASWordmark";
 import { cn } from "@/lib/utils";
 
 export function ServiceCard({
@@ -25,14 +27,24 @@ export function ServiceCard({
 }) {
   return (
     <Reveal as="article" delay={delay} className="h-full">
-      <div className="flex h-full flex-col rounded-lg border border-border bg-card p-7 transition-all duration-500 hover:-translate-y-1 hover:border-aqua/60 hover:shadow-lift">
-        <span className="eyebrow text-aqua">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <h3 className="mt-4 text-lg font-semibold text-ink">{service.title}</h3>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          {service.description}
-        </p>
+      <div className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-500 hover:-translate-y-1 hover:border-aqua/60 hover:shadow-lift">
+        <div className="aspect-[5/4] w-full overflow-hidden bg-surface">
+          <img
+            src={service.image}
+            alt={service.title}
+            loading="lazy"
+            className="h-full w-full object-cover object-center"
+          />
+        </div>
+        <div className="flex flex-1 flex-col p-7">
+          <span className="eyebrow text-aqua">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <h3 className="mt-4 text-lg font-semibold text-ink">{service.title}</h3>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {service.description}
+          </p>
+        </div>
       </div>
     </Reveal>
   );
@@ -106,26 +118,97 @@ export function LocationCard({
 }: {
   location: (typeof company.locations)[number];
 }) {
+  // No API key required: Google's legacy /maps?...&output=embed endpoint
+  // renders a real, live Maps tile preview from the existing approved
+  // address text — not a fabricated or hardcoded image. `t=m`/`t=k` switches
+  // roadmap vs. satellite imagery for the same query/zoom, so the marker,
+  // position and zoom stay put across the toggle below.
+  const [mapType, setMapType] = useState<"roadmap" | "satellite">("roadmap");
+  const previewQuery = encodeURIComponent(location.lines.join(", "));
+  const previewSrc = `https://maps.google.com/maps?q=${previewQuery}&z=15&t=${mapType === "satellite" ? "k" : "m"}&output=embed`;
+
   return (
     <Reveal as="article" className="h-full">
-      <div className="flex h-full flex-col rounded-lg border border-border bg-card p-7">
-        <span className="flex size-10 items-center justify-center rounded-full bg-accent text-primary">
-          <MapPin className="size-4" aria-hidden="true" />
-        </span>
-        <h3 className="mt-5 text-base font-semibold text-ink">{location.label}</h3>
-        <address className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground not-italic">
-          {location.lines.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
-        </address>
-        <Button asChild variant="quiet" size="sm" className="mt-5 self-start">
-          <a href={location.mapUrl} target="_blank" rel="noreferrer noopener">
-            <MapPin />
-            Open in Google Maps
-          </a>
-        </Button>
+      <div className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card">
+        <a
+          href={location.mapUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label={`Open ${location.label} location in Google Maps`}
+          className="group relative block aspect-[16/9] w-full shrink-0 overflow-hidden bg-surface"
+        >
+          <iframe
+            key={mapType}
+            src={previewSrc}
+            title={`${location.label} map preview`}
+            aria-hidden="true"
+            tabIndex={-1}
+            loading="lazy"
+            className="pointer-events-none h-full w-full"
+          />
+          <span className="pointer-events-none absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/10" />
+
+          {/* In-page Map/Satellite toggle — intercepts its own clicks so it
+              never triggers the surrounding anchor's external navigation. */}
+          <div
+            className="absolute bottom-2 left-2 z-10 flex overflow-hidden rounded-md border border-white/30 bg-ink/80 text-[0.65rem] font-semibold shadow-lift backdrop-blur-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <button
+              type="button"
+              aria-pressed={mapType === "roadmap"}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setMapType("roadmap");
+              }}
+              className={cn(
+                "px-2.5 py-1 transition-colors",
+                mapType === "roadmap" ? "bg-aqua text-ink" : "text-ink-foreground hover:bg-white/10",
+              )}
+            >
+              Map
+            </button>
+            <button
+              type="button"
+              aria-pressed={mapType === "satellite"}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setMapType("satellite");
+              }}
+              className={cn(
+                "px-2.5 py-1 transition-colors",
+                mapType === "satellite" ? "bg-aqua text-ink" : "text-ink-foreground hover:bg-white/10",
+              )}
+            >
+              Satellite
+            </button>
+          </div>
+        </a>
+
+        <div className="flex flex-1 flex-col p-7">
+          <span className="flex size-10 items-center justify-center rounded-full bg-accent text-primary">
+            <MapPin className="size-4" aria-hidden="true" />
+          </span>
+          <h3 className="mt-5 text-base font-semibold text-ink">{location.label}</h3>
+          <address className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground not-italic">
+            {location.lines.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </address>
+          <Button asChild variant="quiet" size="sm" className="mt-5 self-start">
+            <a href={location.mapUrl} target="_blank" rel="noreferrer noopener">
+              <MapPin />
+              Open in Google Maps
+            </a>
+          </Button>
+        </div>
       </div>
     </Reveal>
   );
@@ -185,9 +268,7 @@ export function CTASection({
             {script && (
               <>
                 {" "}
-                <span className="script-accent font-normal text-aqua-soft">
-                  {script}
-                </span>
+                <ScriptAccent text={script} inverse className="font-normal text-aqua-soft" />
               </>
             )}
           </h2>

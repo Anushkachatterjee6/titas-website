@@ -1,9 +1,13 @@
 import type { ReactNode } from "react";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { Reveal } from "./Reveal";
+import { ScriptAccent } from "./TiTASWordmark";
+import { cn } from "@/lib/utils";
+import pageSurfaceImg from "@/assets/titas/motion/page-surface-water-blue-v2.png";
 
 export function PageHero({
   eyebrow,
+  eyebrowClassName,
   title,
   script,
   lede,
@@ -11,6 +15,9 @@ export function PageHero({
   children,
 }: {
   eyebrow?: string;
+  /** Extra classes merged onto the eyebrow — for the rare hero that needs a
+   *  more prominent eyebrow than the shared default. */
+  eyebrowClassName?: string;
   title: string;
   script?: string;
   lede?: string;
@@ -18,27 +25,22 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <header className="surface-deep relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 -right-24 size-[34rem] rounded-full bg-aqua/20 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-52 -left-32 size-[30rem] rounded-full bg-aqua-soft/10 blur-3xl"
-      />
+    <header
+      className="relative overflow-hidden bg-cover bg-top bg-no-repeat pt-28 pb-16 text-ink-foreground md:pt-36 md:pb-24"
+      style={{ backgroundImage: `url(${pageSurfaceImg})` }}
+    >
       <div className="container-page relative">
         <Breadcrumbs items={crumbs} tone="inverse" />
-        <Reveal className="mt-7 max-w-3xl">
-          {eyebrow && <p className="eyebrow mb-4 text-aqua-soft/80">{eyebrow}</p>}
-          <h1 className="text-4xl leading-[1.04] font-semibold text-ink-foreground md:text-[3.4rem]">
+        <Reveal className="mt-7 max-w-4xl">
+          {eyebrow && (
+            <p className={cn("eyebrow mb-4 text-aqua-soft/80", eyebrowClassName)}>{eyebrow}</p>
+          )}
+          <h1 className="text-[2.75rem] leading-[1.04] font-bold text-ink-foreground md:text-[3.9rem]">
             {title}
             {script && (
               <>
                 {" "}
-                <span className="script-accent font-normal text-aqua-soft">
-                  {script}
-                </span>
+                <ScriptAccent text={script} className="font-normal text-aqua-soft" />
               </>
             )}
           </h1>

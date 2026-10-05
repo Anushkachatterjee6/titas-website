@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { services } from "@/data/services";
 import { company } from "@/data/company";
 
-const title = "Services | TiTAS Packaged Drinking Water";
+const title = "Our Services | TiTAS Packaged Drinking Water";
 const description =
   "TiTAS supply for homes, offices, institutions, events, bulk requirements, wholesalers, retailers, dealers and distributors.";
 
@@ -34,11 +34,11 @@ function ServicesPage() {
       <Navbar />
       <main>
         <PageHero
-          eyebrow="Services"
+          eyebrow="Our Services"
           title="Supply for every"
           script="requirement"
           lede="From a single household to dealers and distributors, TiTAS supplies to suit how you need water."
-          crumbs={[{ label: "Services" }]}
+          crumbs={[{ label: "Our Services" }]}
         />
 
         <Section>

@@ -112,6 +112,7 @@ function BrandIntro() {
           <SectionHeading
             eyebrow={`${company.legalName} · ${company.sinceLine}`}
             title={company.brand}
+            titleBrand
             script={company.tagline}
             lede={company.intro}
             className="mx-auto lg:mx-0"
@@ -161,6 +162,7 @@ function JourneySection() {
           align="center"
           eyebrow="Our Story in Motion"
           title="Every Drop Has"
+          titleHref="/journey"
           script="a Journey"
           lede="From source to your doorstep, every TiTAS pack follows the same careful path."
           className="mx-auto"
@@ -319,6 +321,7 @@ function WhyTitas() {
       <SectionHeading
         align="center"
         eyebrow="Why TiTAS"
+        eyebrowClassName="text-[0.8rem] font-extrabold tracking-[0.22em]"
         title="Built on trust,"
         script="drop by drop"
         lede={`Serving homes, businesses and institutions since ${company.since}.`}
@@ -408,7 +411,9 @@ function QualityPreview() {
 function GalleryPreview() {
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
   const items = galleryCategories.flatMap((c) =>
-    c.available ? c.items.map((it) => ({ src: it.src as string, alt: it.alt as string })) : [],
+    c.available
+      ? c.items.map((it) => ({ src: it.src as string, alt: it.alt as string, position: it.position as string }))
+      : [],
   );
 
   return (
@@ -440,6 +445,7 @@ function GalleryPreview() {
                 src={item.src}
                 alt={item.alt}
                 loading="lazy"
+                style={{ objectPosition: item.position }}
                 className={cn(
                   "size-full object-cover transition-transform duration-700 group-hover:scale-105",
                   i === 0 ? "aspect-[3/4] sm:aspect-auto sm:h-full" : "aspect-square",

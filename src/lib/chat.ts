@@ -10,10 +10,11 @@ export type ChatTurn = { role: "user" | "model"; text: string };
 const FALLBACK_ERROR =
   "Sorry, I'm having trouble responding right now. Please try again or visit our FAQs.";
 
-/** Calls the `chat-assistant` Edge Function. Requires an authenticated
- *  Supabase session — supabase-js attaches it automatically. No customer
- *  personal data is included in the payload, only the message text and a
- *  short slice of recent conversation turns. */
+/** Calls the `chat-assistant` Edge Function. Works for logged-out visitors
+ *  too — supabase-js automatically attaches the public anon key (or the
+ *  user's session token, if logged in) as the request's credentials either
+ *  way. No customer personal data is included in the payload, only the
+ *  message text and a short slice of recent conversation turns. */
 export async function sendChatMessage(
   message: string,
   history: ChatTurn[],

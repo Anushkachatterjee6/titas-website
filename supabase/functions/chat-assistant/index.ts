@@ -4,10 +4,15 @@
 // GEMINI_API_KEY lives ONLY in Supabase's server-side Edge Function secrets
 // (Deno.env) and is never returned to, or reachable from, the browser.
 //
-// Auth: `verify_jwt = true` in supabase/config.toml makes the Edge Runtime
-// reject any request without a valid Supabase session JWT before this code
-// even runs. We additionally resolve the user via that JWT below (needed
-// for per-user rate limiting) as defense in depth.
+// Auth: the chatbot is open to every visitor, logged in or not. `verify_jwt =
+// true` in supabase/config.toml still requires SOME valid Supabase JWT before
+// this code runs — but supabase-js always attaches one automatically (the
+// public anon key for a logged-out visitor, or the session token for a
+// logged-in one), so that platform-level check never blocks a normal browser
+// caller either way; it only blocks requests with no Supabase credentials at
+// all (e.g. a bare curl), which stays in place unchanged. Below, we resolve
+// the user from that JWT *if present* purely for nicer per-user rate
+// limiting — a missing/anonymous session is expected and allowed through.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
@@ -56,11 +61,11 @@ const SYSTEM_PROMPT = `You are "TiTAS Assistant", the official informational cha
 Answer ONLY using the approved information below. If something isn't covered here, say that information isn't currently available and point the customer to TiTAS contact/FAQs — never guess or invent an answer.
 
 PRODUCTS (final approved prices):
-- 500 ml — ₹160 per case of 24
-- 1 L — ₹135 per case of 12
-- 2 L — ₹155 per case of 9
-- 5 L — ₹45 each
-- 20 L — ₹80 each (jar)
+- 500 ml — ₹160 per case of 24 pieces
+- 1 L — ₹135 per case of 24 pieces
+- 2 L — ₹155 per case of 24 pieces
+- 5 L — ₹45 per jar
+- 20 L — ₹80 per jar
 
 SERVICES:
 Home & Residential Supply · Office & Commercial Supply · Institutional Supply · Events & Bulk Orders · Regular & Scheduled Supply · Wholesale & Retailer Supply · Distributor & Dealer Supply · Custom Bulk Enquiry / Business Supply.
@@ -123,26 +128,31 @@ Deno.serve(async (req) => {
     return json({ error: FRIENDLY_ERROR }, 500);
   }
 
-  // --- Authenticate the caller (Part 4 / Part 9.1, 9.8) -------------------
+  // --- Identify the caller, login optional ---------------------------------
+  // Logged-in visitors get resolved to their user id purely for a more
+  // precise per-user rate-limit bucket; a logged-out visitor is still fully
+  // served, just rate-limited by IP instead.
   const authHeader = req.headers.get("Authorization");
-  if (!authHeader) {
-    return json({ error: "Please log in to use the TiTAS Assistant." }, 401);
+  let rateLimitKey: string | null = null;
+  if (authHeader) {
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const {
+      data: { user },
+    } = await supabaseClient.auth.getUser();
+    if (user) {
+      rateLimitKey = `user:${user.id}`;
+      console.log("[chat-assistant] authenticated user", user.id);
+    }
   }
-  const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    global: { headers: { Authorization: authHeader } },
-  });
-  const {
-    data: { user },
-    error: authError,
-  } = await supabaseClient.auth.getUser();
-  if (authError || !user) {
-    console.error("[chat-assistant] auth.getUser failed", authError?.message);
-    return json({ error: "Please log in to use the TiTAS Assistant." }, 401);
+  if (!rateLimitKey) {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    rateLimitKey = `ip:${ip}`;
   }
-  console.log("[chat-assistant] authenticated user", user.id);
 
   // --- Rate limit (Part 9.6) ------------------------------------------
-  if (isRateLimited(user.id)) {
+  if (isRateLimited(rateLimitKey)) {
     return json(
       { error: "You're sending messages a little too fast — please wait a moment and try again." },
       429,

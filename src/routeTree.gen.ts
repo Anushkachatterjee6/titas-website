@@ -20,6 +20,7 @@ import { Route as DealerDistributorRouteImport } from './routes/dealer-distribut
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as QualityRouteImport } from './routes/quality'
@@ -85,6 +86,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JourneyRoute = JourneyRouteImport.update({
+  id: '/journey',
+  path: '/journey',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/faqs': typeof FaqsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gallery': typeof GalleryRoute
+  '/journey': typeof JourneyRoute
   '/login': typeof LoginRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/quality': typeof QualityRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/faqs': typeof FaqsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gallery': typeof GalleryRoute
+  '/journey': typeof JourneyRoute
   '/login': typeof LoginRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/quality': typeof QualityRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/faqs': typeof FaqsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gallery': typeof GalleryRoute
+  '/journey': typeof JourneyRoute
   '/login': typeof LoginRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/quality': typeof QualityRoute
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/forgot-password'
     | '/gallery'
+    | '/journey'
     | '/login'
     | '/privacy-policy'
     | '/quality'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/forgot-password'
     | '/gallery'
+    | '/journey'
     | '/login'
     | '/privacy-policy'
     | '/quality'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/faqs'
     | '/forgot-password'
     | '/gallery'
+    | '/journey'
     | '/login'
     | '/privacy-policy'
     | '/quality'
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   FaqsRoute: typeof FaqsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GalleryRoute: typeof GalleryRoute
+  JourneyRoute: typeof JourneyRoute
   LoginRoute: typeof LoginRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   QualityRoute: typeof QualityRoute
@@ -393,6 +406,13 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journey': {
+      id: '/journey'
+      path: '/journey'
+      fullPath: '/journey'
+      preLoaderRoute: typeof JourneyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -487,6 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqsRoute: FaqsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GalleryRoute: GalleryRoute,
+  JourneyRoute: JourneyRoute,
   LoginRoute: LoginRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   QualityRoute: QualityRoute,

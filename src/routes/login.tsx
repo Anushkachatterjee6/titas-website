@@ -2,9 +2,11 @@ import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { AuthLayout, AuthField, AuthError } from "@/components/site/AuthLayout";
+import { GoogleIcon } from "@/components/site/SocialAuthIcons";
+import { Facebook } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth";
+import { useAuth, type OAuthProvider } from "@/lib/auth";
 
 const title = "Login | TiTAS";
 const description = "Log in to your TiTAS account to check out and manage your orders.";
@@ -31,12 +33,13 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn, signInWithOAuth } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +52,19 @@ function LoginPage() {
       return;
     }
     navigate({ to: redirect || "/account", replace: true });
+  };
+
+  const handleOAuth = async (provider: OAuthProvider) => {
+    setError(null);
+    setOauthLoading(provider);
+    const { error: oauthError } = await signInWithOAuth(provider, redirect || "/account");
+    // On success the browser is already navigating away to the provider's
+    // consent screen, so this only ever resolves on the spot when something
+    // went wrong before that redirect could happen.
+    if (oauthError) {
+      setError(oauthError);
+      setOauthLoading(null);
+    }
   };
 
   return (
@@ -68,9 +84,38 @@ function LoginPage() {
         </>
       }
     >
-      <form className="grid gap-5" onSubmit={handleSubmit}>
+      <div className="grid gap-3">
         <AuthError message={error} />
 
+        <Button
+          type="button"
+          variant="quiet"
+          size="xl"
+          disabled={oauthLoading !== null}
+          onClick={() => handleOAuth("google")}
+        >
+          <GoogleIcon className="size-4.5" />
+          {oauthLoading === "google" ? "Redirecting…" : "Continue with Google"}
+        </Button>
+        <Button
+          type="button"
+          variant="quiet"
+          size="xl"
+          disabled={oauthLoading !== null}
+          onClick={() => handleOAuth("facebook")}
+        >
+          <Facebook className="size-4.5 fill-[#1877F2] text-[#1877F2]" aria-hidden="true" />
+          {oauthLoading === "facebook" ? "Redirecting…" : "Continue with Facebook"}
+        </Button>
+      </div>
+
+      <div className="my-6 flex items-center gap-3" aria-hidden="true">
+        <span className="h-px flex-1 bg-border" />
+        <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Or</span>
+        <span className="h-px flex-1 bg-border" />
+      </div>
+
+      <form className="grid gap-5" onSubmit={handleSubmit}>
         <AuthField label="Email" htmlFor="login-email">
           <Input
             id="login-email"

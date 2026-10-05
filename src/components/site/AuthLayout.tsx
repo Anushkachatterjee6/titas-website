@@ -29,7 +29,7 @@ export function AuthLayout({
             <Reveal>
               <div className="text-center">
                 <Logo className="justify-center" />
-                <h1 className="mt-7 text-2xl font-semibold text-ink md:text-3xl">{title}</h1>
+                <h1 className="mt-7 text-[1.65rem] font-bold text-ink md:text-[2.05rem]">{title}</h1>
                 {subtitle && (
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{subtitle}</p>
                 )}

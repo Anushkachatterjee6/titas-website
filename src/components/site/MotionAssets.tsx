@@ -4,21 +4,20 @@ import purificationImg from "@/assets/titas/motion/purification-3d.png";
 import qualityImg from "@/assets/titas/motion/quality-3d.png";
 import bottleImg from "@/assets/titas/motion/bottle-3d.png";
 import deliveryImg from "@/assets/titas/motion/delivery-3d.png";
-import networkCenterImg from "@/assets/titas/motion/network-center.png";
+import networkCenterImg from "@/assets/titas/motion/network-center-splash.png";
 import networkHomeImg from "@/assets/titas/motion/network-home.png";
-import networkOfficeImg from "@/assets/titas/motion/network-office.png";
+import networkOfficeImg from "@/assets/titas/motion/network-events-bulk.png";
 import networkInstitutionalImg from "@/assets/titas/motion/network-institutional.png";
-import networkEventsImg from "@/assets/titas/motion/network-events.png";
-import networkRegularImg from "@/assets/titas/motion/network-regular.png";
-import networkWholesaleImg from "@/assets/titas/motion/network-wholesale.png";
-import networkDistributorImg from "@/assets/titas/motion/network-distributor.png";
-import networkCustomBulkImg from "@/assets/titas/motion/network-custombulk.png";
-import orderBrowseImg from "@/assets/titas/motion/order-1-browse.png";
-import orderAddToCartImg from "@/assets/titas/motion/order-2-add-to-cart.png";
-import orderCartReviewImg from "@/assets/titas/motion/order-3-cart-review.png";
-import orderPaymentImg from "@/assets/titas/motion/order-4-payment.png";
-import orderConfirmedImg from "@/assets/titas/motion/order-5-confirmed.png";
-import orderDeliveryImg from "@/assets/titas/motion/order-6-delivery.png";
+import networkEventsImg from "@/assets/titas/motion/TITAS Water Station Splash Pavilion(1).png";
+import networkRegularImg from "@/assets/titas/motion/TiTAS Water Delivery Splash Scene.png";
+import networkWholesaleImg from "@/assets/titas/motion/TiTAS Water Warehouse Splash.png";
+import networkDistributorImg from "@/assets/titas/motion/TiTAS Distributor Water Showcase.png";
+import networkCustomBulkImg from "@/assets/titas/motion/TiTAS Water Facility Splash Cutout.png";
+import orderBrowseImg from "@/assets/titas/motion/TiTAS Water Marketplace Splash Showcase.png";
+import orderAddToCartImg from "@/assets/titas/motion/TiTAS Water Cart Splash (1).png";
+import orderCartReviewImg from "@/assets/titas/motion/TiTAS Water Cart Adventure.png";
+import orderConfirmedImg from "@/assets/titas/motion/TiTAS Order Confirmed 3D Scene.png";
+import orderDeliveryImg from "@/assets/titas/motion/TiTAS Water Delivery Tracking Graphic.png";
 import { RoutePath } from "@/components/site/WaterMotion";
 import { usePrefersReducedMotion, useRevealOnce, useScrollProgress } from "@/lib/hooks";
 import { services } from "@/data/services";
@@ -616,18 +615,21 @@ export function ServicesNetworkVisual() {
 /* 3. Ordering Flow — six individual phone-state cutouts                */
 /* ------------------------------------------------------------------ */
 
-/** All six steps now use genuinely transparent individual assets. */
+/** Five genuinely transparent individual assets — no dedicated "Payment"
+ *  artwork was supplied for this refresh, so that state was dropped rather
+ *  than reused from a mismatched image. */
 const ORDER_STATES = [
   { label: "Browse", img: orderBrowseImg },
   { label: "Add to Cart", img: orderAddToCartImg },
   { label: "Cart", img: orderCartReviewImg },
-  { label: "Payment", img: orderPaymentImg },
   { label: "Confirmed", img: orderConfirmedImg },
   { label: "Delivery", img: orderDeliveryImg },
 ];
 
 const ORDER_DURATION = 2600;
 const ORDER_TRANSITION = 700;
+const ORDER_CONFIRMED_INDEX = ORDER_STATES.findIndex((s) => s.label === "Confirmed");
+const ORDER_DELIVERY_INDEX = ORDER_STATES.findIndex((s) => s.label === "Delivery");
 
 export function OrderingFlowVisual() {
   const reducedMotion = usePrefersReducedMotion();
@@ -705,9 +707,9 @@ export function OrderingFlowVisual() {
           <span
             aria-hidden="true"
             className="pointer-events-none absolute top-[30%] left-1/2 size-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-aqua/25 transition-opacity duration-500"
-            style={{ opacity: active === 4 && !reducedMotion ? 1 : 0 }}
+            style={{ opacity: active === ORDER_CONFIRMED_INDEX && !reducedMotion ? 1 : 0 }}
           >
-            {active === 4 && !reducedMotion && (
+            {active === ORDER_CONFIRMED_INDEX && !reducedMotion && (
               <span className="animate-check-ripple absolute inset-0 rounded-full bg-aqua/40" />
             )}
           </span>
@@ -715,7 +717,7 @@ export function OrderingFlowVisual() {
           {/* Delivery state: a small route draw-on, independent of the flattened art */}
           <div
             className="pointer-events-none absolute inset-x-4 bottom-4 transition-opacity duration-500"
-            style={{ opacity: active === 5 ? 1 : 0 }}
+            style={{ opacity: active === ORDER_DELIVERY_INDEX ? 1 : 0 }}
           >
             <RoutePath reducedMotion={reducedMotion} className="drop-shadow-sm" />
           </div>

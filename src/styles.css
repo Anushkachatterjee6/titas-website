@@ -361,6 +361,26 @@
   }
 }
 
+/* Seamless marquee: the track renders the content sequence twice back to
+   back, then scrolls exactly -50% of its own width — since both halves are
+   identical, the moment it completes it's visually indistinguishable from
+   the starting frame, so the loop has no jump/reset. Reduced-motion users
+   get a frozen single line automatically via the global rule below, which
+   collapses animation-duration to ~0 — translateX(-50%) still resolves, so
+   the layout stays correct, just without the motion. */
+@utility animate-marquee {
+  animation: titas-marquee 32s linear infinite;
+}
+
+@keyframes titas-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(var(--marquee-end, -50%));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

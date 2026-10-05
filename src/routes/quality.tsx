@@ -6,11 +6,12 @@ import { PageHero } from "@/components/site/PageHero";
 import { Section, SectionHeading } from "@/components/site/Section";
 import { Reveal } from "@/components/site/Reveal";
 import { CertificationCard, NoticeBanner } from "@/components/site/Blocks";
+import { ProcessTimeline } from "@/components/site/ProcessTimeline";
 import { Button } from "@/components/ui/button";
-import { processSteps, processStages, processFlowImage } from "@/data/process";
+import { processFlowImage } from "@/data/process";
 import { labReport, labCategories, certifications } from "@/data/quality";
 
-const title = "Water Quality | TiTAS";
+const title = "Quality & Process | TiTAS";
 const description =
   "TiTAS purification process, quality-control approach and the laboratory test report for our packaged drinking water.";
 
@@ -38,7 +39,7 @@ function QualityPage() {
           title="From Source"
           script="to Seal"
           lede="A careful, quality-focused process — transcribed from the company's own process documentation — carries every TiTAS pack from raw water to the sealed bottle in your hands."
-          crumbs={[{ label: "Quality" }]}
+          crumbs={[{ label: "Quality & Process" }]}
         />
 
         <Section>
@@ -49,7 +50,10 @@ function QualityPage() {
             lede="Each step below is transcribed from TiTAS's own Process Flow Chart for Bottle Filling. Nothing is invented and nothing beyond that document is claimed."
           />
 
-          <Reveal delay={100} className="mt-10 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <ProcessTimeline />
+
+          <Reveal delay={100} className="mt-14 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            <p className="eyebrow mb-3 text-aqua">Official Process Flow Chart</p>
             <img
               src={processFlowImage}
               alt="TiTAS process flow chart for bottle filling, supplied by SUJIT AQUA ENTERPRISE"
@@ -60,41 +64,6 @@ function QualityPage() {
           <p className="mt-2 text-xs text-muted-foreground sm:hidden">
             Scroll sideways to see the full process flow.
           </p>
-
-          <div className="mt-14 space-y-10">
-            {processStages.map((stage, stageIndex) => {
-              const steps = processSteps.filter((s) => s.stage === stage);
-              if (steps.length === 0) return null;
-              return (
-                <Reveal key={stage} delay={stageIndex * 60}>
-                  <h3 className="flex items-center gap-3 text-lg font-semibold text-ink">
-                    <span className="eyebrow flex size-8 items-center justify-center rounded-full bg-accent text-primary">
-                      {stageIndex + 1}
-                    </span>
-                    {stage}
-                  </h3>
-                  <ol className="mt-4 grid gap-3 border-l border-border pl-6 sm:grid-cols-2">
-                    {steps.map((step) => (
-                      <li key={step.ref} className="text-sm">
-                        <span className="font-mono text-xs text-aqua">{step.ref}</span>{" "}
-                        <span className="text-ink">{step.title}</span>
-                        {step.control && (
-                          <span className="ml-2 rounded-full bg-accent px-2 py-0.5 text-[0.65rem] font-semibold text-primary">
-                            {step.control}
-                          </span>
-                        )}
-                        {step.detail && (
-                          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                            {step.detail}
-                          </p>
-                        )}
-                      </li>
-                    ))}
-                  </ol>
-                </Reveal>
-              );
-            })}
-          </div>
         </Section>
 
         <Section tone="surface">

@@ -15,6 +15,7 @@ import { CartProvider } from "../lib/cart";
 import { AuthProvider } from "../lib/auth";
 import { CartDrawer } from "../components/site/CartDrawer";
 import { ChatWidget } from "../components/site/ChatWidget";
+import { WhatsAppButton } from "../components/site/WhatsAppButton";
 import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
@@ -97,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;600&display=swap" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
@@ -132,6 +133,7 @@ function RootComponent() {
           <Outlet />
           <CartDrawer />
           <ChatWidget />
+          <WhatsAppButton />
           <Toaster position="bottom-center" />
         </CartProvider>
       </AuthProvider>

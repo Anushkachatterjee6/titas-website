@@ -32,7 +32,7 @@ function CheckoutPage() {
       <Navbar />
       <main>
         <Section className="py-24">
-          <h1 className="font-display text-3xl text-ink">Checkout</h1>
+          <h1 className="font-display text-[2rem] font-bold text-ink md:text-[2.5rem]">Checkout</h1>
           <p className="mt-4 text-muted-foreground">
             You're logged in — delivery address, order review and payment are coming in the next
             milestone.

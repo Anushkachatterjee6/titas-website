@@ -33,6 +33,7 @@ function WhyTitasPage() {
       <main>
         <PageHero
           eyebrow="Why TiTAS"
+          eyebrowClassName="text-[0.8rem] font-extrabold"
           title="Built on trust,"
           script="drop by drop"
           lede={`Serving homes, businesses and institutions since ${company.since}.`}

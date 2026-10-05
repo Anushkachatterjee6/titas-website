@@ -29,7 +29,9 @@ export const Route = createFileRoute("/gallery")({
 
 function GalleryPage() {
   const items = galleryCategories.flatMap((c) =>
-    c.available ? c.items.map((it) => ({ src: it.src as string, alt: it.alt as string })) : [],
+    c.available
+      ? c.items.map((it) => ({ src: it.src as string, alt: it.alt as string, position: it.position as string }))
+      : [],
   );
   const comingSoon = galleryCategories.filter((c) => !c.available);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -64,6 +66,7 @@ function GalleryPage() {
                     src={item.src}
                     alt={item.alt}
                     loading="lazy"
+                    style={{ objectPosition: item.position }}
                     className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <span className="absolute inset-0 flex items-center justify-center bg-ink/0 opacity-0 transition-all duration-300 group-hover:bg-ink/25 group-hover:opacity-100">

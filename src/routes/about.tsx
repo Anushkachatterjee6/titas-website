@@ -1,5 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  BadgePercent,
+  Compass,
+  Eye,
+  HeartHandshake,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
@@ -7,7 +15,9 @@ import { Section, SectionHeading } from "@/components/site/Section";
 import { Reveal } from "@/components/site/Reveal";
 import { Button } from "@/components/ui/button";
 import { brandImages } from "@/data/images";
-import { company } from "@/data/company";
+import { company, commitments } from "@/data/company";
+
+const COMMITMENT_ICONS = [ShieldCheck, HeartHandshake, Truck, BadgePercent];
 
 const title = "About TiTAS | Ekti Jaler Naam";
 const description = `About TiTAS packaged drinking water by ${company.legalName} — ${company.tagline}, ${company.supportingLine}, serving since ${company.since}.`;
@@ -45,6 +55,7 @@ function About() {
               <SectionHeading
                 eyebrow={`${company.legalName} · ${company.sinceLine}`}
                 title={company.brand}
+                titleBrand
                 script={company.tagline}
                 lede={company.supportingLine}
               />
@@ -71,19 +82,56 @@ function About() {
         <Section tone="surface">
           <div className="grid gap-10 lg:grid-cols-2">
             <Reveal as="article" className="rounded-lg border border-border bg-card p-8">
-              <span className="eyebrow text-aqua">Vision</span>
+              <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
+                <Eye className="size-5" strokeWidth={1.75} />
+              </span>
+              <span className="eyebrow mt-4 block text-aqua">Vision</span>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {company.vision}
               </p>
             </Reveal>
             <Reveal as="article" delay={80} className="rounded-lg border border-border bg-card p-8">
-              <span className="eyebrow text-aqua">Mission</span>
+              <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
+                <Compass className="size-5" strokeWidth={1.75} />
+              </span>
+              <span className="eyebrow mt-4 block text-aqua">Mission</span>
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
                 {company.mission.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
             </Reveal>
+          </div>
+        </Section>
+
+        <Section>
+          <SectionHeading eyebrow="What Drives Us" title="Our" script="Commitment" />
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {commitments.map((item, i) => {
+              const Icon = COMMITMENT_ICONS[i]!;
+              return (
+                <Reveal
+                  as="article"
+                  key={item.number}
+                  delay={(i % 4) * 80}
+                  className="flex gap-5 rounded-lg border border-border bg-card p-7"
+                >
+                  <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-accent text-primary">
+                    <Icon className="size-6" strokeWidth={1.75} />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="eyebrow text-aqua">{item.number}</span>
+                      <span className="eyebrow text-muted-foreground">{item.eyebrow}</span>
+                    </div>
+                    <h3 className="mt-2 text-lg font-semibold text-ink">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </Section>
 

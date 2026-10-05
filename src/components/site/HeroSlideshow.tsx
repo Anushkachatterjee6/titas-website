@@ -3,9 +3,16 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { approvedSlides } from "@/data/images";
 import { cn } from "@/lib/utils";
 
-const DURATION = 2000;
+const DURATION = 3500;
 const TRANSITION_MS = 600;
 const RESUME_AFTER = 8000;
+// Backstop for the clone->real-slide snap below — guarantees the loop
+// corrects itself even if the browser ever fails to fire the CSS
+// `transitionend` event (observed after long idle periods: throttled
+// background tabs / dropped frames can silently drop that event, and
+// without this, the track index would keep marching past the last
+// rendered slide and the hero would go permanently blank).
+const SNAP_FALLBACK_MS = TRANSITION_MS + 150;
 const EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
 
 /**
@@ -70,10 +77,24 @@ export function HeroSlideshow() {
     resumeTimer.current = setTimeout(() => setPaused(false), RESUME_AFTER);
   }, []);
 
-  const step = useCallback((delta: number) => {
-    setTransitionsOn(true);
-    setTrackIndex((i) => i + delta);
-  }, []);
+  const step = useCallback(
+    (delta: number) => {
+      setTransitionsOn(true);
+      setTrackIndex((i) => {
+        const next = i + delta;
+        // Hard safety clamp: trackIndex must never land more than one
+        // position past either clone slot. Normal operation never needs
+        // this (the snap-back below keeps it in [0, n+1] on its own), but
+        // it guarantees the track can never be pushed into empty space
+        // beyond the last rendered slide, even in a pathological case
+        // where a snap was somehow missed entirely.
+        if (next < 0) return n;
+        if (next > n + 1) return 1;
+        return next;
+      });
+    },
+    [n],
+  );
 
   const go = useCallback(
     (targetRealIndex: number) => {
@@ -99,6 +120,8 @@ export function HeroSlideshow() {
   }, []);
 
   // Land on a clone -> snap (no transition) to the matching real slide.
+  // This is the fast path, fired by the browser as soon as the slide
+  // transition visually finishes.
   const handleTransitionEnd = useCallback(() => {
     if (trackIndex === 0) {
       setTransitionsOn(false);
@@ -107,6 +130,24 @@ export function HeroSlideshow() {
       setTransitionsOn(false);
       setTrackIndex(1);
     }
+  }, [trackIndex, n]);
+
+  // Guaranteed backstop for the same snap, independent of the DOM event.
+  // Whenever trackIndex sits on a clone slot, this schedules a correction
+  // a little after the transition should have finished. If the fast path
+  // above already ran, trackIndex has moved off the clone slot by then, so
+  // this effect's own cleanup (which re-runs on every trackIndex change)
+  // cancels the pending timer before it ever fires — it's a no-op in the
+  // normal case, and the only thing that actually fires it is a missed
+  // transitionend event, which is exactly the bug this exists to catch.
+  useEffect(() => {
+    if (trackIndex !== 0 && trackIndex !== n + 1) return;
+    const target = trackIndex === 0 ? n : 1;
+    const id = setTimeout(() => {
+      setTransitionsOn(false);
+      setTrackIndex(target);
+    }, SNAP_FALLBACK_MS);
+    return () => clearTimeout(id);
   }, [trackIndex, n]);
 
   // Re-enable transitions on the next frame after a snap.
@@ -164,6 +205,12 @@ export function HeroSlideshow() {
                 loading="eager"
                 decoding="async"
                 className="size-full object-cover object-center"
+                onError={() => {
+                  // Never leave the hero showing a broken image — if the
+                  // slide currently on screen fails to load, move straight
+                  // past it instead of sitting on an invalid frame.
+                  if (i === trackIndex) step(1);
+                }}
               />
             </figure>
           ))}

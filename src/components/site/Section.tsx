@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { Reveal } from "./Reveal";
+import { ScriptAccent, TiTASWordmark } from "./TiTASWordmark";
 
 export function Section({
   children,
@@ -31,7 +33,10 @@ export function Section({
 
 export function SectionHeading({
   eyebrow,
+  eyebrowClassName,
   title,
+  titleBrand = false,
+  titleHref,
   script,
   lede,
   align = "left",
@@ -39,13 +44,46 @@ export function SectionHeading({
   className,
 }: {
   eyebrow?: string;
+  /** Extra classes merged onto the eyebrow — for the rare heading that
+   *  needs a more prominent eyebrow than the shared default. */
+  eyebrowClassName?: string;
   title: string;
+  /** When true, renders the TiTAS brand wordmark image instead of `title`
+   *  as text — for headings where "TiTAS" itself IS the brand mark, not a
+   *  sentence that merely mentions it. `title` is still used for a11y text. */
+  titleBrand?: boolean;
+  /** When set, the whole heading (title + script, not the eyebrow or lede)
+   *  becomes a link to this route — for headings that double as a "read
+   *  more" entry point into a dedicated page. */
+  titleHref?: string;
   script?: string;
   lede?: string;
   align?: "left" | "center";
   tone?: "default" | "inverse";
   className?: string;
 }) {
+  const headingContent = (
+    <>
+      {titleBrand ? (
+        <>
+          <TiTASWordmark title={title} className="inline-block h-[0.8em] w-auto align-[-0.12em]" />
+          <span className="sr-only">{title}</span>
+        </>
+      ) : (
+        title
+      )}
+      {script && (
+        <>
+          {" "}
+          <ScriptAccent
+            text={script}
+            inverse={tone === "inverse"}
+            className={cn("font-normal", tone === "inverse" ? "text-aqua-soft" : "text-primary")}
+          />
+        </>
+      )}
+    </>
+  );
   return (
     <Reveal
       as="header"
@@ -60,6 +98,7 @@ export function SectionHeading({
           className={cn(
             "eyebrow mb-4",
             tone === "inverse" ? "text-aqua-soft/80" : "text-aqua",
+            eyebrowClassName,
           )}
         >
           {eyebrow}
@@ -67,23 +106,19 @@ export function SectionHeading({
       )}
       <h2
         className={cn(
-          "text-3xl leading-[1.08] font-semibold md:text-[2.7rem]",
+          "text-[2.05rem] leading-[1.08] font-bold md:text-[2.95rem]",
           tone === "inverse" ? "text-ink-foreground" : "text-ink",
         )}
       >
-        {title}
-        {script && (
-          <>
-            {" "}
-            <span
-              className={cn(
-                "script-accent font-normal",
-                tone === "inverse" ? "text-aqua-soft" : "text-primary",
-              )}
-            >
-              {script}
-            </span>
-          </>
+        {titleHref ? (
+          <Link
+            to={titleHref}
+            className="rounded-sm opacity-100 transition-opacity duration-300 hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {headingContent}
+          </Link>
+        ) : (
+          headingContent
         )}
       </h2>
       {lede && (

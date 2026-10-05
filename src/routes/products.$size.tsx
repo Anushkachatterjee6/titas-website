@@ -43,7 +43,7 @@ function ProductDetail() {
       <>
         <Navbar />
         <main className="container-page py-24 text-center">
-          <h1 className="font-display text-3xl text-ink">Product not found</h1>
+          <h1 className="font-display text-[2rem] font-bold text-ink md:text-[2.5rem]">Product not found</h1>
           <p className="mt-4 text-muted-foreground">
             We couldn't find that pack size. Browse our full range instead.
           </p>
@@ -82,7 +82,7 @@ function ProductDetail() {
               <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-primary">
                 {product.size}
               </span>
-              <h1 className="mt-4 text-3xl leading-tight font-semibold text-ink md:text-4xl">
+              <h1 className="mt-4 text-[2rem] leading-tight font-bold text-ink md:text-[2.5rem]">
                 {product.name}
               </h1>
               <p className="script-accent mt-2 text-xl text-primary">{product.headline}</p>

@@ -3,7 +3,11 @@ import everyDrop from "@/assets/titas/1000156793.jpg";
 import studio from "@/assets/titas/1000156794.jpg";
 import lifestyle from "@/assets/titas/1000156796.jpg";
 import doorstep from "@/assets/titas/ChatGPT Image Sep 28, 2026, 01_28_42 PM.png";
-import mark from "@/assets/titas/Logo (1).jpeg";
+// The original Logo (1).jpeg has a plain white square background baked in
+// (JPEGs can't carry transparency) — this is the same artwork, keyed and
+// cropped to a genuinely transparent PNG so it sits cleanly on any
+// background without a white box or square corners behind the circular mark.
+import mark from "@/assets/titas/motion/titas-mark-transparent.png";
 import brandName from "@/assets/titas-brand-name.png.asset.json";
 import wordmark from "@/assets/titas-wordmark.png.asset.json";
 import bottle from "@/assets/titas/Demo TiTAS 1 L Bottle.png";
@@ -11,7 +15,7 @@ import s1 from "@/assets/titas/titas-slide-1.jpg";
 import s2 from "@/assets/titas/titas-slide-2.jpg";
 import s3 from "@/assets/titas/titas-slide-3.jpg";
 import s4 from "@/assets/titas/titas-slide-4.jpg";
-import s5 from "@/assets/titas/titas-slide-5.png";
+import s5 from "@/assets/titas/titas-slide-5-v2.png";
 
 export const brandImages = {
   mark,
@@ -79,9 +83,14 @@ export const galleryCategories = [
     label: "Products",
     available: true,
     items: [
-      { src: range, alt: "The full TiTAS pack range from 500 ml to 20 L" },
-      { src: studio, alt: "TiTAS 1 L bottle, studio photograph" },
-      { src: everyDrop, alt: "TiTAS 1 L bottle with water splash" },
+      // Wide banner — the TiTAS wordmark sits in the upper-left third, not
+      // the centre, so a centred square crop would cut it off.
+      { src: range, alt: "The full TiTAS pack range from 500 ml to 20 L", position: "22% 38%" },
+      // Portrait product shot, label already sits in the vertical middle —
+      // the default centred crop already frames it correctly.
+      { src: studio, alt: "TiTAS 1 L bottle, studio photograph", position: "center" },
+      // Wide banner — wordmark sits right-of-centre, upper half.
+      { src: everyDrop, alt: "TiTAS 1 L bottle with water splash", position: "58% 38%" },
     ],
   },
   {
@@ -89,10 +98,13 @@ export const galleryCategories = [
     label: "Packaging",
     available: true,
     items: [
-      { src: bottle, alt: "TiTAS 1 L bottle showing the pack label" },
+      // Tall bottle photo, label already centred — default crop is fine.
+      { src: bottle, alt: "TiTAS 1 L bottle showing the pack label", position: "center" },
+      // Wide banner — wordmark sits centred, upper third.
       {
         src: lifestyle,
         alt: "TiTAS packs photographed together with a traveller",
+        position: "55% 32%",
       },
     ],
   },
@@ -101,9 +113,12 @@ export const galleryCategories = [
     label: "Delivery",
     available: true,
     items: [
+      // Wide banner — the TiTAS logo and headline sit in the upper-left
+      // corner, well outside a centred square crop.
       {
         src: doorstep,
         alt: "TiTAS pack being handed over at a customer's door",
+        position: "16% 22%",
       },
     ],
   },
