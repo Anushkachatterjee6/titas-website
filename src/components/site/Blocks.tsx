@@ -104,7 +104,7 @@ export function CertificationCard({ item }: { item: Certification }) {
           <Button asChild variant="quiet" size="sm" className="mt-5 self-start">
             <a href={item.documentUrl} target="_blank" rel="noreferrer noopener">
               <FileText />
-              View document
+              {item.documentLabel ?? "View document"}
             </a>
           </Button>
         )}
@@ -122,9 +122,15 @@ export function LocationCard({
   // renders a real, live Maps tile preview from the existing approved
   // address text — not a fabricated or hardcoded image. `t=m`/`t=k` switches
   // roadmap vs. satellite imagery for the same query/zoom, so the marker,
-  // position and zoom stay put across the toggle below.
+  // position and zoom stay put across the toggle below. A single-result
+  // `q=` search always drops Google's standard red pin at that address —
+  // no custom marker/mapping library needed — and leading the query with
+  // `markerName` makes that pin's own label read as the approved business
+  // name rather than a generic address.
   const [mapType, setMapType] = useState<"roadmap" | "satellite">("roadmap");
-  const previewQuery = encodeURIComponent(location.lines.join(", "));
+  const previewQuery = encodeURIComponent(
+    [location.markerName, ...location.lines].join(", "),
+  );
   const previewSrc = `https://maps.google.com/maps?q=${previewQuery}&z=15&t=${mapType === "satellite" ? "k" : "m"}&output=embed`;
 
   return (

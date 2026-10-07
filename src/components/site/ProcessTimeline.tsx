@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
   Beaker,
   Building2,
@@ -18,7 +18,6 @@ import {
   Warehouse,
   Waves,
 } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { Reveal } from "./Reveal";
 import { processStages, processSteps, type ProcessIcon, type ProcessStep } from "@/data/process";
@@ -26,13 +25,17 @@ import { processStages, processSteps, type ProcessIcon, type ProcessStep } from 
 /**
  * Vertical process journey for the Quality & Process page.
  *
- * Every individual step from the company's Process Flow Chart gets its own
- * card and icon (not just the 3 major stages) — the stages are rendered as
- * section markers along one continuous timeline, alternating left/right on
- * desktop and collapsing to a single rail on mobile. Stage markers sit on an
- * opaque background so they visually interrupt the thin flow-line/node
- * instead of colliding with it — the line still runs continuously behind
- * them, it's just given clear space to breathe above each stage's first card.
+ * Every individual step gets its own expandable card — collapsed by
+ * default, showing only the stage's verbatim opening sentence (`brief`).
+ * Clicking/tapping a card (or focusing it and pressing Enter/Space) expands
+ * it to reveal every paragraph from the approved source document, in full,
+ * verbatim. Built on Radix's Accordion primitive (`type="single"
+ * collapsible`) — the same primitive already used by FAQAccordion
+ * elsewhere on the site — so only one stage is open at a time (keeping the
+ * page from turning into a 25-stage wall of text), aria-expanded/keyboard
+ * behaviour comes for free, and the open/close animation reuses the
+ * project's existing `animate-accordion-down`/`-up` utilities rather than
+ * introducing a new animation.
  */
 
 const ICONS: Record<ProcessIcon, typeof Droplet> = {
@@ -55,9 +58,8 @@ const ICONS: Record<ProcessIcon, typeof Droplet> = {
   dispatch: Truck,
 };
 
-function StepCard({ step, index, side }: { step: ProcessStep; index: number; side: "left" | "right" }) {
+function StepItem({ step, index, side }: { step: ProcessStep; index: number; side: "left" | "right" }) {
   const Icon = ICONS[step.icon];
-  const [open, setOpen] = useState(false);
 
   return (
     <Reveal
@@ -73,39 +75,35 @@ function StepCard({ step, index, side }: { step: ProcessStep; index: number; sid
         )}
       />
 
-      <div className="ml-6 rounded-xl border border-border bg-card p-5 shadow-lift md:ml-0 md:p-6">
-        <div className="flex items-center gap-4 md:gap-5">
-          <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-accent text-primary md:size-24">
-            <Icon className="size-8 md:size-12" strokeWidth={1.5} />
-          </span>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
+      <AccordionPrimitive.Item
+        value={step.ref}
+        className="ml-6 overflow-hidden rounded-xl border border-border bg-card shadow-lift transition-colors duration-300 hover:border-aqua/40 md:ml-0"
+      >
+        <AccordionPrimitive.Header>
+          <AccordionPrimitive.Trigger className="group flex w-full items-center gap-4 p-5 text-left md:gap-5 md:p-6">
+            <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-accent text-primary md:size-24">
+              <Icon className="size-8 md:size-12" strokeWidth={1.5} />
+            </span>
+            <div className="min-w-0 flex-1">
               <span className="font-mono text-xs text-aqua">{step.ref}</span>
-              {step.control && (
-                <span className="rounded-full bg-accent px-2 py-0.5 text-[0.65rem] font-semibold text-primary">
-                  {step.control}
-                </span>
-              )}
+              <h4 className="mt-1 text-sm font-semibold text-ink md:text-base">{step.displayTitle}</h4>
+              <p className="mt-0.5 text-xs text-muted-foreground">{step.title}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.brief}</p>
             </div>
-            <h4 className="mt-1 text-sm font-semibold text-ink md:text-base">{step.displayTitle}</h4>
-            <p className="mt-0.5 text-xs text-muted-foreground">{step.title}</p>
+            <ChevronDown
+              className="size-5 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
+              aria-hidden="true"
+            />
+          </AccordionPrimitive.Trigger>
+        </AccordionPrimitive.Header>
+        <AccordionPrimitive.Content className="overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+          <div className="space-y-3 border-t border-border px-5 pt-4 pb-5 text-sm leading-relaxed whitespace-pre-line text-ink/80 md:px-6 md:pb-6">
+            {step.paragraphs.map((paragraph, i) => (
+              <p key={i}>{paragraph}</p>
+            ))}
           </div>
-        </div>
-
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
-
-        {step.fullDetail && (
-          <Collapsible open={open} onOpenChange={setOpen} className="mt-2">
-            <CollapsibleTrigger className="flex items-center gap-1 text-xs font-medium text-primary hover:underline">
-              {open ? "Hide process detail" : "Show process detail"}
-              <ChevronDown className={cn("size-3.5 transition-transform", open && "rotate-180")} />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2 rounded-lg bg-accent/40 p-3 text-xs leading-relaxed text-ink/80">
-              {step.fullDetail}
-            </CollapsibleContent>
-          </Collapsible>
-        )}
-      </div>
+        </AccordionPrimitive.Content>
+      </AccordionPrimitive.Item>
     </Reveal>
   );
 }
@@ -134,7 +132,7 @@ export function ProcessTimeline() {
   let runningIndex = 0;
 
   return (
-    <div className="relative mt-4">
+    <AccordionPrimitive.Root type="single" collapsible className="relative mt-4">
       {/* Central water-flow line: a hairline on mobile's left rail, centred on desktop.
           Stage markers above render on an opaque background and sit in normal
           flow (not on top of the line), so the line visually pauses for each
@@ -155,13 +153,13 @@ export function ProcessTimeline() {
                 {steps.map((step) => {
                   const side = runningIndex % 2 === 0 ? "left" : "right";
                   runningIndex += 1;
-                  return <StepCard key={step.ref} step={step} index={runningIndex} side={side} />;
+                  return <StepItem key={step.ref} step={step} index={runningIndex} side={side} />;
                 })}
               </div>
             </div>
           );
         })}
       </div>
-    </div>
+    </AccordionPrimitive.Root>
   );
 }

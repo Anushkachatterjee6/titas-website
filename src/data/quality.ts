@@ -52,9 +52,11 @@ export const labCategories = [
 
 /**
  * Licences & certifications.
- * Client information currently indicates GST and FSSAI are pending, so nothing
- * is presented as obtained. Add `issueDate`, `expiryDate` and `documentUrl`
- * once the documentation is finalised.
+ * GST Registration was obtained 06/10/2026 (GST REG-06 certificate,
+ * GSTIN 19AERPM6342N1ZN) — transcribed from the supplied certificate only;
+ * its "Period of Validity — To" field is "Not Applicable", so no expiry
+ * date is shown. FSSAI and other licences remain pending until their own
+ * documentation is supplied.
  */
 export type Certification = {
   name: string;
@@ -63,6 +65,8 @@ export type Certification = {
   issueDate?: string;
   expiryDate?: string;
   documentUrl?: string;
+  /** Overrides the document button's label (defaults to "View document"). */
+  documentLabel?: string;
 };
 
 export const certifications: Certification[] = [
@@ -73,8 +77,12 @@ export const certifications: Certification[] = [
   },
   {
     name: "GST Registration",
-    status: "Pending",
-    note: "Information will be updated as documentation is finalised.",
+    status: "Obtained",
+    note: "GSTIN 19AERPM6342N1ZN · Regular registration for SUJIT AQUA ENTERPRISE (Legal name: Amit Mondal, Proprietorship).",
+    issueDate: "06/10/2026",
+    expiryDate: "—",
+    documentUrl: "/documents/titas-gst-registration-certificate.pdf",
+    documentLabel: "View Certificate",
   },
   {
     name: "Laboratory Test Report",

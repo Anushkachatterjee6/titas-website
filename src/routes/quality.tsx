@@ -8,7 +8,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { CertificationCard, NoticeBanner } from "@/components/site/Blocks";
 import { ProcessTimeline } from "@/components/site/ProcessTimeline";
 import { Button } from "@/components/ui/button";
-import { processFlowImage } from "@/data/process";
+import { processFlowImage, processClosingLine } from "@/data/process";
 import { labReport, labCategories, certifications } from "@/data/quality";
 
 const title = "Quality & Process | TiTAS";
@@ -51,6 +51,10 @@ function QualityPage() {
           />
 
           <ProcessTimeline />
+
+          <Reveal delay={60} className="mt-10 text-center text-sm font-medium text-muted-foreground">
+            {processClosingLine}
+          </Reveal>
 
           <Reveal delay={100} className="mt-14 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             <p className="eyebrow mb-3 text-aqua">Official Process Flow Chart</p>

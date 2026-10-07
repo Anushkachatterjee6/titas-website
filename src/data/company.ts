@@ -37,6 +37,10 @@ export const company = {
     {
       id: "plant",
       label: "Plant",
+      /** Shown as the map pin's marker name (the embed's `q=` search query
+       *  is label-first, so this becomes the pin's title) — not displayed
+       *  as the card heading, which stays "Plant". */
+      markerName: "SUJIT AQUA ENTERPRISES",
       lines: [
         "Vill – JALA DHULAGORI",
         "P.O. – DHULAGORI",
@@ -49,6 +53,7 @@ export const company = {
     {
       id: "office",
       label: "Office",
+      markerName: "TiTAS Packaged Drinking Water",
       lines: ["8/2/2 UMESH BANERJEE LANE", "Howrah", "711301"],
       mapUrl: "https://maps.app.goo.gl/PVC5DaxDKE2in67c9",
     },
