@@ -79,10 +79,10 @@ HOW TO UNDERSTAND THE VISITOR:
 ABOUT TiTAS:
 TiTAS is a packaged drinking water brand by SUJIT AQUA ENTERPRISE, serving customers since 1999. Tagline: "Ekti Jaler Naam" ("A Name for Water"); supporting line: "Banglar Jal, Banglar Bharsha". TiTAS provides packaged drinking water for homes, businesses, institutions, events and bulk requirements, with multiple pack sizes to suit different needs.
 
-PRODUCTS (final approved prices — this also covers "ordering"/"buying" questions about a specific size):
-- 500 ml — ₹160 per case of 24 pieces
-- 1 L — ₹135 per case of 24 pieces
-- 2 L — ₹155 per case of 24 pieces
+PRODUCTS (final approved prices — this also covers "ordering"/"buying" questions about a specific size; the first three are CASE prices sold in bottles, the last two are sold per jar — never say "per bottle" for 500 ml/1 L/2 L, never say "24/12/9 pcs" (always "bottles"), and never say "per bottle" for 5 L or 20 L (always "per jar")):
+- 500 ml — ₹160 per case of 24 bottles
+- 1 L — ₹135 per case of 12 bottles
+- 2 L — ₹155 per case of 9 bottles
 - 5 L — ₹45 per jar
 - 20 L — ₹80 per jar
 
@@ -106,13 +106,13 @@ PURIFICATION (high level only — do not invent technical specifics beyond this)
 TiTAS water goes through a multi-stage process: raw water extraction, sand and carbon filtration, nano-filtration, reverse osmosis, mineral dosing, UV treatment and ozonisation, before automatic bottle filling and packaging. If asked for exact technical parameters not listed here, say you don't have that level of detail and suggest contacting TiTAS.
 
 QUALITY:
-TiTAS water has been lab-tested (microbiological, organoleptic/physical, and chemical parameters) by an independent testing laboratory. FSSAI licence and GST registration are currently PENDING, not yet obtained — never claim TiTAS holds any certification, licence, ISI mark or award unless a customer says otherwise; if asked, say licensing is in progress.
+TiTAS water has been lab-tested (microbiological, organoleptic/physical, and chemical parameters) by an independent testing laboratory. GST registration has been obtained (GSTIN 19AERPM6342N1ZN). FSSAI licence is currently PENDING, not yet obtained — never claim TiTAS holds an FSSAI licence, ISI mark or any other certification/award beyond the lab testing and GST registration stated here; if asked about FSSAI, say it's in progress.
 
-CONTACT (use these exact details whenever a visitor asks how to reach TiTAS, or as the fallback for anything you can't confidently answer from the information above):
-- Phone/WhatsApp: +91 9830014706 (WhatsApp: https://wa.me/919830014706)
-- Alternate phone: +91 9051019995
-- Email: titas.pdw@gmail.com
-- Or the Contact page on the TiTAS website for the full address and contact form.
+CONTACT: whenever a visitor asks how to reach TiTAS, or as the fallback for anything you can't confidently answer from the information above, always give ALL THREE of the following together — never just one of them. Wrap each contact detail itself in Markdown bold (**...**) so it stands out — never bold any other part of your reply:
+- **WhatsApp: +91 9830014706** (https://wa.me/919830014706)
+- **Contact number: +91 9051019995**
+- **Email: titas.pdw@gmail.com**
+You may also mention the Contact page on the TiTAS website for the full address and contact form, in addition to (not instead of) the three details above.
 
 WHEN YOU CAN'T CONFIDENTLY ANSWER:
 Say something like: "I'm sorry, I don't have enough information to answer that accurately. Please contact TiTAS directly for assistance." — then give the CONTACT details above. Do not guess, and do not make up an answer just to sound helpful.
@@ -146,6 +146,41 @@ function json(body: unknown, status = 200) {
 
 const FRIENDLY_ERROR =
   "Sorry, I'm having trouble responding right now. Please try again or visit our FAQs.";
+
+// --- Transient-failure retry (Gemini 503 "high demand") -------------------
+// 503 is the only status Gemini returns for temporary overload, so it's the
+// only one safe to retry blindly — everything else (400/401/403/404/429/…)
+// is either a client error or already has its own handling below and must
+// reach the caller unchanged on the first attempt.
+const MAX_GEMINI_ATTEMPTS = 3;
+const GEMINI_RETRY_DELAYS_MS = [1000, 2000]; // wait after 1st and 2nd 503
+
+async function callGeminiWithRetry(payload: Record<string, unknown>): Promise<Response> {
+  let res: Response;
+  for (let attempt = 1; attempt <= MAX_GEMINI_ATTEMPTS; attempt++) {
+    res = await fetch(GEMINI_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_API_KEY!,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.status !== 503) {
+      if (attempt > 1) {
+        console.log("[chat-assistant] Gemini retry succeeded");
+      }
+      return res;
+    }
+
+    if (attempt < MAX_GEMINI_ATTEMPTS) {
+      console.log(`[chat-assistant] Gemini returned 503 — retrying (attempt ${attempt + 1}/${MAX_GEMINI_ATTEMPTS})`);
+      await new Promise((resolve) => setTimeout(resolve, GEMINI_RETRY_DELAYS_MS[attempt - 1]));
+    }
+  }
+  return res!;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -236,20 +271,13 @@ Deno.serve(async (req) => {
   );
 
   try {
-    const geminiRes = await fetch(GEMINI_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": GEMINI_API_KEY,
+    const geminiRes = await callGeminiWithRetry({
+      systemInstruction: { role: "system", parts: [{ text: SYSTEM_PROMPT }] },
+      contents,
+      generationConfig: {
+        maxOutputTokens: MAX_OUTPUT_TOKENS,
+        temperature: 0.4,
       },
-      body: JSON.stringify({
-        systemInstruction: { role: "system", parts: [{ text: SYSTEM_PROMPT }] },
-        contents,
-        generationConfig: {
-          maxOutputTokens: MAX_OUTPUT_TOKENS,
-          temperature: 0.4,
-        },
-      }),
     });
 
     console.log("[chat-assistant] Gemini responded", geminiRes.status);

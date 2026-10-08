@@ -86,8 +86,8 @@ function StepItem({ step, index, side }: { step: ProcessStep; index: number; sid
             </span>
             <div className="min-w-0 flex-1">
               <span className="font-mono text-xs text-aqua">{step.ref}</span>
-              <h4 className="mt-1 text-sm font-semibold text-ink md:text-base">{step.displayTitle}</h4>
-              <p className="mt-0.5 text-xs text-muted-foreground">{step.title}</p>
+              <h4 className="mt-1 text-sm font-semibold text-ink md:text-base">{step.title}</h4>
+              <p className="mt-0.5 text-xs text-muted-foreground">{step.displayTitle}</p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.brief}</p>
             </div>
             <ChevronDown

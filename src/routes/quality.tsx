@@ -50,13 +50,7 @@ function QualityPage() {
             lede="Each step below is transcribed from TiTAS's own Process Flow Chart for Bottle Filling. Nothing is invented and nothing beyond that document is claimed."
           />
 
-          <ProcessTimeline />
-
-          <Reveal delay={60} className="mt-10 text-center text-sm font-medium text-muted-foreground">
-            {processClosingLine}
-          </Reveal>
-
-          <Reveal delay={100} className="mt-14 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <Reveal delay={60} className="mt-10 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             <p className="eyebrow mb-3 text-aqua">Official Process Flow Chart</p>
             <img
               src={processFlowImage}
@@ -68,6 +62,14 @@ function QualityPage() {
           <p className="mt-2 text-xs text-muted-foreground sm:hidden">
             Scroll sideways to see the full process flow.
           </p>
+
+          <div className="mt-14">
+            <ProcessTimeline />
+          </div>
+
+          <Reveal delay={60} className="mt-10 text-center text-sm font-medium text-muted-foreground">
+            {processClosingLine}
+          </Reveal>
         </Section>
 
         <Section tone="surface">

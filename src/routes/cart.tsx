@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Droplet, Minus, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Droplet, Plus, Trash2 } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { Section } from "@/components/site/Section";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { Reveal } from "@/components/site/Reveal";
+import { QuantityInput } from "@/components/site/QuantityInput";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/data/products";
@@ -86,25 +87,11 @@ function CartPage() {
                       </div>
 
                       <div className="flex items-center justify-between gap-4 sm:justify-end sm:gap-6">
-                        <div className="flex items-center rounded-md border border-border">
-                          <button
-                            type="button"
-                            onClick={() => setQty(product.slug, qty - 1)}
-                            aria-label={`Decrease ${product.name} quantity`}
-                            className="flex size-9 items-center justify-center text-ink transition-colors hover:bg-accent"
-                          >
-                            <Minus className="size-3.5" aria-hidden="true" />
-                          </button>
-                          <span className="w-10 text-center text-sm font-medium">{qty}</span>
-                          <button
-                            type="button"
-                            onClick={() => setQty(product.slug, qty + 1)}
-                            aria-label={`Increase ${product.name} quantity`}
-                            className="flex size-9 items-center justify-center text-ink transition-colors hover:bg-accent"
-                          >
-                            <Plus className="size-3.5" aria-hidden="true" />
-                          </button>
-                        </div>
+                        <QuantityInput
+                          qty={qty}
+                          label={product.name}
+                          onChange={(next) => setQty(product.slug, next)}
+                        />
 
                         <span className="w-20 text-right text-sm font-semibold text-ink">
                           {formatPrice(lineTotal)}
@@ -125,7 +112,10 @@ function CartPage() {
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                   <Button asChild variant="quiet">
-                    <Link to="/products">Continue Shopping</Link>
+                    <Link to="/products">
+                      <Plus className="size-4" aria-hidden="true" />
+                      Add New Product
+                    </Link>
                   </Button>
                   <button
                     type="button"

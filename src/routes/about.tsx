@@ -18,6 +18,9 @@ import { brandImages } from "@/data/images";
 import { company, commitments } from "@/data/company";
 
 const COMMITMENT_ICONS = [ShieldCheck, HeartHandshake, Truck, BadgePercent];
+// One tasteful emoji per commitment card, chosen to match its meaning —
+// purely decorative alongside the existing Lucide icon, never replacing it.
+const COMMITMENT_EMOJIS = ["💧", "💙", "🚚", "✨"];
 
 const title = "About TiTAS | Ekti Jaler Naam";
 const description = `About TiTAS packaged drinking water by ${company.legalName} — ${company.tagline}, ${company.supportingLine}, serving since ${company.since}.`;
@@ -85,7 +88,10 @@ function About() {
               <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
                 <Eye className="size-5" strokeWidth={1.75} />
               </span>
-              <span className="eyebrow mt-4 block text-aqua">Vision</span>
+              <span className="eyebrow mt-4 block text-aqua">
+                <span className="text-[0.78rem]">Vision</span>{" "}
+                <span className="align-[-2px] text-[1.05rem]">🌱</span>
+              </span>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                 {company.vision}
               </p>
@@ -94,7 +100,10 @@ function About() {
               <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
                 <Compass className="size-5" strokeWidth={1.75} />
               </span>
-              <span className="eyebrow mt-4 block text-aqua">Mission</span>
+              <span className="eyebrow mt-4 block text-aqua">
+                <span className="text-[0.78rem]">Mission</span>{" "}
+                <span className="align-[-2px] text-[1.05rem]">🤝</span>
+              </span>
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
                 {company.mission.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
@@ -109,6 +118,7 @@ function About() {
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             {commitments.map((item, i) => {
               const Icon = COMMITMENT_ICONS[i]!;
+              const emoji = COMMITMENT_EMOJIS[i]!;
               return (
                 <Reveal
                   as="article"
@@ -120,12 +130,12 @@ function About() {
                     <Icon className="size-6" strokeWidth={1.75} />
                   </span>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="eyebrow text-aqua">{item.number}</span>
-                      <span className="eyebrow text-muted-foreground">{item.eyebrow}</span>
-                    </div>
-                    <h3 className="mt-2 text-lg font-semibold text-ink">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    <span className="eyebrow text-aqua">{item.number}</span>
+                    <h3 className="mt-2 text-lg font-bold text-ink">
+                      {item.eyebrow} <span className="align-[-2px] text-lg">{emoji}</span>
+                    </h3>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{item.title}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                       {item.description}
                     </p>
                   </div>

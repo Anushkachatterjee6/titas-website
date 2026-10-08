@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { QuantityInput } from "./QuantityInput";
 import { useCart } from "@/lib/cart";
 import { company } from "@/data/company";
 import { formatPrice } from "@/data/products";
@@ -75,27 +76,11 @@ export function CartDrawer() {
                       {formatPrice(product.pricePerUnit)} / {product.priceUnit}
                     </p>
                     <div className="mt-3 flex items-center justify-between gap-3">
-                      <div className="flex items-center rounded-md border border-border">
-                        <button
-                          type="button"
-                          onClick={() => setQty(product.slug, qty - 1)}
-                          aria-label={`Decrease ${product.name} quantity`}
-                          className="flex size-8 items-center justify-center text-ink transition-colors hover:bg-accent"
-                        >
-                          <Minus className="size-3" aria-hidden="true" />
-                        </button>
-                        <span className="w-9 text-center text-sm font-medium">
-                          {qty}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setQty(product.slug, qty + 1)}
-                          aria-label={`Increase ${product.name} quantity`}
-                          className="flex size-8 items-center justify-center text-ink transition-colors hover:bg-accent"
-                        >
-                          <Plus className="size-3" aria-hidden="true" />
-                        </button>
-                      </div>
+                      <QuantityInput
+                        qty={qty}
+                        label={product.name}
+                        onChange={(next) => setQty(product.slug, next)}
+                      />
                       <span className="text-sm font-semibold text-ink">
                         {formatPrice(lineTotal)}
                       </span>
@@ -126,6 +111,12 @@ export function CartDrawer() {
               <div className="mt-5 grid gap-2">
                 <Button asChild variant="brand" size="xl" onClick={closeCart}>
                   <Link to="/checkout">Checkout</Link>
+                </Button>
+                <Button asChild variant="quiet" onClick={closeCart}>
+                  <Link to="/products">
+                    <Plus className="size-4" aria-hidden="true" />
+                    Add New Product
+                  </Link>
                 </Button>
                 <Button asChild variant="quiet" onClick={closeCart}>
                   <Link to="/cart">View full cart</Link>

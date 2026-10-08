@@ -67,6 +67,9 @@ export type Certification = {
   documentUrl?: string;
   /** Overrides the document button's label (defaults to "View document"). */
   documentLabel?: string;
+  /** Small muted helper line shown under the document button, e.g. a
+   *  signature-verification tip. Optional, rendered only when present. */
+  verificationNote?: string;
 };
 
 export const certifications: Certification[] = [
@@ -83,6 +86,7 @@ export const certifications: Certification[] = [
     expiryDate: "—",
     documentUrl: "/documents/titas-gst-registration-certificate.pdf",
     documentLabel: "View Certificate",
+    verificationNote: "For digital signature verification, open the certificate in Adobe Acrobat Reader.",
   },
   {
     name: "Laboratory Test Report",

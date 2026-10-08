@@ -39,7 +39,7 @@ export const products: Product[] = [
       "Compact and convenient for travel, meetings, events, restaurants and everyday refreshment.",
     caseQty: 24,
     pricePerUnit: 160,
-    priceUnit: "case of 24 pieces",
+    priceUnit: "case of 24 bottles",
     image: bottle500mlAsset,
     bestFor: ["Travel & commuting", "Meetings & events", "Restaurants & cafés"],
   },
@@ -50,9 +50,9 @@ export const products: Product[] = [
     headline: "Your Everyday Companion",
     description:
       "A practical everyday choice for home, work, travel and individual consumption.",
-    caseQty: 24,
+    caseQty: 12,
     pricePerUnit: 135,
-    priceUnit: "case of 24 pieces",
+    priceUnit: "case of 12 bottles",
     /** The supplied studio photo is specifically the 1 L bottle. */
     image: bottleAsset,
     bestFor: ["Home & family use", "Workplace desks", "Day trips"],
@@ -64,9 +64,9 @@ export const products: Product[] = [
     headline: "More Water, More Convenience",
     description:
       "Designed for families, shared consumption, journeys and occasions when a larger bottle is more convenient.",
-    caseQty: 24,
+    caseQty: 9,
     pricePerUnit: 155,
-    priceUnit: "case of 24 pieces",
+    priceUnit: "case of 9 bottles",
     image: bottle2lAsset,
     bestFor: ["Family dining", "Shared consumption", "Long journeys"],
   },

@@ -20,6 +20,21 @@ function makeId(): string {
 
 const MAIN_SCREEN: Screen = { id: "main" };
 
+/** Renders `**bold**` Markdown segments as real bold text — the only
+ *  Markdown syntax the assistant's messages use (e.g. for contact details)
+ *  — everything else is shown as plain text, never literal asterisks. */
+function renderChatText(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={i} className="font-semibold">
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
+
 function welcomeMessage(): Message {
   const main = getScreenContent(MAIN_SCREEN);
   return {
@@ -226,7 +241,7 @@ export function ChatWidget() {
                         : "rounded-bl-sm border border-border bg-card text-ink",
                   )}
                 >
-                  {m.text}
+                  {renderChatText(m.text)}
                 </p>
                 {m.buttons && m.buttons.length > 0 && (
                   <div className="mt-2 flex max-w-[95%] flex-wrap gap-1.5">

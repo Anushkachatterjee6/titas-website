@@ -108,6 +108,9 @@ export function CertificationCard({ item }: { item: Certification }) {
             </a>
           </Button>
         )}
+        {item.verificationNote && (
+          <p className="mt-2 text-[0.7rem] text-muted-foreground">{item.verificationNote}</p>
+        )}
       </div>
     </Reveal>
   );

@@ -42,6 +42,24 @@ function ServicesPage() {
         />
 
         <Section>
+          <Reveal className="flex flex-col items-center gap-6 rounded-2xl border border-border bg-accent/40 p-10 text-center md:p-14">
+            <SectionHeading
+              align="center"
+              eyebrow="Distributor & Dealer Supply"
+              title="Become a"
+              script="TiTAS partner"
+              lede="A dedicated business-partner service for distributors and dealers interested in selling TiTAS."
+              className="mx-auto"
+            />
+            <Button asChild variant="brand" size="xl">
+              <Link to="/dealer-distributor">
+                Become a Distributor <ArrowRight />
+              </Link>
+            </Button>
+          </Reveal>
+        </Section>
+
+        <Section>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((s, i) => (
               <ServiceCard key={s.slug} service={s} index={i} delay={(i % 4) * 70} />
@@ -74,24 +92,6 @@ function ServicesPage() {
             </Reveal>
           </div>
           <NoticeBanner>{company.priceNotice}</NoticeBanner>
-        </Section>
-
-        <Section>
-          <Reveal className="flex flex-col items-center gap-6 rounded-2xl border border-border bg-accent/40 p-10 text-center md:p-14">
-            <SectionHeading
-              align="center"
-              eyebrow="Distributor & Dealer Supply"
-              title="Become a"
-              script="TiTAS partner"
-              lede="A dedicated business-partner service for distributors and dealers interested in selling TiTAS."
-              className="mx-auto"
-            />
-            <Button asChild variant="brand" size="xl">
-              <Link to="/dealer-distributor">
-                Become a Distributor <ArrowRight />
-              </Link>
-            </Button>
-          </Reveal>
         </Section>
       </main>
       <Footer />

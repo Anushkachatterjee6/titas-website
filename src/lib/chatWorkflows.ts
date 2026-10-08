@@ -238,8 +238,8 @@ export function getScreenContent(screen: Screen): ScreenContent {
 
     case "contact-topic": {
       const texts: Record<string, string> = {
-        call: `Call us at +91 ${company.phone} (${telHref}).`,
-        whatsapp: `Message us on WhatsApp at +91 ${company.whatsapp} (${whatsappHref}).`,
+        call: `Call us at **+91 ${company.phone}** (${telHref}).`,
+        whatsapp: `Message us on **WhatsApp** at **+91 ${company.whatsapp}** (${whatsappHref}).`,
         map: company.locations
           .map((l) => `${l.label}: ${l.lines.join(", ")}`)
           .join("\n"),

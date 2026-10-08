@@ -19,6 +19,10 @@ const navItems = [
   { label: "Gallery", to: "/gallery" },
   { label: "FAQs", to: "/faqs" },
 ];
+const servicesMenu = [
+  { label: "Services", to: "/services" },
+  { label: "Become a Distributor", to: "/dealer-distributor" },
+];
 const contactItem = { label: "Contact", to: "/contact" } as const;
 
 export function Navbar() {
@@ -27,6 +31,9 @@ export function Navbar() {
   const [legalOpen, setLegalOpen] = useState(false);
   const [legalMobileOpen, setLegalMobileOpen] = useState(false);
   const legalRef = useRef<HTMLLIElement>(null);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [servicesMobileOpen, setServicesMobileOpen] = useState(false);
+  const servicesRef = useRef<HTMLLIElement>(null);
   const { count, openCart } = useCart();
   const { user, loading: authLoading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -42,6 +49,8 @@ export function Navbar() {
     setMenuOpen(false);
     setLegalOpen(false);
     setLegalMobileOpen(false);
+    setServicesOpen(false);
+    setServicesMobileOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -70,9 +79,30 @@ export function Navbar() {
     };
   }, [legalOpen]);
 
+  // Close the Our Services dropdown on outside click / Escape.
+  useEffect(() => {
+    if (!servicesOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (servicesRef.current && !servicesRef.current.contains(e.target as Node)) {
+        setServicesOpen(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setServicesOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [servicesOpen]);
+
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname.startsWith(to);
   const isLegalActive = Object.values(legalPaths).some((p) => pathname.startsWith(p));
+  const isServicesActive =
+    pathname.startsWith("/services") || pathname.startsWith("/dealer-distributor");
 
   return (
     <>
@@ -111,28 +141,96 @@ export function Navbar() {
 
           <nav aria-label="Main" className="hidden shrink-0 lg:block">
             <ul className="flex flex-nowrap items-center gap-0.5 whitespace-nowrap">
-              {navItems.map((item) => (
-                <li key={item.to} className="shrink-0">
-                  <Link
-                    to={item.to}
-                    className={cn(
-                      "relative rounded-md px-2.5 py-2 text-[0.94rem] font-semibold whitespace-nowrap transition-colors",
-                      isActive(item.to)
-                        ? "text-primary"
-                        : "text-ink/75 hover:text-primary",
-                    )}
+              {navItems.map((item) =>
+                item.to === "/services" ? (
+                  <li
+                    key={item.to}
+                    ref={servicesRef}
+                    className="relative shrink-0"
+                    onMouseEnter={() => setServicesOpen(true)}
+                    onMouseLeave={() => setServicesOpen(false)}
+                    onBlur={(e) => {
+                      if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                        setServicesOpen(false);
+                      }
+                    }}
                   >
-                    {item.label}
-                    <span
-                      aria-hidden="true"
+                    <button
+                      type="button"
+                      aria-haspopup="true"
+                      aria-expanded={servicesOpen}
+                      onClick={() => setServicesOpen((v) => !v)}
+                      onFocus={() => setServicesOpen(true)}
                       className={cn(
-                        "absolute inset-x-3 -bottom-0.5 h-[2px] origin-left rounded-full bg-aqua transition-transform duration-300",
-                        isActive(item.to) ? "scale-x-100" : "scale-x-0",
+                        "relative flex flex-nowrap items-center gap-1 rounded-md px-2.5 py-2 text-[0.94rem] font-semibold whitespace-nowrap transition-colors",
+                        isServicesActive ? "text-primary" : "text-ink/75 hover:text-primary",
                       )}
-                    />
-                  </Link>
-                </li>
-              ))}
+                    >
+                      {item.label}
+                      <ChevronDown
+                        aria-hidden="true"
+                        className={cn("size-3.5 transition-transform duration-200", servicesOpen && "rotate-180")}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute inset-x-3 -bottom-0.5 h-[2px] origin-left rounded-full bg-aqua transition-transform duration-300",
+                          isServicesActive ? "scale-x-100" : "scale-x-0",
+                        )}
+                      />
+                    </button>
+
+                    <div
+                      role="menu"
+                      aria-label="Our Services"
+                      className={cn(
+                        "absolute top-full left-0 z-10 mt-1 w-56 origin-top-left rounded-lg border border-border bg-card py-2 shadow-float transition-all duration-150",
+                        servicesOpen
+                          ? "pointer-events-auto translate-y-0 opacity-100"
+                          : "pointer-events-none -translate-y-1 opacity-0",
+                      )}
+                    >
+                      {servicesMenu.map((entry) => (
+                        <Link
+                          key={entry.to}
+                          role="menuitem"
+                          to={entry.to}
+                          onClick={() => setServicesOpen(false)}
+                          className={cn(
+                            "block px-4 py-2 text-sm transition-colors",
+                            pathname.startsWith(entry.to)
+                              ? "text-primary"
+                              : "text-ink/80 hover:bg-accent hover:text-primary",
+                          )}
+                        >
+                          {entry.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </li>
+                ) : (
+                  <li key={item.to} className="shrink-0">
+                    <Link
+                      to={item.to}
+                      className={cn(
+                        "relative rounded-md px-2.5 py-2 text-[0.94rem] font-semibold whitespace-nowrap transition-colors",
+                        isActive(item.to)
+                          ? "text-primary"
+                          : "text-ink/75 hover:text-primary",
+                      )}
+                    >
+                      {item.label}
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute inset-x-3 -bottom-0.5 h-[2px] origin-left rounded-full bg-aqua transition-transform duration-300",
+                          isActive(item.to) ? "scale-x-100" : "scale-x-0",
+                        )}
+                      />
+                    </Link>
+                  </li>
+                ),
+              )}
 
               <li
                 ref={legalRef}
@@ -304,20 +402,66 @@ export function Navbar() {
         >
           <div className="container-page">
             <ul className="divide-y divide-border">
-              {navItems.map((item) => (
-                <li key={item.to}>
-                  <Link
-                    to={item.to}
-                    onClick={() => setMenuOpen(false)}
-                    className={cn(
-                      "flex items-center justify-between py-4 text-lg font-medium",
-                      isActive(item.to) ? "text-primary" : "text-ink",
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {navItems.map((item) =>
+                item.to === "/services" ? (
+                  <li key={item.to}>
+                    <button
+                      type="button"
+                      aria-expanded={servicesMobileOpen}
+                      onClick={() => setServicesMobileOpen((v) => !v)}
+                      className={cn(
+                        "flex w-full items-center justify-between py-4 text-lg font-medium",
+                        isServicesActive ? "text-primary" : "text-ink",
+                      )}
+                    >
+                      {item.label}
+                      <ChevronDown
+                        aria-hidden="true"
+                        className={cn(
+                          "size-4 transition-transform duration-200",
+                          servicesMobileOpen && "rotate-180",
+                        )}
+                      />
+                    </button>
+                    <div
+                      className={cn(
+                        "grid overflow-hidden transition-all duration-300",
+                        servicesMobileOpen ? "grid-rows-[1fr] pb-3" : "grid-rows-[0fr]",
+                      )}
+                    >
+                      <ul className="min-h-0">
+                        {servicesMenu.map((entry) => (
+                          <li key={entry.to}>
+                            <Link
+                              to={entry.to}
+                              onClick={() => setMenuOpen(false)}
+                              className={cn(
+                                "block py-2.5 pl-4 text-base",
+                                pathname.startsWith(entry.to) ? "text-primary" : "text-ink/70",
+                              )}
+                            >
+                              {entry.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </li>
+                ) : (
+                  <li key={item.to}>
+                    <Link
+                      to={item.to}
+                      onClick={() => setMenuOpen(false)}
+                      className={cn(
+                        "flex items-center justify-between py-4 text-lg font-medium",
+                        isActive(item.to) ? "text-primary" : "text-ink",
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ),
+              )}
 
               <li>
                 <button

@@ -168,6 +168,13 @@ function JourneySection() {
           className="mx-auto"
         />
         <WaterJourneyVisual />
+        <Reveal delay={100} className="mt-10 flex justify-center">
+          <Button asChild variant="quiet" size="lg">
+            <Link to="/journey">
+              Click Here <ArrowRight />
+            </Link>
+          </Button>
+        </Reveal>
       </div>
     </section>
   );
