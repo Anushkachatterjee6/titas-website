@@ -156,8 +156,10 @@ const MAX_GEMINI_ATTEMPTS = 3;
 const GEMINI_RETRY_DELAYS_MS = [1000, 2000]; // wait after 1st and 2nd 503
 
 async function callGeminiWithRetry(payload: Record<string, unknown>): Promise<Response> {
+  const totalStart = Date.now();
   let res: Response;
   for (let attempt = 1; attempt <= MAX_GEMINI_ATTEMPTS; attempt++) {
+    const attemptStart = Date.now();
     res = await fetch(GEMINI_ENDPOINT, {
       method: "POST",
       headers: {
@@ -166,11 +168,15 @@ async function callGeminiWithRetry(payload: Record<string, unknown>): Promise<Re
       },
       body: JSON.stringify(payload),
     });
+    console.log(
+      `[chat-assistant] Gemini attempt ${attempt} completed in ${Date.now() - attemptStart}ms with status ${res.status}`,
+    );
 
     if (res.status !== 503) {
       if (attempt > 1) {
         console.log("[chat-assistant] Gemini retry succeeded");
       }
+      console.log(`[chat-assistant] Gemini total latency: ${Date.now() - totalStart}ms`);
       return res;
     }
 
@@ -179,6 +185,7 @@ async function callGeminiWithRetry(payload: Record<string, unknown>): Promise<Re
       await new Promise((resolve) => setTimeout(resolve, GEMINI_RETRY_DELAYS_MS[attempt - 1]));
     }
   }
+  console.log(`[chat-assistant] Gemini total latency: ${Date.now() - totalStart}ms`);
   return res!;
 }
 
