@@ -1,21 +1,69 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageCircle, Send } from "lucide-react";
+import {
+  ClipboardList,
+  FileCheck2,
+  Handshake,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+  Truck,
+} from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
+import { TiTASWordmark, ScriptAccent } from "@/components/site/TiTASWordmark";
 import { Section, SectionHeading } from "@/components/site/Section";
-import { Reveal } from "@/components/site/Reveal";
+import { Reveal, AnimatedHeading, ProgressiveText } from "@/components/site/Reveal";
 import { ContactActions } from "@/components/site/Blocks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { heroImages } from "@/data/heroImages";
 import { company, whatsappHref } from "@/data/company";
 
 const title = "Become a Distributor / Dealer | TiTAS";
 const description =
   "Enquire about becoming a TiTAS distributor or dealer — a dedicated business-partner service for distributors and dealers interested in selling TiTAS.";
+
+const APPLY_STEPS = [
+  {
+    number: "01",
+    icon: Phone,
+    title: "Contact Us",
+    description: "Reach out to the TiTAS team through phone, WhatsApp or our website.",
+  },
+  {
+    number: "02",
+    icon: ClipboardList,
+    title: "Share Your Details",
+    description:
+      "Provide your name, business location, contact number and preferred dealership or distributorship area.",
+  },
+  {
+    number: "03",
+    icon: Handshake,
+    title: "Discuss Business Opportunities",
+    description:
+      "Learn about available products, pricing, order quantities, delivery arrangements and potential margins.",
+  },
+  {
+    number: "04",
+    icon: FileCheck2,
+    title: "Complete Registration",
+    description:
+      "Submit the required business documents and complete the necessary formalities after approval.",
+  },
+  {
+    number: "05",
+    icon: Truck,
+    title: "Start Your Business",
+    description:
+      "Place your first order and begin supplying TiTAS Packaged Drinking Water in your approved area.",
+  },
+] as const;
 
 export const Route = createFileRoute("/dealer-distributor")({
   head: () => ({
@@ -61,20 +109,114 @@ function DealerDistributorPage() {
       <main>
         <PageHero
           eyebrow="Distributor & Dealer Supply"
-          title="Become a TiTAS"
-          script="Distributor / Dealer"
+          title={
+            <>
+              <span className="block">
+                Become a{" "}
+                <TiTASWordmark className="inline-block h-[0.82em] w-auto align-[-0.08em]" />
+              </span>
+              <ScriptAccent
+                text="Distributor / Dealer"
+                className="mt-2 block font-normal text-aqua-soft"
+              />
+            </>
+          }
           lede="A dedicated business-partner service for distributors and dealers interested in selling TiTAS. Tell us about your business and we'll get in touch to discuss available opportunities."
           crumbs={[{ label: "Dealer / Distributor" }]}
+          image={heroImages.dealerDistributor}
         />
+
+        <Section tone="surface">
+          <div className="mx-auto max-w-2xl text-center">
+            <Reveal direction="up">
+              <h2 className="text-[2.05rem] leading-[1.08] font-bold text-ink md:text-[2.95rem]">
+                Partner with TiTAS Packaged Drinking Water — Reliable Since 1999
+              </h2>
+            </Reveal>
+            <ProgressiveText
+              text="Join the growing TiTAS distribution network and explore business opportunities with Sujit Aqua Enterprise."
+              delay={120}
+              as="p"
+              className="mt-5 block text-[1.02rem] leading-relaxed text-muted-foreground"
+            />
+          </div>
+        </Section>
+
+        <Section>
+          <div className="mx-auto max-w-2xl text-center">
+            <Reveal direction="up">
+              <h2 className="text-[2.05rem] leading-[1.08] font-bold text-ink md:text-[2.95rem]">
+                How to apply
+              </h2>
+            </Reveal>
+            <ProgressiveText
+              text="Follow 5 Easy Simple Steps"
+              delay={120}
+              as="p"
+              className="mt-5 block text-[1.02rem] leading-relaxed text-muted-foreground"
+            />
+          </div>
+          <div className="mt-12 flex flex-wrap justify-center gap-6">
+            {APPLY_STEPS.map((step, i) => {
+              const Icon = step.icon;
+              const cardDelay = Math.min(i * 70, 280);
+              return (
+                <Reveal
+                  key={step.number}
+                  as="article"
+                  direction="up"
+                  delay={cardDelay}
+                  className="flex w-full flex-col items-center rounded-lg border border-border bg-card p-7 text-center transition-colors hover:border-aqua/50 sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
+                >
+                  <span className="eyebrow text-aqua">{step.number}</span>
+                  <span className="mt-3 flex size-14 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                    <Icon className="size-6" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <AnimatedHeading as="div" delay={60}>
+                    <h3 className="mt-4 text-base font-bold text-ink">{step.title}</h3>
+                  </AnimatedHeading>
+                  <ProgressiveText
+                    text={step.description}
+                    delay={160}
+                    wordIntervalMs={22}
+                    maxTotalMs={700}
+                    as="p"
+                    className="mt-2 block text-sm leading-relaxed text-muted-foreground"
+                  />
+                </Reveal>
+              );
+            })}
+          </div>
+        </Section>
+
+        <Section tone="surface">
+          <Reveal direction="up" className="mx-auto max-w-xl text-center">
+            <ProgressiveText
+              text="TiTAS — Ekti Jaler Naam"
+              wordIntervalMs={45}
+              as="p"
+              className="block script-accent text-2xl text-primary"
+            />
+            <ProgressiveText
+              text="Grow Your Business with TiTAS!"
+              delay={260}
+              wordIntervalMs={45}
+              as="p"
+              className="mt-2 block text-xl font-bold text-ink"
+            />
+            <Reveal direction="up" delay={480}>
+              <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                Dealership and distributorship opportunities are subject to area availability,
+                company approval and agreed commercial terms.
+              </p>
+            </Reveal>
+          </Reveal>
+        </Section>
 
         <Section>
           <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr]">
             <Reveal>
-              <SectionHeading
-                eyebrow="Enquiry Form"
-                title="Tell us about"
-                script="your business"
-              />
+              <SectionHeading eyebrow="Enquiry Form" title="Tell us about" script="your business" />
               <form
                 className="mt-8 grid gap-5"
                 onSubmit={(e) => {
@@ -133,7 +275,8 @@ function DealerDistributorPage() {
                   />
                 </Field>
                 <p className="text-xs text-muted-foreground">
-                  Submitting opens WhatsApp with your details pre-filled, so our team can respond directly.
+                  Submitting opens WhatsApp with your details pre-filled, so our team can respond
+                  directly.
                 </p>
                 <Button type="submit" variant="brand" size="xl" className="justify-self-start">
                   <Send />
@@ -153,6 +296,7 @@ function DealerDistributorPage() {
                 <MessageCircle className="size-3.5" aria-hidden="true" />
                 {company.hours.weekdays} · {company.hours.closed}
               </p>
+              <OfficeMap />
             </Reveal>
           </div>
         </Section>
@@ -178,6 +322,44 @@ function Field({
         {required && <span className="text-primary"> *</span>}
       </Label>
       {children}
+    </div>
+  );
+}
+
+/** Interactive office-location map, shown below the Call/WhatsApp/Email
+ *  actions on this page. Uses the verified office address already approved
+ *  in `company.locations` (same source Footer, Contact and the About page's
+ *  location cards read from — see src/components/site/Blocks.tsx's
+ *  `LocationCard` for the same embed approach) — no API key, no invented
+ *  coordinates. Unlike `LocationCard`'s click-through preview, the embed
+ *  here stays fully interactive (pannable/zoomable) since this page asked
+ *  for a genuinely usable map, not just a thumbnail. */
+function OfficeMap() {
+  const office = company.locations.find((l) => l.id === "office");
+  if (!office) return null;
+
+  const query = encodeURIComponent([office.markerName, ...office.lines].join(", "));
+  const src = `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-lg border border-primary/25">
+      <iframe
+        src={src}
+        title={`${office.label} location map — SUJIT AQUA ENTERPRISE`}
+        loading="lazy"
+        className="h-56 w-full sm:h-64"
+      />
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary/15 bg-accent/30 px-4 py-3">
+        <address className="text-xs leading-relaxed text-muted-foreground not-italic">
+          {office.lines.join(", ")}
+        </address>
+        <Button asChild variant="quiet" size="sm" className="shrink-0">
+          <a href={office.mapUrl} target="_blank" rel="noreferrer noopener">
+            <MapPin />
+            Directions
+          </a>
+        </Button>
+      </div>
     </div>
   );
 }

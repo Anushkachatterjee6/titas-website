@@ -29,18 +29,26 @@ export function AuthLayout({
             <Reveal>
               <div className="text-center">
                 <Logo className="justify-center" />
-                <h1 className="mt-7 text-[1.65rem] font-bold text-ink md:text-[2.05rem]">{title}</h1>
+                <h1 className="mt-7 text-[1.65rem] font-bold text-ink md:text-[2.05rem]">
+                  {title}
+                </h1>
                 {subtitle && (
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{subtitle}</p>
                 )}
               </div>
+            </Reveal>
 
+            <Reveal delay={120}>
               <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-lift md:p-8">
                 {children}
               </div>
-
-              {footer && <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>}
             </Reveal>
+
+            {footer && (
+              <Reveal delay={200}>
+                <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>
+              </Reveal>
+            )}
           </div>
         </Section>
       </main>

@@ -16,6 +16,12 @@ export type Profile = {
   full_name: string | null;
   phone: string | null;
   email: string | null;
+  avatar_url: string | null;
+  permanent_address_line: string | null;
+  permanent_city: string | null;
+  permanent_state: string | null;
+  permanent_pincode: string | null;
+  permanent_country: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -95,6 +101,68 @@ export function useAddresses() {
   });
 }
 
+/** The account UI now exposes exactly ONE delivery address, not a list —
+ *  this reads the single row that single-address UI should show: the
+ *  account's `is_default` address if one is flagged, otherwise whichever
+ *  row was saved most recently. The underlying `addresses` table is
+ *  unchanged (still supports multiple rows per user), so an account that
+ *  already had several saved addresses from before this change keeps all
+ *  of that data intact in the database — this just stops exposing "add
+ *  another address" in the UI and always edits/creates through this one
+ *  row going forward. */
+export function usePrimaryAddress() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["primary-address", user?.id],
+    enabled: !!user,
+    queryFn: async (): Promise<Address | null> => {
+      const { data, error } = await supabase
+        .from("addresses")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("is_default", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export type DeliveryAddressInput = {
+  full_name: string;
+  phone: string;
+  address_line: string;
+  city: string;
+  state: string;
+  pincode: string;
+};
+
+/** Creates or updates the single delivery address — pass the existing
+ *  row's `id` (from `usePrimaryAddress`) to update it in place, or omit it
+ *  to create the first one. Always saved with `is_default: true` since
+ *  there is, by design, only ever one. */
+export function useSaveDeliveryAddress() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: DeliveryAddressInput & { id?: string }) => {
+      const { error } = await supabase.from("addresses").upsert({
+        ...(id ? { id } : {}),
+        user_id: user!.id,
+        ...input,
+        is_default: true,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["primary-address", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["addresses", user?.id] });
+    },
+  });
+}
+
 /** Updates the editable profile fields (name, phone) in `profiles`. The
  *  account email is handled separately via `useUpdateAccountEmail`, since
  *  it's the Supabase Auth identity email, not just a profile column. */
@@ -108,6 +176,78 @@ export function useUpdateProfile() {
         .update({ full_name: patch.full_name, phone: patch.phone })
         .eq("id", user!.id);
       if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+    },
+  });
+}
+
+export type PermanentAddressInput = {
+  permanent_address_line: string;
+  permanent_city: string;
+  permanent_state: string;
+  permanent_pincode: string;
+  permanent_country: string;
+};
+
+/** Saves the Profile Details "Permanent Address" fields — stored directly
+ *  on `profiles`, deliberately separate from the `addresses` table (which
+ *  holds the single delivery address below), so the two never get mixed
+ *  up. */
+export function useUpdatePermanentAddress() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: PermanentAddressInput) => {
+      const { error } = await supabase.from("profiles").update(input).eq("id", user!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+    },
+  });
+}
+
+const AVATAR_MAX_BYTES = 5 * 1024 * 1024; // matches the bucket's own file_size_limit
+const AVATAR_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+/** Uploads a new profile picture to the `avatars` storage bucket (path
+ *  "<user-id>/<timestamp>.<ext>", enforced by that bucket's RLS policies —
+ *  see supabase/migrations/profile_avatar_and_permanent_address.sql) and
+ *  saves the resulting public URL onto `profiles.avatar_url`. Validates
+ *  type/size client-side first; the bucket itself also enforces both
+ *  server-side, so a tampered client can't bypass either check. */
+export function useUploadAvatar() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (file: File) => {
+      if (!AVATAR_ALLOWED_TYPES.includes(file.type)) {
+        throw new Error("Please choose a JPEG, PNG, WEBP or GIF image.");
+      }
+      if (file.size > AVATAR_MAX_BYTES) {
+        throw new Error("Image is too large — please choose one under 5 MB.");
+      }
+
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${user!.id}/${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage.from("avatars").getPublicUrl(path);
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrlData.publicUrl })
+        .eq("id", user!.id);
+      if (updateError) throw updateError;
+
+      return publicUrlData.publicUrl;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import { Reveal } from "./Reveal";
+import { Reveal, TextReveal, ProgressiveText } from "./Reveal";
 import { ScriptAccent, TiTASWordmark } from "./TiTASWordmark";
 
 export function Section({
@@ -39,9 +39,11 @@ export function SectionHeading({
   titleHref,
   script,
   lede,
+  ledeAnimation = "fade",
   align = "left",
   tone = "default",
   className,
+  direction = "left",
 }: {
   eyebrow?: string;
   /** Extra classes merged onto the eyebrow — for the rare heading that
@@ -58,9 +60,18 @@ export function SectionHeading({
   titleHref?: string;
   script?: string;
   lede?: string;
+  /** "fade" (default) keeps the existing block fade/slide reveal used
+   *  everywhere else. "progressive" reveals `lede` word by word via the
+   *  shared `ProgressiveText` component instead — opt in per call site, so
+   *  every other `SectionHeading` usage is unaffected. */
+  ledeAnimation?: "fade" | "progressive";
   align?: "left" | "center";
   tone?: "default" | "inverse";
   className?: string;
+  /** Entrance direction — defaults to a left-to-right reveal; pass "right"
+   *  for alternating sections or "up" for centred headings where a
+   *  horizontal entrance would look odd. */
+  direction?: "up" | "left" | "right";
 }) {
   const headingContent = (
     <>
@@ -84,53 +95,73 @@ export function SectionHeading({
       )}
     </>
   );
-  return (
-    <Reveal
-      as="header"
+  const centered = align === "center";
+  const heading = (
+    <h2
       className={cn(
-        "max-w-2xl",
-        align === "center" && "mx-auto text-center",
-        className,
+        "text-[2.05rem] leading-[1.08] font-bold md:text-[2.95rem]",
+        tone === "inverse" ? "text-ink-foreground" : "text-ink",
       )}
     >
+      {titleHref ? (
+        <Link
+          to={titleHref}
+          className="rounded-sm opacity-100 transition-opacity duration-300 hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {headingContent}
+        </Link>
+      ) : (
+        headingContent
+      )}
+    </h2>
+  );
+  const ledeClassName = cn(
+    "mt-5 text-[1.02rem] leading-relaxed",
+    tone === "inverse" ? "text-ink-foreground/75" : "text-muted-foreground",
+  );
+  const ledeNode =
+    lede &&
+    (ledeAnimation === "progressive" ? (
+      <ProgressiveText text={lede} delay={140} as="p" className={cn("block", ledeClassName)} />
+    ) : (
+      <p className={ledeClassName}>{lede}</p>
+    ));
+
+  return (
+    <div className={cn("max-w-2xl", centered && "mx-auto text-center", className)}>
       {eyebrow && (
-        <p
-          className={cn(
-            "eyebrow mb-4",
-            tone === "inverse" ? "text-aqua-soft/80" : "text-aqua",
-            eyebrowClassName,
-          )}
-        >
-          {eyebrow}
-        </p>
-      )}
-      <h2
-        className={cn(
-          "text-[2.05rem] leading-[1.08] font-bold md:text-[2.95rem]",
-          tone === "inverse" ? "text-ink-foreground" : "text-ink",
-        )}
-      >
-        {titleHref ? (
-          <Link
-            to={titleHref}
-            className="rounded-sm opacity-100 transition-opacity duration-300 hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        <Reveal direction={centered ? "up" : direction}>
+          <p
+            className={cn(
+              "eyebrow mb-4",
+              tone === "inverse" ? "text-aqua-soft/80" : "text-aqua",
+              eyebrowClassName,
+            )}
           >
-            {headingContent}
-          </Link>
-        ) : (
-          headingContent
-        )}
-      </h2>
-      {lede && (
-        <p
-          className={cn(
-            "mt-5 text-[1.02rem] leading-relaxed",
-            tone === "inverse" ? "text-ink-foreground/75" : "text-muted-foreground",
-          )}
-        >
-          {lede}
-        </p>
+            {eyebrow}
+          </p>
+        </Reveal>
       )}
-    </Reveal>
+      {/* Centred headings keep the lighter fade+rise — a masked horizontal
+          slide looks lopsided once the text is centre-aligned. Left-aligned
+          ones get the stronger "Sliding Text Reveal" masked entrance. */}
+      {centered ? (
+        <Reveal direction="up" delay={60}>
+          {heading}
+        </Reveal>
+      ) : (
+        <TextReveal delay={60}>{heading}</TextReveal>
+      )}
+      {ledeNode &&
+        (ledeAnimation === "progressive" ? (
+          ledeNode
+        ) : centered ? (
+          <Reveal direction="up" delay={140}>
+            {ledeNode}
+          </Reveal>
+        ) : (
+          <TextReveal delay={140}>{ledeNode}</TextReveal>
+        ))}
+    </div>
   );
 }

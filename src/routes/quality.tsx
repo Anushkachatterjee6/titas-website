@@ -10,6 +10,7 @@ import { ProcessTimeline } from "@/components/site/ProcessTimeline";
 import { Button } from "@/components/ui/button";
 import { processFlowImage, processClosingLine } from "@/data/process";
 import { labReport, labCategories, certifications } from "@/data/quality";
+import { heroImages } from "@/data/heroImages";
 
 const title = "Quality & Process | TiTAS";
 const description =
@@ -40,6 +41,7 @@ function QualityPage() {
           script="to Seal"
           lede="A careful, quality-focused process — transcribed from the company's own process documentation — carries every TiTAS pack from raw water to the sealed bottle in your hands."
           crumbs={[{ label: "Quality & Process" }]}
+          image={heroImages.quality}
         />
 
         <Section>
@@ -67,7 +69,10 @@ function QualityPage() {
             <ProcessTimeline />
           </div>
 
-          <Reveal delay={60} className="mt-10 text-center text-sm font-medium text-muted-foreground">
+          <Reveal
+            delay={60}
+            className="mt-10 text-center text-sm font-medium text-muted-foreground"
+          >
             {processClosingLine}
           </Reveal>
         </Section>
@@ -80,7 +85,10 @@ function QualityPage() {
             lede="Water quality testing is carried out through an external laboratory. Details below are from the specific sample and report supplied by the company."
           />
 
-          <Reveal delay={100} className="mt-10 grid gap-4 rounded-xl border border-border bg-card p-6 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal
+            delay={100}
+            className="mt-10 grid gap-4 rounded-xl border border-border bg-card p-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
             <Field label="Laboratory" value={labReport.laboratory} />
             <Field label="Report code" value={labReport.reportCode} />
             <Field label="Issue date" value={labReport.issueDate} />

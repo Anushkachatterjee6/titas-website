@@ -5,10 +5,11 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { Section } from "@/components/site/Section";
-import { Reveal } from "@/components/site/Reveal";
+import { Reveal, AnimatedList } from "@/components/site/Reveal";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { galleryCategories } from "@/data/images";
+import { heroImages } from "@/data/heroImages";
 
 const title = "Gallery | TiTAS";
 const description = "A look at TiTAS packaged drinking water — products, packaging and delivery.";
@@ -30,7 +31,11 @@ export const Route = createFileRoute("/gallery")({
 function GalleryPage() {
   const items = galleryCategories.flatMap((c) =>
     c.available
-      ? c.items.map((it) => ({ src: it.src as string, alt: it.alt as string, position: it.position as string }))
+      ? c.items.map((it) => ({
+          src: it.src as string,
+          alt: it.alt as string,
+          position: it.position as string,
+        }))
       : [],
   );
   const comingSoon = galleryCategories.filter((c) => !c.available);
@@ -46,6 +51,7 @@ function GalleryPage() {
           script="TiTAS"
           lede="Approved product and packaging imagery. Plant, facility and delivery photography will be added once supplied by the company."
           crumbs={[{ label: "Gallery" }]}
+          image={heroImages.gallery}
         />
 
         <Section>
@@ -78,16 +84,17 @@ function GalleryPage() {
           </div>
 
           {comingSoon.length > 0 && (
-            <Reveal delay={120} className="mt-10 flex flex-wrap gap-2">
+            <AnimatedList
+              as="div"
+              itemAs="div"
+              className="mt-10 flex flex-wrap gap-2"
+              itemClassName="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-muted-foreground"
+              stagger={60}
+            >
               {comingSoon.map((c) => (
-                <span
-                  key={c.id}
-                  className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-muted-foreground"
-                >
-                  {c.label} — coming soon
-                </span>
+                <>{c.label} — coming soon</>
               ))}
-            </Reveal>
+            </AnimatedList>
           )}
         </Section>
       </main>
@@ -108,7 +115,9 @@ function GalleryPage() {
               <button
                 type="button"
                 aria-label="Previous image"
-                onClick={() => setOpenIndex((i) => (i === null ? i : (i - 1 + items.length) % items.length))}
+                onClick={() =>
+                  setOpenIndex((i) => (i === null ? i : (i - 1 + items.length) % items.length))
+                }
                 className={cn(
                   "absolute top-1/2 left-2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-card/80 text-ink shadow-lift backdrop-blur hover:bg-card",
                 )}

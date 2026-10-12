@@ -152,8 +152,7 @@ export const processSteps: ProcessStep[] = [
     ref: "1.6",
     title: "Roof Top Storage",
     displayTitle: "Maintaining a Continuous Process Supply",
-    brief:
-      "Water from the ground-floor storage tank is transferred to the rooftop storage system.",
+    brief: "Water from the ground-floor storage tank is transferred to the rooftop storage system.",
     paragraphs: [
       "Water from the ground-floor storage tank is transferred to the rooftop storage system. This stage provides another controlled holding point and maintains a consistent supply of process water to the downstream filtration equipment.",
       "A stable supply is important for maintaining an organized treatment sequence. From rooftop storage, the water is directed to the larger sand filtration system for additional treatment.",
@@ -178,8 +177,7 @@ export const processSteps: ProcessStep[] = [
     ref: "1.8A & 1.8B",
     title: "Big Carbon Filters",
     displayTitle: "Additional Activated Carbon Treatment",
-    brief:
-      "The treatment process incorporates dedicated large carbon-filtration units.",
+    brief: "The treatment process incorporates dedicated large carbon-filtration units.",
     paragraphs: [
       "The treatment process incorporates dedicated large carbon-filtration units. These units provide additional activated carbon treatment after the preceding sand-filtration stage.",
       "Activated carbon helps reduce unwanted taste, odour, residual chlorine and certain organic substances. The use of these carbon-filtration stages provides further conditioning of the water before it enters the finer membrane-based nano-filtration process.",
@@ -283,7 +281,8 @@ export const processSteps: ProcessStep[] = [
     ref: "2.6",
     title: "UV Treatment",
     displayTitle: "Ultraviolet Disinfection",
-    brief: "Following mineral dosing, the water undergoes ultraviolet (UV) treatment as an additional disinfection stage.",
+    brief:
+      "Following mineral dosing, the water undergoes ultraviolet (UV) treatment as an additional disinfection stage.",
     paragraphs: [
       "Following mineral dosing, the water undergoes ultraviolet (UV) treatment as an additional disinfection stage.",
       "UV treatment uses ultraviolet light to help control microorganisms in the treated water without introducing additional taste or odour. This provides another treatment barrier following the filtration, membrane purification and mineral-dosing stages.",
@@ -325,7 +324,8 @@ export const processSteps: ProcessStep[] = [
     ref: "2.9",
     title: "Bottle Filling Fully Automatic Machine",
     displayTitle: "Controlled & Automated Bottle Filling",
-    brief: "From the final SS storage tank, treated water is transferred to the fully automatic bottle-filling machine.",
+    brief:
+      "From the final SS storage tank, treated water is transferred to the fully automatic bottle-filling machine.",
     paragraphs: [
       "From the final SS storage tank, treated water is transferred to the fully automatic bottle-filling machine.",
       "Automation helps maintain a controlled filling operation while reducing unnecessary manual handling during this critical stage. Bottles are filled through the designated filling system before moving forward to the packaging and finished-product stages.",
@@ -338,8 +338,7 @@ export const processSteps: ProcessStep[] = [
     ref: "3.0",
     title: "Packaging",
     displayTitle: "Preparing Every Pack for Handling & Distribution",
-    brief:
-      "After filling and sealing, the finished TiTAS bottles move to the packaging stage.",
+    brief: "After filling and sealing, the finished TiTAS bottles move to the packaging stage.",
     paragraphs: [
       "After filling and sealing, the finished TiTAS bottles move to the packaging stage. Packaging prepares the product for subsequent testing, storage, transportation and distribution.",
       "Appropriate packaging helps protect finished bottles during handling and transportation and enables them to move efficiently through the supply chain.",
@@ -394,4 +393,40 @@ export const processSteps: ProcessStep[] = [
 
 /** Closing brand lines from the approved content document, shown once below
  *  the full timeline (not a process stage itself). */
-export const processClosingLine = "TiTAS – Ekti Jaler Naam. Banglar Jal, Banglar Bharsha. Reliable Since 1999.";
+export const processClosingLine =
+  "TiTAS – Ekti Jaler Naam. Banglar Jal, Banglar Bharsha. Reliable Since 1999.";
+
+function briefFor(ref: string): string {
+  const step = processSteps.find((s) => s.ref === ref);
+  if (!step) throw new Error(`Unknown process step ref: ${ref}`);
+  return step.brief;
+}
+
+export type HomepagePurificationStep = {
+  title: string;
+  description: string;
+};
+
+/** Condensed 10-step list for the homepage's purification-process preview.
+ *  Every description is the verbatim `brief` of the matching stage above
+ *  (the client-approved process document) — nothing here is paraphrased or
+ *  invented. Several stage names recur more than once in the full timeline
+ *  (e.g. "Sand Filter" appears at both 1.3 and 2.2); this preview uses the
+ *  first occurrence's wording. The final card merges the two approved
+ *  briefs for bottle filling (2.9) and dispatch (3.3), since the homepage
+ *  preview combines them into a single "Bottle Filling and Dispatch" card. */
+export const homepagePurificationSteps: HomepagePurificationStep[] = [
+  { title: "Raw Material Received", description: briefFor("1.0") },
+  { title: "Chlorine Dosing", description: briefFor("CCP-1") },
+  { title: "Sand Filter", description: briefFor("1.3") },
+  { title: "Activated Carbon Filter", description: briefFor("1.4") },
+  { title: "Nano Filtration (NF)", description: briefFor("1.9A & 1.9B") },
+  { title: "Reverse Osmosis (RO)", description: briefFor("2.4") },
+  { title: "Mineral Dosing", description: briefFor("2.5") },
+  { title: "UV Treatment", description: briefFor("2.6") },
+  { title: "Ozonisation", description: briefFor("2.7") },
+  {
+    title: "Bottle Filling and Dispatch",
+    description: `${briefFor("2.9")} ${briefFor("3.3")}`,
+  },
+];

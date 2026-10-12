@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { heroImages } from "@/data/heroImages";
 import { company, mailHref } from "@/data/company";
 
 const title = "Contact | TiTAS";
@@ -56,6 +57,7 @@ function ContactPage() {
           script="water"
           lede="Get in touch with TiTAS for orders, bulk enquiries, dealer/distributor enquiries and regular supply requirements."
           crumbs={[{ label: "Contact" }]}
+          image={heroImages.contact}
         />
 
         <Section>

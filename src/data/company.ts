@@ -54,7 +54,7 @@ export const company = {
       id: "office",
       label: "Office",
       markerName: "TiTAS Packaged Drinking Water",
-      lines: ["8/2/2 UMESH BANERJEE LANE", "Howrah", "711301"],
+      lines: ["8/2/2 UMESH BANERJEE LANE", "Howrah", "711101"],
       mapUrl: "https://maps.app.goo.gl/PVC5DaxDKE2in67c9",
     },
   ],
@@ -82,6 +82,73 @@ export const company = {
   priceNotice:
     "Pricing above applies to standard retail packs. Bulk, institutional and dealer/distributor orders are priced separately — contact our team for a quotation.",
 } as const;
+
+/** Canonical "Product Information" strip shown on every product detail page
+ *  (src/routes/products.$size.tsx) — client-supplied wording, not product-
+ *  specific, so it lives here once rather than being duplicated per page. */
+export const productInformation = {
+  brand: "TiTAS",
+  company: "Sujit Aqua Enterprise",
+  established: "1999",
+  productType: "Packaged Drinking Water with Added Minerals",
+} as const;
+
+/** The 12 canonical product benefit/feature points, shown on every product
+ *  detail page below the "Product Information" strip. Wording is the
+ *  client-supplied canonical copy — kept verbatim, not per-product. */
+export const productHighlights = [
+  {
+    title: "Pure & Safe Water",
+    description: "Quality-focused drinking water processed with attention to hygiene and safety.",
+  },
+  {
+    title: "Advanced Purification",
+    description:
+      "Multi-stage treatment using sand filtration, carbon filtration, nano filtration, RO, UV and ozonation.",
+  },
+  {
+    title: "Added Minerals",
+    description: "Controlled mineral dosing to maintain the intended mineral composition.",
+  },
+  {
+    title: "Hygienic Packaging",
+    description: "Automatic filling and sealing for hygienic product handling.",
+  },
+  {
+    title: "Quality Assurance",
+    description: "Applicable quality testing and verification before distribution.",
+  },
+  {
+    title: "Multiple Pack Sizes",
+    description: "Available in 500 ml, 1 L, 2 L, 5 L and 20 L.",
+  },
+  {
+    title: "Affordable Price",
+    description: "Competitive pricing with dependable value for customers.",
+  },
+  {
+    title: "Wide Applications",
+    description:
+      "Suitable for homes, offices, hotels, restaurants, institutions, travel and events.",
+  },
+  {
+    title: "Reliable Supply",
+    description: "Flexible delivery solutions for regular and bulk orders.",
+  },
+  {
+    title: "Trusted Since 1999",
+    description: "Backed by the experience of TiTAS.",
+  },
+  {
+    title: "Customer Satisfaction",
+    description: "Focused on dependable service and long-term customer relationships.",
+  },
+  {
+    title: "Dealer & Distributor Opportunities",
+    description:
+      "Business partnership opportunities subject to company approval and area availability.",
+  },
+] as const;
 
 export const telHref = `tel:+91${company.phone}`;
 export const whatsappHref = `https://wa.me/91${company.whatsapp}`;

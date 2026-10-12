@@ -9,9 +9,11 @@ import { FAQAccordion } from "@/components/site/Blocks";
 import { Button } from "@/components/ui/button";
 import { faqs } from "@/data/faqs";
 import { whatsappHref } from "@/data/company";
+import { heroImages } from "@/data/heroImages";
 
 const title = "FAQs | TiTAS";
-const description = "Frequently asked questions about TiTAS packaged drinking water — products, delivery, bulk orders, payment and more.";
+const description =
+  "Frequently asked questions about TiTAS packaged drinking water — products, delivery, bulk orders, payment and more.";
 
 export const Route = createFileRoute("/faqs")({
   head: () => ({
@@ -38,6 +40,7 @@ function FaqsPage() {
           script="questions"
           lede="Answers to what customers most often ask about TiTAS products, delivery and ordering."
           crumbs={[{ label: "FAQs" }]}
+          image={heroImages.faqs}
         />
 
         <Section>

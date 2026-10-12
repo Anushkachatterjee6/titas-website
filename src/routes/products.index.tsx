@@ -5,6 +5,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { Section } from "@/components/site/Section";
 import { ProductGrid } from "@/components/site/ProductCard";
 import { products } from "@/data/products";
+import { heroImages } from "@/data/heroImages";
 
 const title = "Products | TiTAS Packaged Drinking Water";
 const description =
@@ -35,6 +36,7 @@ function ProductsPage() {
           script="five pack sizes"
           lede="From a bottle on the go to regular 20 L supply — choose the TiTAS pack that fits your need."
           crumbs={[{ label: "Products" }]}
+          image={heroImages.products}
         />
         <Section>
           <ProductGrid items={products} />

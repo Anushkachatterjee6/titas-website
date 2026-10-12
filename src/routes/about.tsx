@@ -12,10 +12,11 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { Section, SectionHeading } from "@/components/site/Section";
-import { Reveal } from "@/components/site/Reveal";
+import { Reveal, AnimatedHeading, ProgressiveText } from "@/components/site/Reveal";
 import { Button } from "@/components/ui/button";
 import { brandImages } from "@/data/images";
 import { company, commitments } from "@/data/company";
+import { heroImages } from "@/data/heroImages";
 
 const COMMITMENT_ICONS = [ShieldCheck, HeartHandshake, Truck, BadgePercent];
 // One tasteful emoji per commitment card, chosen to match its meaning —
@@ -50,6 +51,7 @@ function About() {
           script="TiTAS"
           lede={company.intro}
           crumbs={[{ label: "About" }]}
+          image={heroImages.about}
         />
 
         <Section>
@@ -62,9 +64,11 @@ function About() {
                 script={company.tagline}
                 lede={company.supportingLine}
               />
-              <Reveal delay={100} className="mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                <p>{company.intro}</p>
-              </Reveal>
+              <ProgressiveText
+                text={company.intro}
+                delay={100}
+                className="mt-6 block max-w-xl text-sm leading-relaxed text-muted-foreground"
+              />
             </div>
             <Reveal delay={150} className="flex justify-center">
               <div className="relative flex aspect-square w-full max-w-xs items-center justify-center rounded-full bg-accent/50">
@@ -84,29 +88,50 @@ function About() {
 
         <Section tone="surface">
           <div className="grid gap-10 lg:grid-cols-2">
-            <Reveal as="article" className="rounded-lg border border-border bg-card p-8">
+            <Reveal
+              as="article"
+              direction="up"
+              className="rounded-lg border border-border bg-card p-8"
+            >
               <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
                 <Eye className="size-5" strokeWidth={1.75} />
               </span>
               <span className="eyebrow mt-4 block text-aqua">
-                <span className="text-[0.78rem]">Vision</span>{" "}
+                <AnimatedHeading as="span" trigger="scroll">
+                  <span className="text-[0.78rem]">Vision</span>
+                </AnimatedHeading>{" "}
                 <span className="align-[-2px] text-[1.05rem]">🌱</span>
               </span>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                {company.vision}
-              </p>
+              <ProgressiveText
+                text={company.vision}
+                delay={150}
+                className="mt-4 block text-sm leading-relaxed text-muted-foreground"
+              />
             </Reveal>
-            <Reveal as="article" delay={80} className="rounded-lg border border-border bg-card p-8">
+            <Reveal
+              as="article"
+              direction="up"
+              delay={80}
+              className="rounded-lg border border-border bg-card p-8"
+            >
               <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
                 <Compass className="size-5" strokeWidth={1.75} />
               </span>
               <span className="eyebrow mt-4 block text-aqua">
-                <span className="text-[0.78rem]">Mission</span>{" "}
+                <AnimatedHeading as="span" trigger="scroll" delay={80}>
+                  <span className="text-[0.78rem]">Mission</span>
+                </AnimatedHeading>{" "}
                 <span className="align-[-2px] text-[1.05rem]">🤝</span>
               </span>
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                {company.mission.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                {company.mission.map((paragraph, i) => (
+                  <ProgressiveText
+                    key={paragraph}
+                    text={paragraph}
+                    delay={200 + i * 120}
+                    wordIntervalMs={20}
+                    as="p"
+                  />
                 ))}
               </div>
             </Reveal>
@@ -119,11 +144,16 @@ function About() {
             {commitments.map((item, i) => {
               const Icon = COMMITMENT_ICONS[i]!;
               const emoji = COMMITMENT_EMOJIS[i]!;
+              // Rows stagger a little (0/80ms within each row), but the second
+              // row starts its own short sequence rather than waiting for
+              // every word of row one to finish revealing.
+              const rowDelay = (i % 2) * 80;
               return (
                 <Reveal
                   as="article"
+                  direction="up"
                   key={item.number}
-                  delay={(i % 4) * 80}
+                  delay={rowDelay}
                   className="flex gap-5 rounded-lg border border-border bg-card p-7"
                 >
                   <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-accent text-primary">
@@ -132,12 +162,25 @@ function About() {
                   <div className="min-w-0">
                     <span className="eyebrow text-aqua">{item.number}</span>
                     <h3 className="mt-2 text-lg font-bold text-ink">
-                      {item.eyebrow} <span className="align-[-2px] text-lg">{emoji}</span>
+                      <AnimatedHeading as="span" trigger="scroll" delay={rowDelay + 40}>
+                        {item.eyebrow}
+                      </AnimatedHeading>{" "}
+                      <span className="align-[-2px] text-lg">{emoji}</span>
                     </h3>
-                    <p className="mt-0.5 text-sm text-muted-foreground">{item.title}</p>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      {item.description}
-                    </p>
+                    <Reveal
+                      direction="left"
+                      distance={25}
+                      durationMs={500}
+                      delay={rowDelay + 120}
+                      className="mt-0.5 text-sm text-muted-foreground"
+                    >
+                      {item.title}
+                    </Reveal>
+                    <ProgressiveText
+                      text={item.description}
+                      delay={rowDelay + 200}
+                      className="mt-3 block text-sm leading-relaxed text-muted-foreground"
+                    />
                   </div>
                 </Reveal>
               );

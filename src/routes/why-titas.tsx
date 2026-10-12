@@ -8,6 +8,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { Button } from "@/components/ui/button";
 import { whyTitas } from "@/data/services";
 import { company } from "@/data/company";
+import { heroImages } from "@/data/heroImages";
 
 const title = "Why TiTAS | Ekti Jaler Naam";
 const description = `Why choose TiTAS packaged drinking water — reliable, quality-focused and trusted since ${company.since}.`;
@@ -38,6 +39,7 @@ function WhyTitasPage() {
           script="drop by drop"
           lede={`Serving homes, businesses and institutions since ${company.since}.`}
           crumbs={[{ label: "Why TiTAS" }]}
+          image={heroImages.whyTitas}
         />
 
         <Section>

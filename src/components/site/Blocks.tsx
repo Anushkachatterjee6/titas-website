@@ -37,9 +37,7 @@ export function ServiceCard({
           />
         </div>
         <div className="flex flex-1 flex-col p-7">
-          <span className="eyebrow text-aqua">
-            {String(index + 1).padStart(2, "0")}
-          </span>
+          <span className="eyebrow text-aqua">{String(index + 1).padStart(2, "0")}</span>
           <h3 className="mt-4 text-lg font-semibold text-ink">{service.title}</h3>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             {service.description}
@@ -54,14 +52,16 @@ export function FAQAccordion({ items = faqs }: { items?: Faq[] }) {
   return (
     <Accordion type="single" collapsible className="w-full">
       {items.map((faq, i) => (
-        <AccordionItem key={faq.question} value={`faq-${i}`}>
-          <AccordionTrigger className="text-left text-base font-medium text-ink hover:text-primary hover:no-underline">
-            {faq.question}
-          </AccordionTrigger>
-          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-            {faq.answer}
-          </AccordionContent>
-        </AccordionItem>
+        <Reveal key={faq.question} delay={Math.min(i * 50, 300)}>
+          <AccordionItem value={`faq-${i}`}>
+            <AccordionTrigger className="text-left text-base font-medium text-ink hover:text-primary hover:no-underline">
+              {faq.question}
+            </AccordionTrigger>
+            <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+              {faq.answer}
+            </AccordionContent>
+          </AccordionItem>
+        </Reveal>
       ))}
     </Accordion>
   );
@@ -69,9 +69,7 @@ export function FAQAccordion({ items = faqs }: { items?: Faq[] }) {
 
 export function CertificationCard({ item }: { item: Certification }) {
   const tone =
-    item.status === "Obtained"
-      ? "bg-aqua/15 text-primary"
-      : "bg-muted text-muted-foreground";
+    item.status === "Obtained" ? "bg-aqua/15 text-primary" : "bg-muted text-muted-foreground";
 
   return (
     <Reveal as="article" className="h-full">
@@ -87,9 +85,7 @@ export function CertificationCard({ item }: { item: Certification }) {
             {item.status}
           </span>
         </div>
-        <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
-          {item.note}
-        </p>
+        <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">{item.note}</p>
         <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-border pt-4 text-xs">
           <div>
             <dt className="text-muted-foreground">Issue date</dt>
@@ -116,11 +112,7 @@ export function CertificationCard({ item }: { item: Certification }) {
   );
 }
 
-export function LocationCard({
-  location,
-}: {
-  location: (typeof company.locations)[number];
-}) {
+export function LocationCard({ location }: { location: (typeof company.locations)[number] }) {
   // No API key required: Google's legacy /maps?...&output=embed endpoint
   // renders a real, live Maps tile preview from the existing approved
   // address text — not a fabricated or hardcoded image. `t=m`/`t=k` switches
@@ -131,9 +123,7 @@ export function LocationCard({
   // `markerName` makes that pin's own label read as the approved business
   // name rather than a generic address.
   const [mapType, setMapType] = useState<"roadmap" | "satellite">("roadmap");
-  const previewQuery = encodeURIComponent(
-    [location.markerName, ...location.lines].join(", "),
-  );
+  const previewQuery = encodeURIComponent([location.markerName, ...location.lines].join(", "));
   const previewSrc = `https://maps.google.com/maps?q=${previewQuery}&z=15&t=${mapType === "satellite" ? "k" : "m"}&output=embed`;
 
   return (
@@ -176,7 +166,9 @@ export function LocationCard({
               }}
               className={cn(
                 "px-2.5 py-1 transition-colors",
-                mapType === "roadmap" ? "bg-aqua text-ink" : "text-ink-foreground hover:bg-white/10",
+                mapType === "roadmap"
+                  ? "bg-aqua text-ink"
+                  : "text-ink-foreground hover:bg-white/10",
               )}
             >
               Map
@@ -191,7 +183,9 @@ export function LocationCard({
               }}
               className={cn(
                 "px-2.5 py-1 transition-colors",
-                mapType === "satellite" ? "bg-aqua text-ink" : "text-ink-foreground hover:bg-white/10",
+                mapType === "satellite"
+                  ? "bg-aqua text-ink"
+                  : "text-ink-foreground hover:bg-white/10",
               )}
             >
               Satellite
@@ -281,9 +275,7 @@ export function CTASection({
               </>
             )}
           </h2>
-          <p className="mt-5 text-[1.02rem] leading-relaxed text-ink-foreground/75">
-            {body}
-          </p>
+          <p className="mt-5 text-[1.02rem] leading-relaxed text-ink-foreground/75">{body}</p>
           <div className="mt-9 flex flex-wrap gap-2.5">
             <Button asChild variant="aqua" size="xl">
               <Link to={primary.to}>{primary.label}</Link>

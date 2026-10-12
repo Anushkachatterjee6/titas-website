@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import sourceImg from "@/assets/titas/motion/source-3d.png";
 import purificationImg from "@/assets/titas/motion/purification-3d.png";
 import qualityImg from "@/assets/titas/motion/quality-3d.png";
+import { heroImages } from "@/data/heroImages";
 import bottleImg from "@/assets/titas/motion/bottle-3d.png";
 import deliveryImg from "@/assets/titas/motion/delivery-3d.png";
 
@@ -88,6 +89,7 @@ function JourneyPage() {
           script="a Journey"
           lede="From source to your doorstep, every TiTAS pack follows the same careful path."
           crumbs={[{ label: "Journey" }]}
+          image={heroImages.journey}
         />
 
         <Section>

@@ -9,6 +9,7 @@ import { ServiceCard, NoticeBanner } from "@/components/site/Blocks";
 import { Button } from "@/components/ui/button";
 import { services } from "@/data/services";
 import { company } from "@/data/company";
+import { heroImages } from "@/data/heroImages";
 
 const title = "Our Services | TiTAS Packaged Drinking Water";
 const description =
@@ -39,6 +40,7 @@ function ServicesPage() {
           script="requirement"
           lede="From a single household to dealers and distributors, TiTAS supplies to suit how you need water."
           crumbs={[{ label: "Our Services" }]}
+          image={heroImages.services}
         />
 
         <Section>
@@ -80,12 +82,20 @@ function ServicesPage() {
                 {company.delivery.reach}
               </p>
             </Reveal>
-            <Reveal as="article" delay={140} className="rounded-lg border border-border bg-card p-6">
+            <Reveal
+              as="article"
+              delay={140}
+              className="rounded-lg border border-border bg-card p-6"
+            >
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {company.delivery.bulkMinimum}
               </p>
             </Reveal>
-            <Reveal as="article" delay={210} className="rounded-lg border border-border bg-card p-6">
+            <Reveal
+              as="article"
+              delay={210}
+              className="rounded-lg border border-border bg-card p-6"
+            >
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {company.delivery.freeDelivery}
               </p>

@@ -3,10 +3,18 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { Section } from "@/components/site/Section";
-import { Reveal } from "@/components/site/Reveal";
+import { Reveal, TextReveal, AnimatedList, ProgressiveText } from "@/components/site/Reveal";
 import { cn } from "@/lib/utils";
 import { legalDocs, legalPaths, type LegalDoc } from "@/data/legal";
 import { company, mailHref, telHref, whatsappHref } from "@/data/company";
+import { heroImages } from "@/data/heroImages";
+
+const LEGAL_HERO_IMAGE: Record<LegalDoc["slug"], (typeof heroImages)[keyof typeof heroImages]> = {
+  "privacy-policy": heroImages.privacyPolicy,
+  terms: heroImages.terms,
+  "shipping-delivery": heroImages.shippingDelivery,
+  "cancellation-refund": heroImages.cancellationRefund,
+};
 
 /** Shared renderer for the four legal pages — content comes from
  *  `src/data/legal.ts`, transcribed verbatim from the approved document. */
@@ -20,55 +28,67 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
           title={doc.pageTitle}
           lede={doc.effectiveDateLines.join(" · ")}
           crumbs={[{ label: doc.pageTitle }]}
+          image={LEGAL_HERO_IMAGE[doc.slug]}
         />
 
         <Section>
           <div className="mx-auto max-w-3xl">
             {doc.intro && (
-              <Reveal className="space-y-4">
+              <div className="space-y-4">
                 {doc.intro.map((p, i) => (
-                  <p key={i} className="text-[1.05rem] leading-relaxed text-ink">
-                    {p}
-                  </p>
+                  <ProgressiveText
+                    key={i}
+                    text={p}
+                    delay={i * 150}
+                    wordIntervalMs={18}
+                    maxTotalMs={600}
+                    className="block text-[1.05rem] leading-relaxed text-ink"
+                  />
                 ))}
-              </Reveal>
+              </div>
             )}
 
             <ol className="mt-10 space-y-10">
-              {doc.sections.map((section, i) => (
-                <Reveal as="li" key={section.heading} delay={Math.min(i * 40, 320)}>
-                  <h2 className="text-lg font-semibold text-ink md:text-xl">
-                    {section.heading}
-                  </h2>
+              {doc.sections.map((section) => (
+                <li key={section.heading}>
+                  <TextReveal>
+                    <h2 className="text-lg font-semibold text-ink md:text-xl">{section.heading}</h2>
+                  </TextReveal>
                   <div className="mt-3 space-y-3">
                     {section.lead && (
-                      <p className="text-sm leading-relaxed text-muted-foreground">
-                        {section.lead}
-                      </p>
+                      <ProgressiveText
+                        text={section.lead}
+                        delay={60}
+                        wordIntervalMs={16}
+                        maxTotalMs={500}
+                        className="block text-sm leading-relaxed text-muted-foreground"
+                      />
                     )}
                     {section.bullets && (
-                      <ul className="grid gap-2 sm:grid-cols-2">
+                      <AnimatedList
+                        as="ul"
+                        className="grid gap-2 sm:grid-cols-2"
+                        itemClassName="flex items-start gap-2.5 text-sm leading-relaxed text-ink"
+                        stagger={80}
+                      >
                         {section.bullets.map((b) => (
-                          <li
-                            key={b}
-                            className="flex items-start gap-2.5 text-sm leading-relaxed text-ink"
-                          >
+                          <>
                             <span
                               aria-hidden="true"
                               className="mt-2 size-1.5 shrink-0 rounded-full bg-aqua"
                             />
                             {b}
-                          </li>
+                          </>
                         ))}
-                      </ul>
+                      </AnimatedList>
                     )}
                     {section.paragraphs?.map((p, pi) => (
-                      <p key={pi} className="text-sm leading-relaxed text-muted-foreground">
-                        {p}
-                      </p>
+                      <Reveal key={pi} delay={60 + pi * 40}>
+                        <p className="text-sm leading-relaxed text-muted-foreground">{p}</p>
+                      </Reveal>
                     ))}
                   </div>
-                </Reveal>
+                </li>
               ))}
 
               <Reveal as="li">

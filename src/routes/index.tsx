@@ -1,22 +1,34 @@
 import { useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
   ArrowRight,
+  Beaker,
   Building2,
+  ChevronDown,
+  Droplet,
+  Filter,
+  FlaskConical,
+  Grid3x3,
   Home,
+  Layers,
   Mail,
   MessageCircle,
+  Orbit,
   Phone,
   ShoppingCart,
+  SunMedium,
   Truck,
   Expand,
+  Waves,
 } from "lucide-react";
 import bottleImpactVideo from "@/assets/titas/motion/bottle-impact.mp4";
+import mineralCompositionImg from "@/assets/titas/motion/mineral-composition.png";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { HeroSlideshow } from "@/components/site/HeroSlideshow";
 import { Section, SectionHeading } from "@/components/site/Section";
-import { Reveal } from "@/components/site/Reveal";
+import { Reveal, AnimatedList, ProgressiveText } from "@/components/site/Reveal";
 import {
   WaveDivider,
   FlowingPath,
@@ -37,6 +49,7 @@ import { usePrefersReducedMotion } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { products, formatPrice, type Product } from "@/data/products";
 import { whyTitas } from "@/data/services";
+import { homepagePurificationSteps } from "@/data/process";
 import { faqs } from "@/data/faqs";
 import { brandImages, galleryCategories, heroSlides } from "@/data/images";
 import { company, mailHref, telHref, whatsappHref } from "@/data/company";
@@ -67,6 +80,7 @@ function Index() {
         <HeroSlideshow />
         <BrandIntro />
         <JourneySection />
+        <PurificationSteps />
         <ProductShowcase />
         <OrderTitasSection />
         <WhyTitas />
@@ -115,15 +129,21 @@ function BrandIntro() {
             titleBrand
             script={company.tagline}
             lede={company.intro}
+            ledeAnimation="progressive"
             className="mx-auto lg:mx-0"
           />
           <Reveal delay={200} className="mt-3">
             <p className="script-accent text-2xl text-primary">{company.supportingLine}</p>
           </Reveal>
-          <Reveal delay={320} className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 lg:justify-start">
+          <Reveal delay={320} className="mt-8 flex flex-col items-center gap-3 lg:items-start">
             <Button asChild variant="brand" size="xl">
               <Link to="/about">
                 Discover TiTAS <ArrowRight />
+              </Link>
+            </Button>
+            <Button asChild variant="brand" size="xl">
+              <Link to="/dealer-distributor">
+                Become a Distributor <ArrowRight />
               </Link>
             </Button>
           </Reveal>
@@ -141,8 +161,7 @@ function BrandIntro() {
             aria-hidden="true"
             className="h-auto w-full max-w-[15rem] object-contain md:max-w-xs"
             style={{
-              maskImage:
-                "radial-gradient(ellipse 78% 82% at 50% 48%, black 58%, transparent 100%)",
+              maskImage: "radial-gradient(ellipse 78% 82% at 50% 48%, black 58%, transparent 100%)",
               WebkitMaskImage:
                 "radial-gradient(ellipse 78% 82% at 50% 48%, black 58%, transparent 100%)",
             }}
@@ -165,28 +184,110 @@ function JourneySection() {
           titleHref="/journey"
           script="a Journey"
           lede="From source to your doorstep, every TiTAS pack follows the same careful path."
+          ledeAnimation="progressive"
           className="mx-auto"
         />
-        <WaterJourneyVisual />
-        <Reveal delay={100} className="mt-10 flex justify-center">
+        <Reveal delay={100} className="mt-8 flex justify-center">
           <Button asChild variant="quiet" size="lg">
             <Link to="/journey">
-              Click Here <ArrowRight />
+              Click here for more <ArrowRight />
             </Link>
           </Button>
         </Reveal>
+        <WaterJourneyVisual />
       </div>
     </section>
   );
 }
 
-function ProductStage({
-  product,
-  active,
+/** One icon per card, in step order — matching the icon choices already
+ *  used for the same stages in ProcessTimeline.tsx (src/components/site),
+ *  so the two renderings of the same process stay visually consistent. */
+const PURIFICATION_ICONS = [
+  Droplet,
+  FlaskConical,
+  Layers,
+  Filter,
+  Grid3x3,
+  Waves,
+  Beaker,
+  SunMedium,
+  Orbit,
+  Truck,
+];
+
+function PurificationStepCard({
+  step,
+  index,
 }: {
-  product: Product;
-  active: boolean;
+  step: (typeof homepagePurificationSteps)[number];
+  index: number;
 }) {
+  const Icon = PURIFICATION_ICONS[index]!;
+  return (
+    <AccordionPrimitive.Item
+      value={String(index)}
+      className="overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-aqua/50"
+    >
+      <AccordionPrimitive.Header>
+        <AccordionPrimitive.Trigger
+          className="group flex w-full flex-col items-center gap-2 rounded-lg p-4 text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`${step.title} — show details`}
+        >
+          <span className="eyebrow text-aqua">{String(index + 1).padStart(2, "0")}</span>
+          <span className="flex size-12 items-center justify-center rounded-xl bg-accent text-primary">
+            <Icon className="size-5" strokeWidth={1.75} aria-hidden="true" />
+          </span>
+          <h3 className="text-xs leading-snug font-bold text-ink sm:text-sm">{step.title}</h3>
+          <ChevronDown
+            className="size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
+            aria-hidden="true"
+          />
+        </AccordionPrimitive.Trigger>
+      </AccordionPrimitive.Header>
+      <AccordionPrimitive.Content className="overflow-hidden text-xs data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+        <p className="border-t border-border px-4 pt-3 pb-4 text-xs leading-relaxed text-muted-foreground">
+          {step.description}
+        </p>
+      </AccordionPrimitive.Content>
+    </AccordionPrimitive.Item>
+  );
+}
+
+function PurificationSteps() {
+  return (
+    <Section tone="surface">
+      <Reveal
+        direction="up"
+        className="rounded-xl bg-primary px-6 py-5 text-center shadow-lift md:px-10 md:py-7"
+      >
+        <h2 className="text-balance text-xl leading-tight font-bold text-primary-foreground md:text-3xl">
+          10 Major Steps in the Purification of TiTAS
+        </h2>
+      </Reveal>
+
+      <AccordionPrimitive.Root
+        type="multiple"
+        className="mt-10 grid grid-cols-2 items-start gap-4 sm:grid-cols-3 lg:grid-cols-5"
+      >
+        {homepagePurificationSteps.map((step, i) => (
+          <PurificationStepCard key={step.title} step={step} index={i} />
+        ))}
+      </AccordionPrimitive.Root>
+
+      <Reveal direction="up" delay={100} className="mt-12">
+        <img
+          src={mineralCompositionImg}
+          alt="TiTAS mineral composition chart — calcium, magnesium, sodium, chlorine, pH and mineralisation levels in TiTAS packaged drinking water"
+          className="mx-auto h-auto w-full max-w-3xl rounded-lg border border-border object-contain"
+          loading="lazy"
+        />
+      </Reveal>
+    </Section>
+  );
+}
+
+function ProductStage({ product, active }: { product: Product; active: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
 
@@ -244,12 +345,17 @@ function ProductShowcase() {
         title="One trusted name,"
         script="five pack sizes"
         lede="From a bottle on the go to regular 20 L supply — choose the TiTAS pack that fits your need."
+        ledeAnimation="progressive"
         className="mx-auto"
       />
 
       <div className="mt-14 grid items-center gap-10 lg:grid-cols-[1fr_1.1fr]">
         <Reveal className="order-2 flex flex-col items-center lg:order-1">
-          <div className="flex flex-wrap justify-center gap-2" role="tablist" aria-label="Product size">
+          <div
+            className="flex flex-wrap justify-center gap-2"
+            role="tablist"
+            aria-label="Product size"
+          >
             {products.map((p) => (
               <button
                 key={p.slug}
@@ -269,7 +375,10 @@ function ProductShowcase() {
             ))}
           </div>
 
-          <div key={activeProduct.slug} className="animate-in fade-in slide-in-from-bottom-2 mt-8 max-w-md text-center duration-400 lg:text-left">
+          <div
+            key={activeProduct.slug}
+            className="animate-in fade-in slide-in-from-bottom-2 mt-8 max-w-md text-center duration-400 lg:text-left"
+          >
             <h3 className="text-2xl font-semibold text-ink">{activeProduct.name}</h3>
             <p className="script-accent mt-1 text-lg text-primary">{activeProduct.headline}</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -312,6 +421,7 @@ function OrderTitasSection() {
           title="From tap to"
           script="your doorstep"
           lede="Pick a pack, confirm your order and TiTAS takes care of the rest — the same simple flow whether you order online or over WhatsApp."
+          ledeAnimation="progressive"
         />
 
         <Reveal delay={100}>
@@ -332,6 +442,7 @@ function WhyTitas() {
         title="Built on trust,"
         script="drop by drop"
         lede={`Serving homes, businesses and institutions since ${company.since}.`}
+        ledeAnimation="progressive"
         className="mx-auto"
       />
       <div className="relative mx-auto mt-16 max-w-3xl">
@@ -352,9 +463,14 @@ function WhyTitas() {
             >
               <span className="eyebrow text-aqua">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="mt-2 text-lg font-semibold text-ink">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {item.description}
-              </p>
+              <ProgressiveText
+                text={item.description}
+                delay={80}
+                wordIntervalMs={22}
+                maxTotalMs={700}
+                as="p"
+                className="mt-2 block text-sm leading-relaxed text-muted-foreground"
+              />
             </Reveal>
           ))}
         </ol>
@@ -372,6 +488,7 @@ function ServicesPreview() {
           title="Supply for every"
           script="requirement"
           lede="From a single household to dealers and distributors, TiTAS supplies to suit how you need water."
+          ledeAnimation="progressive"
         />
         <Button asChild variant="brand" size="xl" className="self-start md:self-auto">
           <Link to="/services">
@@ -402,6 +519,7 @@ function QualityPreview() {
           title="From Source"
           script="to Seal"
           lede="A careful, quality-focused process carries every TiTAS pack from raw water to the sealed bottle in your hands."
+          ledeAnimation="progressive"
         />
         <Reveal delay={120} className="flex lg:justify-end">
           <Button asChild variant="aqua" size="xl">
@@ -419,7 +537,11 @@ function GalleryPreview() {
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
   const items = galleryCategories.flatMap((c) =>
     c.available
-      ? c.items.map((it) => ({ src: it.src as string, alt: it.alt as string, position: it.position as string }))
+      ? c.items.map((it) => ({
+          src: it.src as string,
+          alt: it.alt as string,
+          position: it.position as string,
+        }))
       : [],
   );
 
@@ -513,8 +635,7 @@ function FinalCta() {
           <div>
             <p className="eyebrow mb-4 text-aqua">Delivery</p>
             <h2 className="text-3xl leading-tight font-semibold text-ink md:text-[2.7rem]">
-              Pure Water.{" "}
-              <span className="script-accent font-normal text-primary">Delivered.</span>
+              Pure Water. <span className="script-accent font-normal text-primary">Delivered.</span>
             </h2>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild variant="brand" size="xl">
@@ -535,14 +656,18 @@ function FinalCta() {
             </div>
           </div>
 
-          <ul className="grid grid-cols-2 gap-4">
+          <AnimatedList
+            as="ul"
+            className="grid grid-cols-2 gap-4"
+            itemClassName="rounded-lg bg-card p-5"
+          >
             {deliveryPoints.map(({ icon: Icon, label }) => (
-              <li key={label} className="rounded-lg bg-card p-5">
+              <>
                 <Icon className="size-6 text-primary" aria-hidden="true" />
                 <p className="mt-3 text-sm font-semibold text-ink">{label}</p>
-              </li>
+              </>
             ))}
-          </ul>
+          </AnimatedList>
         </div>
       </Reveal>
     </Section>
@@ -572,7 +697,12 @@ function FaqPreview() {
 }
 
 function ContactCta() {
-  const topics = ["Orders", "Bulk enquiries", "Dealer / distributor enquiries", "Regular supply requirements"];
+  const topics = [
+    "Orders",
+    "Bulk enquiries",
+    "Dealer / distributor enquiries",
+    "Regular supply requirements",
+  ];
   return (
     <Section>
       <div className="grid gap-12 lg:grid-cols-2">
@@ -582,14 +712,18 @@ function ContactCta() {
             title="Let's talk"
             script="water"
             lede="Get in touch with TiTAS for:"
+            ledeAnimation="progressive"
           />
-          <ul className="mt-5 flex flex-wrap gap-2">
+          <AnimatedList
+            as="ul"
+            className="mt-5 flex flex-wrap gap-2"
+            itemClassName="rounded-full border border-border px-4 py-1.5 text-sm text-ink"
+            stagger={60}
+          >
             {topics.map((t) => (
-              <li key={t} className="rounded-full border border-border px-4 py-1.5 text-sm text-ink">
-                {t}
-              </li>
+              <>{t}</>
             ))}
-          </ul>
+          </AnimatedList>
           <Button asChild variant="brand" size="xl" className="mt-8">
             <Link to="/contact">
               Contact Us <ArrowRight />
@@ -598,7 +732,12 @@ function ContactCta() {
         </div>
         <Reveal delay={120} className="grid gap-3 self-start">
           <ContactRow icon={Phone} label="Call" value={`+91 ${company.phone}`} href={telHref} />
-          <ContactRow icon={MessageCircle} label="WhatsApp" value={`+91 ${company.whatsapp}`} href={whatsappHref} />
+          <ContactRow
+            icon={MessageCircle}
+            label="WhatsApp"
+            value={`+91 ${company.whatsapp}`}
+            href={whatsappHref}
+          />
           <ContactRow icon={Mail} label="Email" value={company.email} href={mailHref} />
           <p className="px-1 text-xs text-muted-foreground">
             {company.hours.weekdays} · {company.hours.closed}
