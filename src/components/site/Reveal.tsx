@@ -39,7 +39,7 @@ const HIDDEN_TRANSFORM: Record<RevealDirection, string> = {
  * resets the animation, and `trigger: "mount"` is what guarantees the hero
  * specifically always fires regardless of scroll position.
  */
-function useReveal<T extends HTMLElement>(trigger: RevealTrigger) {
+function useReveal<T extends HTMLElement>(trigger: RevealTrigger, replay = false) {
   const ref = useRef<T | null>(null);
   const [shown, setShown] = useState(true);
 
@@ -81,7 +81,15 @@ function useReveal<T extends HTMLElement>(trigger: RevealTrigger) {
         io = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
-              if (entry.isIntersecting) {
+              if (replay) {
+                // Mirrors AOS's default `once: false` — the reveal replays
+                // every time the element re-enters the viewport (scrolling
+                // back up and down again), rather than firing once and
+                // staying revealed. Opt-in only (default false) so every
+                // other existing Reveal/TextReveal/etc. call site keeps its
+                // current "reveal once" behaviour unchanged.
+                setShown(entry.isIntersecting);
+              } else if (entry.isIntersecting) {
                 setShown(true);
                 io?.disconnect();
               }
@@ -98,7 +106,7 @@ function useReveal<T extends HTMLElement>(trigger: RevealTrigger) {
       cancelAnimationFrame(raf2);
       io?.disconnect();
     };
-  }, [trigger]);
+  }, [trigger, replay]);
 
   return { ref, shown };
 }
@@ -128,6 +136,7 @@ export function Reveal({
   distance,
   durationMs = 700,
   easing = "cubic-bezier(0.16, 1, 0.3, 1)",
+  replay = false,
 }: {
   children: ReactNode;
   className?: string;
@@ -145,8 +154,13 @@ export function Reveal({
   durationMs?: number;
   /** Overrides the default easing curve. */
   easing?: string;
+  /** When true, the reveal replays every time the element re-enters the
+   *  viewport (scrolling away and back triggers it again), instead of the
+   *  default "reveal once and stay revealed". Off by default — only pass
+   *  this where replay-on-reentry is the specifically desired behaviour. */
+  replay?: boolean;
 }) {
-  const { ref, shown } = useReveal<HTMLElement>(trigger);
+  const { ref, shown } = useReveal<HTMLElement>(trigger, replay);
 
   const customTransform =
     distance === undefined
@@ -345,6 +359,46 @@ export function ScaleBounceReveal({
       className={cn(
         "will-change-transform",
         shown ? "animate-scale-bounce-in" : "scale-[0.85] opacity-0",
+        className,
+      )}
+    >
+      {children}
+    </Tag>
+  );
+}
+
+/**
+ * "Zoom Reveal" — a plain scale+fade entrance with no bounce/overshoot:
+ * starts very slightly undersized and invisible, settles to full size as it
+ * fades in. Distinct from `ScaleBounceReveal` (which overshoots past 100%
+ * before settling and is reserved for hero secondary text) — this is for a
+ * single accent image or icon block within a content section, mirroring a
+ * restrained "zoom-in" entrance rather than a "pop".
+ */
+export function ZoomReveal({
+  children,
+  delay = 0,
+  className,
+  as: Tag = "div",
+  trigger = "scroll",
+  durationMs = 500,
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+  as?: "div" | "span" | "figure";
+  trigger?: RevealTrigger;
+  durationMs?: number;
+}) {
+  const { ref, shown } = useReveal<HTMLElement>(trigger);
+
+  return (
+    <Tag
+      ref={ref as never}
+      style={{ transitionDelay: `${delay}ms`, transitionDuration: `${durationMs}ms` }}
+      className={cn(
+        "transition-[opacity,transform] ease-out",
+        shown ? "scale-100 opacity-100" : "scale-[0.94] opacity-0",
         className,
       )}
     >

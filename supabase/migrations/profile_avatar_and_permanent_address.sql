@@ -27,25 +27,31 @@ on conflict (id) do nothing;
 --    insert/update/delete objects under their OWN id prefix. Public read is
 --    granted via the bucket's `public = true` flag above, so no SELECT
 --    policy is required for that.
-create policy if not exists "Avatar images are publicly accessible"
+-- Postgres has no "CREATE POLICY IF NOT EXISTS" — drop-then-create is the
+-- standard idempotent pattern, safe to re-run.
+drop policy if exists "Avatar images are publicly accessible" on storage.objects;
+create policy "Avatar images are publicly accessible"
   on storage.objects for select
   using (bucket_id = 'avatars');
 
-create policy if not exists "Users can upload their own avatar"
+drop policy if exists "Users can upload their own avatar" on storage.objects;
+create policy "Users can upload their own avatar"
   on storage.objects for insert
   with check (
     bucket_id = 'avatars'
     and auth.uid()::text = (storage.foldername(name))[1]
   );
 
-create policy if not exists "Users can update their own avatar"
+drop policy if exists "Users can update their own avatar" on storage.objects;
+create policy "Users can update their own avatar"
   on storage.objects for update
   using (
     bucket_id = 'avatars'
     and auth.uid()::text = (storage.foldername(name))[1]
   );
 
-create policy if not exists "Users can delete their own avatar"
+drop policy if exists "Users can delete their own avatar" on storage.objects;
+create policy "Users can delete their own avatar"
   on storage.objects for delete
   using (
     bucket_id = 'avatars'

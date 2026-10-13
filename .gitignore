@@ -31,6 +31,12 @@ dist-ssr
 # Supabase CLI local cache (machine-specific, not secret but not source)
 supabase/.temp
 
+# Reference-only screen recording used to study a competitor site's motion
+# design — a local research asset, not a production asset. Keep this rule
+# narrow to this one file, not the whole motion/ folder, since that folder
+# also holds real production images/video the site actually uses.
+src/assets/titas/motion/aqua diamond.mp4
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

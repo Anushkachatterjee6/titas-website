@@ -58,12 +58,25 @@ const ICONS: Record<ProcessIcon, typeof Droplet> = {
   dispatch: Truck,
 };
 
-function StepItem({ step, index, side }: { step: ProcessStep; index: number; side: "left" | "right" }) {
+function StepItem({
+  step,
+  index,
+  side,
+}: {
+  step: ProcessStep;
+  index: number;
+  side: "left" | "right";
+}) {
   const Icon = ICONS[step.icon];
 
   return (
     <Reveal
+      direction={side === "right" ? "right" : "left"}
       delay={(index % 6) * 50}
+      distance={100}
+      durationMs={400}
+      easing="ease"
+      replay
       className={cn("relative md:w-[calc(50%-2.25rem)]", side === "right" ? "md:ml-auto" : "")}
     >
       {/* Node on the central line (desktop) / left rail (mobile) */}
@@ -71,7 +84,9 @@ function StepItem({ step, index, side }: { step: ProcessStep; index: number; sid
         aria-hidden="true"
         className={cn(
           "absolute top-6 left-0 flex size-3 -translate-x-1/2 items-center justify-center rounded-full bg-aqua ring-4 ring-background md:left-auto",
-          side === "right" ? "md:-left-9 md:translate-x-0" : "md:-right-9 md:left-auto md:translate-x-1/2",
+          side === "right"
+            ? "md:-left-9 md:translate-x-0"
+            : "md:-right-9 md:left-auto md:translate-x-1/2",
         )}
       />
 

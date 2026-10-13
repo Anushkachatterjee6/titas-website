@@ -15,7 +15,7 @@ import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { TiTASWordmark, ScriptAccent } from "@/components/site/TiTASWordmark";
 import { Section, SectionHeading } from "@/components/site/Section";
-import { Reveal, AnimatedHeading, ProgressiveText } from "@/components/site/Reveal";
+import { Reveal } from "@/components/site/Reveal";
 import { ContactActions } from "@/components/site/Blocks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,33 +128,28 @@ function DealerDistributorPage() {
 
         <Section tone="surface">
           <div className="mx-auto max-w-2xl text-center">
-            <Reveal direction="up">
+            <Reveal direction="up" distance={100} durationMs={400} easing="ease" replay>
               <h2 className="text-[2.05rem] leading-[1.08] font-bold text-ink md:text-[2.95rem]">
                 Partner with TiTAS Packaged Drinking Water — Reliable Since 1999
               </h2>
+              <p className="mt-5 text-[1.02rem] leading-relaxed text-muted-foreground">
+                Join the growing TiTAS distribution network and explore business opportunities with
+                Sujit Aqua Enterprise.
+              </p>
             </Reveal>
-            <ProgressiveText
-              text="Join the growing TiTAS distribution network and explore business opportunities with Sujit Aqua Enterprise."
-              delay={120}
-              as="p"
-              className="mt-5 block text-[1.02rem] leading-relaxed text-muted-foreground"
-            />
           </div>
         </Section>
 
         <Section>
           <div className="mx-auto max-w-2xl text-center">
-            <Reveal direction="up">
+            <Reveal direction="up" distance={100} durationMs={400} easing="ease" replay>
               <h2 className="text-[2.05rem] leading-[1.08] font-bold text-ink md:text-[2.95rem]">
                 How to apply
               </h2>
+              <p className="mt-5 text-[1.02rem] leading-relaxed text-muted-foreground">
+                Follow 5 Easy Simple Steps
+              </p>
             </Reveal>
-            <ProgressiveText
-              text="Follow 5 Easy Simple Steps"
-              delay={120}
-              as="p"
-              className="mt-5 block text-[1.02rem] leading-relaxed text-muted-foreground"
-            />
           </div>
           <div className="mt-12 flex flex-wrap justify-center gap-6">
             {APPLY_STEPS.map((step, i) => {
@@ -166,23 +161,20 @@ function DealerDistributorPage() {
                   as="article"
                   direction="up"
                   delay={cardDelay}
+                  distance={100}
+                  durationMs={400}
+                  easing="ease"
+                  replay
                   className="flex w-full flex-col items-center rounded-lg border border-border bg-card p-7 text-center transition-colors hover:border-aqua/50 sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
                 >
                   <span className="eyebrow text-aqua">{step.number}</span>
                   <span className="mt-3 flex size-14 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                     <Icon className="size-6" strokeWidth={1.75} aria-hidden="true" />
                   </span>
-                  <AnimatedHeading as="div" delay={60}>
-                    <h3 className="mt-4 text-base font-bold text-ink">{step.title}</h3>
-                  </AnimatedHeading>
-                  <ProgressiveText
-                    text={step.description}
-                    delay={160}
-                    wordIntervalMs={22}
-                    maxTotalMs={700}
-                    as="p"
-                    className="mt-2 block text-sm leading-relaxed text-muted-foreground"
-                  />
+                  <h3 className="mt-4 text-base font-bold text-ink">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {step.description}
+                  </p>
                 </Reveal>
               );
             })}
@@ -190,26 +182,20 @@ function DealerDistributorPage() {
         </Section>
 
         <Section tone="surface">
-          <Reveal direction="up" className="mx-auto max-w-xl text-center">
-            <ProgressiveText
-              text="TiTAS — Ekti Jaler Naam"
-              wordIntervalMs={45}
-              as="p"
-              className="block script-accent text-2xl text-primary"
-            />
-            <ProgressiveText
-              text="Grow Your Business with TiTAS!"
-              delay={260}
-              wordIntervalMs={45}
-              as="p"
-              className="mt-2 block text-xl font-bold text-ink"
-            />
-            <Reveal direction="up" delay={480}>
-              <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-                Dealership and distributorship opportunities are subject to area availability,
-                company approval and agreed commercial terms.
-              </p>
-            </Reveal>
+          <Reveal
+            direction="up"
+            distance={100}
+            durationMs={400}
+            easing="ease"
+            replay
+            className="mx-auto max-w-xl text-center"
+          >
+            <p className="script-accent text-2xl text-primary">TiTAS — Ekti Jaler Naam</p>
+            <p className="mt-2 text-xl font-bold text-ink">Grow Your Business with TiTAS!</p>
+            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+              Dealership and distributorship opportunities are subject to area availability, company
+              approval and agreed commercial terms.
+            </p>
           </Reveal>
         </Section>
 
@@ -285,7 +271,15 @@ function DealerDistributorPage() {
               </form>
             </Reveal>
 
-            <Reveal delay={100} className="rounded-lg border border-border bg-accent/40 p-6">
+            <Reveal
+              delay={100}
+              direction="right"
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
+              className="rounded-lg border border-border bg-accent/40 p-6"
+            >
               <h3 className="text-base font-semibold text-ink">Prefer to talk directly?</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Contact our team with your business details and location to discuss available

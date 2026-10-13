@@ -3,7 +3,7 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageHero } from "@/components/site/PageHero";
 import { Section } from "@/components/site/Section";
-import { Reveal, TextReveal, AnimatedList, ProgressiveText } from "@/components/site/Reveal";
+import { Reveal, AnimatedList } from "@/components/site/Reveal";
 import { cn } from "@/lib/utils";
 import { legalDocs, legalPaths, type LegalDoc } from "@/data/legal";
 import { company, mailHref, telHref, whatsappHref } from "@/data/company";
@@ -36,14 +36,17 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
             {doc.intro && (
               <div className="space-y-4">
                 {doc.intro.map((p, i) => (
-                  <ProgressiveText
+                  <Reveal
                     key={i}
-                    text={p}
-                    delay={i * 150}
-                    wordIntervalMs={18}
-                    maxTotalMs={600}
-                    className="block text-[1.05rem] leading-relaxed text-ink"
-                  />
+                    direction="up"
+                    delay={i * 80}
+                    distance={100}
+                    durationMs={400}
+                    easing="ease"
+                    replay
+                  >
+                    <p className="text-[1.05rem] leading-relaxed text-ink">{p}</p>
+                  </Reveal>
                 ))}
               </div>
             )}
@@ -51,18 +54,23 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
             <ol className="mt-10 space-y-10">
               {doc.sections.map((section) => (
                 <li key={section.heading}>
-                  <TextReveal>
+                  <Reveal direction="up" distance={100} durationMs={400} easing="ease" replay>
                     <h2 className="text-lg font-semibold text-ink md:text-xl">{section.heading}</h2>
-                  </TextReveal>
+                  </Reveal>
                   <div className="mt-3 space-y-3">
                     {section.lead && (
-                      <ProgressiveText
-                        text={section.lead}
+                      <Reveal
+                        direction="up"
                         delay={60}
-                        wordIntervalMs={16}
-                        maxTotalMs={500}
-                        className="block text-sm leading-relaxed text-muted-foreground"
-                      />
+                        distance={100}
+                        durationMs={400}
+                        easing="ease"
+                        replay
+                      >
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                          {section.lead}
+                        </p>
+                      </Reveal>
                     )}
                     {section.bullets && (
                       <AnimatedList
@@ -83,7 +91,15 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
                       </AnimatedList>
                     )}
                     {section.paragraphs?.map((p, pi) => (
-                      <Reveal key={pi} delay={60 + pi * 40}>
+                      <Reveal
+                        key={pi}
+                        direction="up"
+                        delay={60 + pi * 40}
+                        distance={100}
+                        durationMs={400}
+                        easing="ease"
+                        replay
+                      >
                         <p className="text-sm leading-relaxed text-muted-foreground">{p}</p>
                       </Reveal>
                     ))}
@@ -91,7 +107,7 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
                 </li>
               ))}
 
-              <Reveal as="li">
+              <Reveal as="li" direction="up" distance={100} durationMs={400} easing="ease" replay>
                 <h2 className="text-lg font-semibold text-ink md:text-xl">Contact</h2>
                 <div className="mt-3 space-y-4">
                   <p className="text-sm leading-relaxed text-muted-foreground">

@@ -47,8 +47,13 @@ function WhyTitasPage() {
             {whyTitas.map((item, i) => (
               <Reveal
                 as="li"
+                direction="up"
                 key={item.title}
                 delay={(i % 4) * 80}
+                distance={100}
+                durationMs={400}
+                easing="ease"
+                replay
                 className="rounded-lg border border-border bg-card p-6"
               >
                 <span className="eyebrow text-aqua">{String(i + 1).padStart(2, "0")}</span>

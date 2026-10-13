@@ -26,7 +26,16 @@ export function ServiceCard({
   delay?: number;
 }) {
   return (
-    <Reveal as="article" delay={delay} className="h-full">
+    <Reveal
+      as="article"
+      direction="up"
+      delay={delay}
+      distance={100}
+      durationMs={400}
+      easing="ease"
+      replay
+      className="h-full"
+    >
       <div className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-500 hover:-translate-y-1 hover:border-aqua/60 hover:shadow-lift">
         <div className="aspect-[5/4] w-full overflow-hidden bg-surface">
           <img
@@ -52,7 +61,15 @@ export function FAQAccordion({ items = faqs }: { items?: Faq[] }) {
   return (
     <Accordion type="single" collapsible className="w-full">
       {items.map((faq, i) => (
-        <Reveal key={faq.question} delay={Math.min(i * 50, 300)}>
+        <Reveal
+          key={faq.question}
+          direction="up"
+          delay={Math.min(i * 50, 300)}
+          distance={100}
+          durationMs={400}
+          easing="ease"
+          replay
+        >
           <AccordionItem value={`faq-${i}`}>
             <AccordionTrigger className="text-left text-base font-medium text-ink hover:text-primary hover:no-underline">
               {faq.question}
@@ -72,7 +89,15 @@ export function CertificationCard({ item }: { item: Certification }) {
     item.status === "Obtained" ? "bg-aqua/15 text-primary" : "bg-muted text-muted-foreground";
 
   return (
-    <Reveal as="article" className="h-full">
+    <Reveal
+      as="article"
+      direction="up"
+      distance={100}
+      durationMs={400}
+      easing="ease"
+      replay
+      className="h-full"
+    >
       <div className="flex h-full flex-col rounded-lg border border-border bg-card p-7">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-base font-semibold text-ink">{item.name}</h3>

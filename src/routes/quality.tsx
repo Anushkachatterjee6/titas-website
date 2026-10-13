@@ -52,7 +52,15 @@ function QualityPage() {
             lede="Each step below is transcribed from TiTAS's own Process Flow Chart for Bottle Filling. Nothing is invented and nothing beyond that document is claimed."
           />
 
-          <Reveal delay={60} className="mt-10 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <Reveal
+            direction="up"
+            delay={60}
+            distance={100}
+            durationMs={400}
+            easing="ease"
+            replay
+            className="mt-10 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+          >
             <p className="eyebrow mb-3 text-aqua">Official Process Flow Chart</p>
             <img
               src={processFlowImage}
@@ -70,7 +78,12 @@ function QualityPage() {
           </div>
 
           <Reveal
+            direction="up"
             delay={60}
+            distance={100}
+            durationMs={400}
+            easing="ease"
+            replay
             className="mt-10 text-center text-sm font-medium text-muted-foreground"
           >
             {processClosingLine}
@@ -86,7 +99,12 @@ function QualityPage() {
           />
 
           <Reveal
+            direction="up"
             delay={100}
+            distance={100}
+            durationMs={400}
+            easing="ease"
+            replay
             className="mt-10 grid gap-4 rounded-xl border border-border bg-card p-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             <Field label="Laboratory" value={labReport.laboratory} />
@@ -106,8 +124,13 @@ function QualityPage() {
             {labCategories.map((cat, i) => (
               <Reveal
                 as="article"
+                direction="up"
                 key={cat.title}
                 delay={i * 70}
+                distance={100}
+                durationMs={400}
+                easing="ease"
+                replay
                 className="rounded-lg border border-border bg-card p-6"
               >
                 <h4 className="text-sm font-semibold text-ink">{cat.title}</h4>
@@ -116,7 +139,15 @@ function QualityPage() {
             ))}
           </div>
 
-          <Reveal delay={140} className="mt-8">
+          <Reveal
+            direction="up"
+            delay={140}
+            distance={100}
+            durationMs={400}
+            easing="ease"
+            replay
+            className="mt-8"
+          >
             <NoticeBanner>{labReport.disclaimer}</NoticeBanner>
             <Button asChild variant="brand" size="xl" className="mt-5">
               <a href={labReport.pdfUrl} target="_blank" rel="noreferrer noopener">

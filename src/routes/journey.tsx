@@ -111,7 +111,16 @@ function JourneyPage() {
               {JOURNEY_STAGES.map((stage, i) => {
                 const reversed = i % 2 === 1;
                 return (
-                  <Reveal key={stage.key} delay={i * 60} className="relative">
+                  <Reveal
+                    key={stage.key}
+                    direction="up"
+                    delay={i * 60}
+                    distance={100}
+                    durationMs={400}
+                    easing="ease"
+                    replay
+                    className="relative"
+                  >
                     <span
                       aria-hidden="true"
                       className="absolute top-0 left-7 flex size-11 -translate-x-1/2 items-center justify-center rounded-full border border-aqua/30 bg-card font-display text-sm font-semibold text-primary shadow-lift md:left-1/2"

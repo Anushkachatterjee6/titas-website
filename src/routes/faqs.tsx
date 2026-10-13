@@ -48,7 +48,15 @@ function FaqsPage() {
             <Reveal>
               <FAQAccordion items={faqs} />
             </Reveal>
-            <Reveal delay={100} className="rounded-lg border border-border bg-accent/40 p-6">
+            <Reveal
+              delay={100}
+              direction="right"
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
+              className="rounded-lg border border-border bg-accent/40 p-6"
+            >
               <h3 className="text-base font-semibold text-ink">Still have a question?</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Reach out to our team directly and we'll help you out.

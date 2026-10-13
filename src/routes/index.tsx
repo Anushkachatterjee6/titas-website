@@ -28,7 +28,7 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { HeroSlideshow } from "@/components/site/HeroSlideshow";
 import { Section, SectionHeading } from "@/components/site/Section";
-import { Reveal, AnimatedList, ProgressiveText } from "@/components/site/Reveal";
+import { Reveal, AnimatedList, ZoomReveal } from "@/components/site/Reveal";
 import {
   WaveDivider,
   FlowingPath,
@@ -109,7 +109,7 @@ function BrandIntro() {
       <Droplets count={4} className="hidden lg:block" />
       <div className="relative grid items-center gap-12 lg:grid-cols-[auto_1.15fr_1fr] lg:gap-14">
         {/* Left: the actual TiTAS mark */}
-        <Reveal className="flex flex-col items-center gap-2.5 lg:items-start">
+        <ZoomReveal className="flex flex-col items-center gap-2.5 lg:items-start">
           <img
             src={brandImages.mark}
             alt="TiTAS logo"
@@ -119,7 +119,7 @@ function BrandIntro() {
           <span className="text-xs font-semibold tracking-wide text-muted-foreground">
             Since {company.since}
           </span>
-        </Reveal>
+        </ZoomReveal>
 
         {/* Centre: approved brand copy, unchanged */}
         <div className="text-center lg:text-left">
@@ -129,7 +129,7 @@ function BrandIntro() {
             titleBrand
             script={company.tagline}
             lede={company.intro}
-            ledeAnimation="progressive"
+            titleAnimation="aos"
             className="mx-auto lg:mx-0"
           />
           <Reveal delay={200} className="mt-3">
@@ -151,7 +151,15 @@ function BrandIntro() {
 
         {/* Right: cinematic bottle-impact moment — feathered so it reads as
             the bottle floating in the page, not a video box */}
-        <Reveal delay={150} className="flex justify-center lg:justify-self-end">
+        <Reveal
+          delay={150}
+          direction="right"
+          distance={100}
+          durationMs={400}
+          easing="ease"
+          replay
+          className="flex justify-center lg:justify-self-end"
+        >
           <video
             src={bottleImpactVideo}
             autoPlay
@@ -184,7 +192,6 @@ function JourneySection() {
           titleHref="/journey"
           script="a Journey"
           lede="From source to your doorstep, every TiTAS pack follows the same careful path."
-          ledeAnimation="progressive"
           className="mx-auto"
         />
         <Reveal delay={100} className="mt-8 flex justify-center">
@@ -275,7 +282,15 @@ function PurificationSteps() {
         ))}
       </AccordionPrimitive.Root>
 
-      <Reveal direction="up" delay={100} className="mt-12">
+      <Reveal direction="up" delay={100} className="mt-12 flex justify-center">
+        <Button asChild variant="brand" size="xl">
+          <Link to="/quality">
+            Quality & Process <ArrowRight />
+          </Link>
+        </Button>
+      </Reveal>
+
+      <Reveal direction="up" delay={140} className="mt-6">
         <img
           src={mineralCompositionImg}
           alt="TiTAS mineral composition chart — calcium, magnesium, sodium, chlorine, pH and mineralisation levels in TiTAS packaged drinking water"
@@ -345,12 +360,19 @@ function ProductShowcase() {
         title="One trusted name,"
         script="five pack sizes"
         lede="From a bottle on the go to regular 20 L supply — choose the TiTAS pack that fits your need."
-        ledeAnimation="progressive"
+        titleAnimation="aos"
         className="mx-auto"
       />
 
       <div className="mt-14 grid items-center gap-10 lg:grid-cols-[1fr_1.1fr]">
-        <Reveal className="order-2 flex flex-col items-center lg:order-1">
+        <Reveal
+          direction="left"
+          distance={100}
+          durationMs={400}
+          easing="ease"
+          replay
+          className="order-2 flex flex-col items-center lg:order-1"
+        >
           <div
             className="flex flex-wrap justify-center gap-2"
             role="tablist"
@@ -396,13 +418,21 @@ function ProductShowcase() {
                 params={{ size: activeProduct.slug }}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:gap-2.5 transition-all"
               >
-                View Product <ArrowRight className="size-4" />
+                For Details <ArrowRight className="size-4" />
               </Link>
             </div>
           </div>
         </Reveal>
 
-        <Reveal delay={120} className="order-1 flex justify-center lg:order-2">
+        <Reveal
+          delay={120}
+          direction="right"
+          distance={100}
+          durationMs={400}
+          easing="ease"
+          replay
+          className="order-1 flex justify-center lg:order-2"
+        >
           {products.map((p) => (
             <ProductStage key={p.slug} product={p} active={p.slug === active} />
           ))}
@@ -421,10 +451,11 @@ function OrderTitasSection() {
           title="From tap to"
           script="your doorstep"
           lede="Pick a pack, confirm your order and TiTAS takes care of the rest — the same simple flow whether you order online or over WhatsApp."
-          ledeAnimation="progressive"
+          ledeAnimation="aos"
+          titleAnimation="aos"
         />
 
-        <Reveal delay={100}>
+        <Reveal delay={100} direction="right" distance={100} durationMs={400} easing="ease" replay>
           <OrderingFlowVisual />
         </Reveal>
       </div>
@@ -442,7 +473,6 @@ function WhyTitas() {
         title="Built on trust,"
         script="drop by drop"
         lede={`Serving homes, businesses and institutions since ${company.since}.`}
-        ledeAnimation="progressive"
         className="mx-auto"
       />
       <div className="relative mx-auto mt-16 max-w-3xl">
@@ -456,6 +486,10 @@ function WhyTitas() {
               as="li"
               key={item.title}
               delay={(i % 2) * 90}
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
               className={cn(
                 "relative border-t border-border pt-6",
                 i % 2 === 0 ? "sm:pr-6 sm:text-right" : "sm:pl-6 sm:translate-y-10",
@@ -463,14 +497,9 @@ function WhyTitas() {
             >
               <span className="eyebrow text-aqua">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="mt-2 text-lg font-semibold text-ink">{item.title}</h3>
-              <ProgressiveText
-                text={item.description}
-                delay={80}
-                wordIntervalMs={22}
-                maxTotalMs={700}
-                as="p"
-                className="mt-2 block text-sm leading-relaxed text-muted-foreground"
-              />
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {item.description}
+              </p>
             </Reveal>
           ))}
         </ol>
@@ -488,7 +517,6 @@ function ServicesPreview() {
           title="Supply for every"
           script="requirement"
           lede="From a single household to dealers and distributors, TiTAS supplies to suit how you need water."
-          ledeAnimation="progressive"
         />
         <Button asChild variant="brand" size="xl" className="self-start md:self-auto">
           <Link to="/services">
@@ -519,9 +547,17 @@ function QualityPreview() {
           title="From Source"
           script="to Seal"
           lede="A careful, quality-focused process carries every TiTAS pack from raw water to the sealed bottle in your hands."
-          ledeAnimation="progressive"
+          titleAnimation="aos"
         />
-        <Reveal delay={120} className="flex lg:justify-end">
+        <Reveal
+          delay={120}
+          direction="right"
+          distance={100}
+          durationMs={400}
+          easing="ease"
+          replay
+          className="flex lg:justify-end"
+        >
           <Button asChild variant="aqua" size="xl">
             <Link to="/quality">
               Explore Our Quality <ArrowRight />
@@ -712,7 +748,6 @@ function ContactCta() {
             title="Let's talk"
             script="water"
             lede="Get in touch with TiTAS for:"
-            ledeAnimation="progressive"
           />
           <AnimatedList
             as="ul"

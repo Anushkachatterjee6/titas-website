@@ -72,19 +72,41 @@ function ServicesPage() {
         <Section tone="surface">
           <SectionHeading eyebrow="Delivery" title="How delivery" script="works" />
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <Reveal as="article" className="rounded-lg border border-border bg-card p-6">
+            <Reveal
+              as="article"
+              direction="up"
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
+              className="rounded-lg border border-border bg-card p-6"
+            >
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {company.delivery.summary}
               </p>
             </Reveal>
-            <Reveal as="article" delay={70} className="rounded-lg border border-border bg-card p-6">
+            <Reveal
+              as="article"
+              direction="up"
+              delay={70}
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
+              className="rounded-lg border border-border bg-card p-6"
+            >
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {company.delivery.reach}
               </p>
             </Reveal>
             <Reveal
               as="article"
+              direction="up"
               delay={140}
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
               className="rounded-lg border border-border bg-card p-6"
             >
               <p className="text-sm leading-relaxed text-muted-foreground">
@@ -93,7 +115,12 @@ function ServicesPage() {
             </Reveal>
             <Reveal
               as="article"
+              direction="up"
               delay={210}
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
               className="rounded-lg border border-border bg-card p-6"
             >
               <p className="text-sm leading-relaxed text-muted-foreground">

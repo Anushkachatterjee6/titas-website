@@ -102,14 +102,21 @@ function ProductDetail() {
         <Section className="pb-8 md:pb-10">
           <Breadcrumbs items={[{ label: "Products", to: "/products" }, { label: product.size }]} />
           <div className="mt-8 grid items-center gap-12 lg:grid-cols-2">
-            <Reveal className="flex items-center justify-center rounded-2xl bg-surface-strong p-10">
+            <Reveal
+              direction="left"
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
+              className="flex items-center justify-center rounded-2xl bg-surface-strong p-10"
+            >
               <img
                 src={product.image}
                 alt={`${product.name} packaged drinking water`}
                 className="h-72 w-auto object-contain drop-shadow-xl md:h-96"
               />
             </Reveal>
-            <Reveal delay={100}>
+            <Reveal direction="right" distance={100} durationMs={400} easing="ease" replay>
               <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-primary">
                 {product.size}
               </span>
@@ -158,6 +165,34 @@ function ProductDetail() {
                 </Button>
               </div>
             </Reveal>
+          </div>
+        </Section>
+
+        <Section>
+          <NoticeBanner>{company.delivery.summary}</NoticeBanner>
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Explore other pack sizes
+            </h2>
+            <Button asChild variant="quiet" size="lg">
+              <Link to="/products">
+                View All Products <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {products
+              .filter((p) => p.slug !== product.slug)
+              .map((p) => (
+                <Link
+                  key={p.slug}
+                  to="/products/$size"
+                  params={{ size: p.slug }}
+                  className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-aqua/60 hover:text-primary"
+                >
+                  {p.size}
+                </Link>
+              ))}
           </div>
         </Section>
 
@@ -231,34 +266,6 @@ function ProductDetail() {
               <p className="mt-2 text-base font-semibold text-ink">{company.supportingLine}</p>
               <p className="mt-1 text-sm text-muted-foreground">Reliable Since {company.since}</p>
             </Reveal>
-          </div>
-        </Section>
-
-        <Section>
-          <NoticeBanner>{company.delivery.summary}</NoticeBanner>
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-            <h2 className="font-display text-xl font-semibold text-ink">
-              Explore other pack sizes
-            </h2>
-            <Button asChild variant="quiet" size="lg">
-              <Link to="/products">
-                View All Products <ArrowRight />
-              </Link>
-            </Button>
-          </div>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {products
-              .filter((p) => p.slug !== product.slug)
-              .map((p) => (
-                <Link
-                  key={p.slug}
-                  to="/products/$size"
-                  params={{ size: p.slug }}
-                  className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-aqua/60 hover:text-primary"
-                >
-                  {p.size}
-                </Link>
-              ))}
           </div>
         </Section>
       </main>

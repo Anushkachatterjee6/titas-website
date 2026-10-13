@@ -39,7 +39,8 @@ export function SectionHeading({
   titleHref,
   script,
   lede,
-  ledeAnimation = "fade",
+  ledeAnimation = "aos",
+  titleAnimation = "aos",
   align = "left",
   tone = "default",
   className,
@@ -60,11 +61,19 @@ export function SectionHeading({
   titleHref?: string;
   script?: string;
   lede?: string;
-  /** "fade" (default) keeps the existing block fade/slide reveal used
-   *  everywhere else. "progressive" reveals `lede` word by word via the
-   *  shared `ProgressiveText` component instead — opt in per call site, so
-   *  every other `SectionHeading` usage is unaffected. */
-  ledeAnimation?: "fade" | "progressive";
+  /** "aos" (default) reveals `lede` with a plain translate+opacity entrance
+   *  matching the Aqua Diamond reference's AOS config (100px offset, 400ms,
+   *  ease, replays every time it re-enters the viewport). "progressive"
+   *  reveals it word by word via `ProgressiveText` instead — set explicitly
+   *  per call site wherever that was deliberately requested. "fade" keeps
+   *  the older masked-slide `TextReveal` treatment, for the rare case that
+   *  needs it. */
+  ledeAnimation?: "aos" | "fade" | "progressive";
+  /** Same choice as `ledeAnimation`, applied to the heading itself. "aos"
+   *  (default) swaps the masked `TextReveal` slide for a plain `Reveal`
+   *  (AOS has no clip-mask — it's a flat translate+opacity) at the
+   *  100px/400ms/ease/replay values. "fade" keeps the older masked slide. */
+  titleAnimation?: "aos" | "fade";
   align?: "left" | "center";
   tone?: "default" | "inverse";
   className?: string;
@@ -144,8 +153,21 @@ export function SectionHeading({
       )}
       {/* Centred headings keep the lighter fade+rise — a masked horizontal
           slide looks lopsided once the text is centre-aligned. Left-aligned
-          ones get the stronger "Sliding Text Reveal" masked entrance. */}
-      {centered ? (
+          ones get the stronger "Sliding Text Reveal" masked entrance, unless
+          `titleAnimation="aos"` asks for the flat (unmasked) AOS-matched
+          reveal instead. */}
+      {titleAnimation === "aos" ? (
+        <Reveal
+          direction={centered ? "up" : direction}
+          delay={60}
+          distance={100}
+          durationMs={400}
+          easing="ease"
+          replay
+        >
+          {heading}
+        </Reveal>
+      ) : centered ? (
         <Reveal direction="up" delay={60}>
           {heading}
         </Reveal>
@@ -155,6 +177,17 @@ export function SectionHeading({
       {ledeNode &&
         (ledeAnimation === "progressive" ? (
           ledeNode
+        ) : ledeAnimation === "aos" ? (
+          <Reveal
+            direction={centered ? "up" : direction}
+            delay={140}
+            distance={100}
+            durationMs={400}
+            easing="ease"
+            replay
+          >
+            {ledeNode}
+          </Reveal>
         ) : centered ? (
           <Reveal direction="up" delay={140}>
             {ledeNode}

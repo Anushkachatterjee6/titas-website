@@ -125,7 +125,15 @@ function ContactPage() {
               </form>
             </Reveal>
 
-            <Reveal delay={100} className="grid gap-6 self-start">
+            <Reveal
+              delay={100}
+              direction="right"
+              distance={100}
+              durationMs={400}
+              easing="ease"
+              replay
+              className="grid gap-6 self-start"
+            >
               <div>
                 <h3 className="text-base font-semibold text-ink">Direct contact</h3>
                 <ContactActions className="mt-4" />
