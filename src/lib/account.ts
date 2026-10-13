@@ -255,6 +255,48 @@ export function useUploadAvatar() {
   });
 }
 
+/** Extracts the storage object path (e.g. "<user-id>/169...jpg") from a
+ *  public avatar URL produced by `getPublicUrl` above, so it can be passed
+ *  back to `storage.from("avatars").remove([...])`. Returns null if the URL
+ *  doesn't look like one of ours — callers then skip the storage delete and
+ *  just clear the column, rather than risk acting on an unrelated path. */
+function avatarPathFromPublicUrl(url: string): string | null {
+  const marker = "/object/public/avatars/";
+  const i = url.indexOf(marker);
+  if (i === -1) return null;
+  return decodeURIComponent(url.slice(i + marker.length));
+}
+
+/** Removes the user's current profile picture: deletes the specific object
+ *  in the `avatars` bucket that `profiles.avatar_url` currently points to
+ *  (bucket policies already restrict this to the owner's own folder — see
+ *  the migration), then clears the column so the UI falls back to the
+ *  default placeholder. Only ever acts on the signed-in user's own current
+ *  avatar — never a bulk/prefix delete, so a past upload nobody is pointing
+ *  to anymore is simply left alone rather than guessed at. */
+export function useRemoveAvatar() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (currentAvatarUrl: string) => {
+      const path = avatarPathFromPublicUrl(currentAvatarUrl);
+      if (path) {
+        const { error: removeError } = await supabase.storage.from("avatars").remove([path]);
+        if (removeError) throw removeError;
+      }
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: null })
+        .eq("id", user!.id);
+      if (updateError) throw updateError;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+    },
+  });
+}
+
 /** Changes the account's actual sign-in email via Supabase Auth. Supabase
  *  requires confirming the new address before it takes effect, so this
  *  only ever *requests* the change — the account email shown elsewhere

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Camera, LogOut, MapPin, Package, Pencil, User } from "lucide-react";
+import { Camera, LogOut, MapPin, Package, Pencil, Trash2, User } from "lucide-react";
 import { RequireAuth } from "@/components/site/RequireAuth";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -17,6 +17,7 @@ import {
   useUpdateAccountEmail,
   useUpdatePermanentAddress,
   useUploadAvatar,
+  useRemoveAvatar,
   usePrimaryAddress,
   useSaveDeliveryAddress,
   type Order,
@@ -301,6 +302,19 @@ function AvatarUploader({ avatarUrl }: { avatarUrl: string | null }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const uploadAvatar = useUploadAvatar();
+  const removeAvatar = useRemoveAvatar();
+
+  const handleRemove = () => {
+    if (!avatarUrl) return;
+    setError(null);
+    removeAvatar.mutate(avatarUrl, {
+      onError: (err) => {
+        setError(
+          err instanceof Error ? err.message : "Couldn't remove this photo. Please try again.",
+        );
+      },
+    });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -358,6 +372,17 @@ function AvatarUploader({ avatarUrl }: { avatarUrl: string | null }) {
       <div>
         <p className="text-sm font-medium text-ink">Profile picture</p>
         <p className="text-xs text-muted-foreground">JPEG, PNG, WEBP or GIF, up to 5 MB.</p>
+        {avatarUrl && (
+          <button
+            type="button"
+            onClick={handleRemove}
+            disabled={uploadAvatar.isPending || removeAvatar.isPending}
+            className="mt-1.5 flex items-center gap-1 text-xs font-medium text-destructive transition-colors hover:text-destructive/80 disabled:opacity-60"
+          >
+            <Trash2 className="size-3.5" aria-hidden="true" />
+            {removeAvatar.isPending ? "Removing…" : "Remove Photo"}
+          </button>
+        )}
         {uploadAvatar.isPending && <p className="mt-1 text-xs text-primary">Uploading…</p>}
         {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
       </div>

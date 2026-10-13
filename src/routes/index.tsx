@@ -283,9 +283,9 @@ function PurificationSteps() {
       </AccordionPrimitive.Root>
 
       <Reveal direction="up" delay={100} className="mt-12 flex justify-center">
-        <Button asChild variant="brand" size="xl">
+        <Button asChild variant="quiet" size="lg">
           <Link to="/quality">
-            Quality & Process <ArrowRight />
+            Click here for more <ArrowRight />
           </Link>
         </Button>
       </Reveal>
