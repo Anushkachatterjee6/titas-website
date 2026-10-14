@@ -25,11 +25,26 @@ export const brandImages = {
   brandName: brandName.url,
 };
 
+// Each slide's actual measured intrinsic size (not guessed) — slides 1-4
+// are 1600x639, slide 5 is 1983x793; both ratios round to the same
+// aspect-[1600/639] the slideshow's frame already uses, so passing each
+// slide's own real width/height as <img> attributes lets the browser
+// reserve the correct box before the image loads without affecting the
+// displayed size (still governed by the frame's CSS + object-cover).
+const APPROVED_SLIDE_DIMENSIONS = [
+  { width: 1600, height: 639 },
+  { width: 1600, height: 639 },
+  { width: 1600, height: 639 },
+  { width: 1600, height: 639 },
+  { width: 1983, height: 793 },
+];
+
 /** The five APPROVED homepage slideshow images — use unmodified, full 16:9-style frame. */
 export const approvedSlides = [s1, s2, s3, s4, s5].map((src, i) => ({
   id: `slide-${i + 1}`,
   src,
   alt: `TiTAS packaged drinking water — promotional image ${i + 1}`,
+  ...APPROVED_SLIDE_DIMENSIONS[i]!,
 }));
 
 /** The five supplied TiTAS promotional images, used for the hero slideshow. */

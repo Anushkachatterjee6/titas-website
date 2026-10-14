@@ -10,6 +10,9 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+
+const GOOGLE_FONTS_URL =
+  "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;600&display=swap";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
 import { AuthProvider } from "../lib/auth";
@@ -98,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;600&display=swap" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
@@ -113,6 +116,54 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/*
+          Google Fonts, loaded without blocking first render — same 4
+          families/weights as before (DM Sans, Instrument Serif, Outfit,
+          Noto Sans Bengali), unchanged.
+
+          A plain `<link rel="stylesheet">` here would be render-blocking:
+          the browser can't paint any text until it's fetched the CSS,
+          then the font files it references. This is the standard
+          "preload as style, then swap its media to activate it" pattern
+          (the same technique web.dev/loadCSS use): the browser fetches
+          the stylesheet at a non-blocking priority (`media="print"` makes
+          it initially inapplicable to screens, so it doesn't block
+          rendering), and the instant it's loaded, the inline `onload`
+          flips `media` to `all`, applying it.
+
+          `onload` is deliberately lowercase (not React's camelCase
+          `onLoad`) — a lowercase prop isn't one of React's synthetic
+          event names, so React passes it straight through as a native
+          HTML attribute instead of expecting a JS function value. That
+          matters here specifically: this needs to fire as a real inline
+          DOM event the instant the browser finishes the fetch, which can
+          happen before React finishes hydrating — a React-attached
+          `onLoad` handler could miss that if hydration hasn't completed
+          yet, silently leaving the stylesheet in its inert `media="print"`
+          state.
+
+          The URL already has `&display=swap`, so even before this
+          stylesheet applies, text renders immediately in the browser's
+          fallback font and swaps to the real one once it loads — never a
+          blank/invisible-text flash, and no layout shift from the swap
+          since `display=swap` doesn't reserve different metrics per font.
+
+          `<noscript>` repeats a plain blocking `<link>` for the (rare)
+          case where JavaScript is unavailable, so fonts still load there
+          too, just without the non-blocking benefit.
+        */}
+        <link rel="preload" as="style" href={GOOGLE_FONTS_URL} />
+        <link
+          rel="stylesheet"
+          href={GOOGLE_FONTS_URL}
+          media="print"
+          // Not a typed React DOM prop (see the comment above) — cast just
+          // this one extra attribute rather than widening the whole tag.
+          {...({ onload: "this.media='all'" } as { onload?: string })}
+        />
+        <noscript>
+          <link rel="stylesheet" href={GOOGLE_FONTS_URL} />
+        </noscript>
       </head>
       <body>
         {children}

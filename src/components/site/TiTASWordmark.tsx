@@ -32,6 +32,12 @@ export function TiTASWordmark({
     <img
       src={wordmarkSrc}
       alt={title}
+      // Actual measured intrinsic size (2019x558) — every call site scales
+      // this via its own className (h-6, h-10, h-[0.8em]…), so these
+      // attributes only give the browser the real aspect ratio up front;
+      // they don't change how large the mark renders anywhere.
+      width={2019}
+      height={558}
       draggable={false}
       className={cn("h-6 w-auto object-contain select-none", className)}
     />

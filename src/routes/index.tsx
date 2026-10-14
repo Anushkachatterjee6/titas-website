@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
@@ -37,12 +37,30 @@ import {
   FluidWaves,
   RoutePath,
 } from "@/components/site/WaterMotion";
-import {
-  WaterJourneyVisual,
-  ServicesNetworkVisual,
-  OrderingFlowVisual,
-} from "@/components/site/MotionAssets";
+// Code-split: each of these three decorative visuals pulls in its own 5-9
+// large PNGs (see each file's own header comment). Previously all three
+// lived in one MotionAssets.tsx module, which meant every image from all
+// three — including ServicesNetworkVisual's and OrderingFlowVisual's,
+// which render well below the fold — was bundled into the homepage's
+// eagerly-loaded initial chunk and preloaded at high priority alongside
+// the actual hero image. Lazy-loading them keeps each one's images out of
+// that critical chunk; they load as a normal (non-preloaded, non-blocking)
+// chunk once React actually renders that part of the tree.
+const WaterJourneyVisual = lazy(() => import("@/components/site/WaterJourneyVisual"));
+const ServicesNetworkVisual = lazy(() => import("@/components/site/ServicesNetworkVisual"));
+const OrderingFlowVisual = lazy(() => import("@/components/site/OrderingFlowVisual"));
+
+/** Suspense fallback for the three visuals above — a plain, static-height
+ *  placeholder (no spinner/animation) so the section occupies roughly the
+ *  same space before and after the real visual mounts, instead of
+ *  collapsing to zero height and shifting the rest of the page. Heights are
+ *  an approximation of each visual's own typical rendered height at that
+ *  breakpoint, not a pixel-exact match. */
+function VisualFallback({ className }: { className?: string }) {
+  return <div aria-hidden="true" className={className} />;
+}
 import { FAQAccordion } from "@/components/site/Blocks";
+import { DeliveryCoverageBanner } from "@/components/site/DeliveryCoverageBanner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { usePrefersReducedMotion } from "@/lib/hooks";
@@ -113,6 +131,8 @@ function BrandIntro() {
           <img
             src={brandImages.mark}
             alt="TiTAS logo"
+            width={453}
+            height={443}
             className="w-16 rounded-full md:w-20"
             loading="lazy"
           />
@@ -176,6 +196,7 @@ function BrandIntro() {
           />
         </Reveal>
       </div>
+      <DeliveryCoverageBanner className="relative mt-12 md:mt-16" />
     </Section>
   );
 }
@@ -201,7 +222,9 @@ function JourneySection() {
             </Link>
           </Button>
         </Reveal>
-        <WaterJourneyVisual />
+        <Suspense fallback={<VisualFallback className="mt-16 min-h-[48rem] md:min-h-[14rem]" />}>
+          <WaterJourneyVisual />
+        </Suspense>
       </div>
     </section>
   );
@@ -294,6 +317,8 @@ function PurificationSteps() {
         <img
           src={mineralCompositionImg}
           alt="TiTAS mineral composition chart — calcium, magnesium, sodium, chlorine, pH and mineralisation levels in TiTAS packaged drinking water"
+          width={1090}
+          height={727}
           className="mx-auto h-auto w-full max-w-3xl rounded-lg border border-border object-contain"
           loading="lazy"
         />
@@ -456,7 +481,9 @@ function OrderTitasSection() {
         />
 
         <Reveal delay={100} direction="right" distance={100} durationMs={400} easing="ease" replay>
-          <OrderingFlowVisual />
+          <Suspense fallback={<VisualFallback className="mx-auto aspect-square w-full max-w-xs" />}>
+            <OrderingFlowVisual />
+          </Suspense>
         </Reveal>
       </div>
     </Section>
@@ -527,7 +554,13 @@ function ServicesPreview() {
 
       {/* The real TiTAS services network artwork — radial on desktop,
           recomposed as a vertical flowing chain on mobile (handled inside). */}
-      <ServicesNetworkVisual />
+      <Suspense
+        fallback={
+          <VisualFallback className="mt-16 min-h-[40rem] md:mx-auto md:aspect-square md:max-w-2xl md:min-h-0" />
+        }
+      >
+        <ServicesNetworkVisual />
+      </Suspense>
     </Section>
   );
 }

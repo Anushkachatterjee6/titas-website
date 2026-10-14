@@ -73,6 +73,8 @@ export function PageHero({
               <img
                 src={image.src}
                 alt=""
+                width={image.width}
+                height={image.height}
                 className="h-auto max-h-full w-full object-contain drop-shadow-[0_16px_22px_rgba(10,40,70,0.22)]"
                 draggable={false}
               />

@@ -34,6 +34,8 @@ export function Logo({
           src={brandImages.mark}
           alt=""
           aria-hidden="true"
+          width={453}
+          height={443}
           className={cn("h-10 w-auto", variant === "inverse" ? "h-14 md:h-16" : "md:h-11")}
         />
       </span>
@@ -41,16 +43,16 @@ export function Logo({
         <span className="flex items-center">
           <TiTASWordmark
             title={company.brand}
-            className={variant === "inverse" ? "h-[1.7rem] md:h-[2.1rem]" : "h-[0.95rem] md:h-[1.1rem]"}
+            className={
+              variant === "inverse" ? "h-[1.7rem] md:h-[2.1rem]" : "h-[0.95rem] md:h-[1.1rem]"
+            }
           />
         </span>
         {withTagline && (
           <span
             className={cn(
               "mt-0.5 text-[0.62rem] leading-none tracking-[0.16em] uppercase",
-              variant === "inverse"
-                ? "text-ink-foreground/70"
-                : "text-muted-foreground",
+              variant === "inverse" ? "text-ink-foreground/70" : "text-muted-foreground",
             )}
           >
             {company.tagline}

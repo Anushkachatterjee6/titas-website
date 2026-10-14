@@ -44,7 +44,7 @@ export function HeroSlideshow() {
   const touchX = useRef<number | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  const realIndex = ((trackIndex - 1) % n + n) % n;
+  const realIndex = (((trackIndex - 1) % n) + n) % n;
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -115,9 +115,12 @@ export function HeroSlideshow() {
     return () => clearInterval(t);
   }, [paused, reducedMotion, inView, step]);
 
-  useEffect(() => () => {
-    if (resumeTimer.current) clearTimeout(resumeTimer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    },
+    [],
+  );
 
   // Land on a clone -> snap (no transition) to the matching real slide.
   // This is the fast path, fired by the browser as soon as the slide
@@ -184,7 +187,9 @@ export function HeroSlideshow() {
           onTransitionEnd={handleTransitionEnd}
           className={cn(
             "flex size-full",
-            transitionsOn && !reducedMotion ? "transition-transform ease-[var(--hero-ease)]" : "transition-none",
+            transitionsOn && !reducedMotion
+              ? "transition-transform ease-[var(--hero-ease)]"
+              : "transition-none",
           )}
           style={{
             transform: `translateX(${-trackIndex * 100}%)`,
@@ -202,6 +207,8 @@ export function HeroSlideshow() {
               <img
                 src={slide.src}
                 alt={slide.alt}
+                width={slide.width}
+                height={slide.height}
                 loading="eager"
                 decoding="async"
                 className="size-full object-cover object-center"
