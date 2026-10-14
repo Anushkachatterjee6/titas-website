@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import {
@@ -27,6 +27,7 @@ import mineralCompositionImg from "@/assets/titas/motion/mineral-composition.web
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { HeroSlideshow } from "@/components/site/HeroSlideshow";
+import { FAQAccordion } from "@/components/site/Blocks";
 import { Section, SectionHeading } from "@/components/site/Section";
 import { Reveal, AnimatedList, ZoomReveal } from "@/components/site/Reveal";
 import {
@@ -37,6 +38,16 @@ import {
   FluidWaves,
   RoutePath,
 } from "@/components/site/WaterMotion";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { usePrefersReducedMotion } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
+import { products, formatPrice, type Product } from "@/data/products";
+import { whyTitas } from "@/data/services";
+import { homepagePurificationSteps } from "@/data/process";
+import { faqs } from "@/data/faqs";
+import { brandImages, galleryCategories, heroSlides } from "@/data/images";
+import { company, mailHref, telHref, whatsappHref } from "@/data/company";
 // Code-split: each of these three decorative visuals pulls in its own 5-9
 // large PNGs (see each file's own header comment). Previously all three
 // lived in one MotionAssets.tsx module, which meant every image from all
@@ -59,17 +70,59 @@ const OrderingFlowVisual = lazy(() => import("@/components/site/OrderingFlowVisu
 function VisualFallback({ className }: { className?: string }) {
   return <div aria-hidden="true" className={className} />;
 }
-import { FAQAccordion } from "@/components/site/Blocks";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { usePrefersReducedMotion } from "@/lib/hooks";
-import { cn } from "@/lib/utils";
-import { products, formatPrice, type Product } from "@/data/products";
-import { whyTitas } from "@/data/services";
-import { homepagePurificationSteps } from "@/data/process";
-import { faqs } from "@/data/faqs";
-import { brandImages, galleryCategories, heroSlides } from "@/data/images";
-import { company, mailHref, telHref, whatsappHref } from "@/data/company";
+
+function DeferredVisual({
+  children,
+  fallbackClassName,
+}: {
+  children: React.ReactNode;
+  fallbackClassName?: string | undefined;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    if (mq.matches || typeof IntersectionObserver === "undefined") {
+      setMounted(true);
+      return;
+    }
+
+    const el = ref.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setMounted(true);
+        io.disconnect();
+      },
+      { rootMargin: "900px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref}>
+      {mounted ? (
+        children
+      ) : (
+        <VisualFallback {...(fallbackClassName ? { className: fallbackClassName } : {})} />
+      )}
+    </div>
+  );
+}
+
+function ResponsiveVisual({
+  children,
+  fallbackClassName,
+}: {
+  children: React.ReactNode;
+  fallbackClassName?: string | undefined;
+}) {
+  return <DeferredVisual fallbackClassName={fallbackClassName}>{children}</DeferredVisual>;
+}
 
 const title = "TiTAS Packaged Drinking Water — Ekti Jaler Naam";
 const description =
@@ -134,6 +187,7 @@ function BrandIntro() {
             height={443}
             className="w-16 rounded-full md:w-20"
             loading="lazy"
+            fetchPriority="low"
           />
           <span className="text-xs font-semibold tracking-wide text-muted-foreground">
             Since {company.since}
@@ -185,6 +239,13 @@ function BrandIntro() {
             muted
             loop
             playsInline
+            // preload="none" prevents the browser from buffering this 622 KB
+            // decorative video during initial page load. Without it, the browser
+            // starts fetching the video immediately, competing directly with the
+            // hero LCP image on mobile connections. autoPlay still works \u2014 the
+            // browser begins loading the video once it's ready to play, but only
+            // after higher-priority resources (CSS, JS, LCP image) are resolved.
+            preload="none"
             aria-hidden="true"
             className="h-auto w-full max-w-[15rem] object-contain md:max-w-xs"
             style={{
@@ -220,9 +281,11 @@ function JourneySection() {
             </Link>
           </Button>
         </Reveal>
-        <Suspense fallback={<VisualFallback className="mt-16 min-h-[48rem] md:min-h-[14rem]" />}>
-          <WaterJourneyVisual />
-        </Suspense>
+        <ResponsiveVisual fallbackClassName="mt-16 min-h-[48rem] md:min-h-[14rem]">
+          <Suspense fallback={<VisualFallback className="mt-16 min-h-[48rem] md:min-h-[14rem]" />}>
+            <WaterJourneyVisual />
+          </Suspense>
+        </ResponsiveVisual>
       </div>
     </section>
   );
@@ -319,6 +382,7 @@ function PurificationSteps() {
           height={727}
           className="mx-auto h-auto w-full max-w-3xl rounded-lg border border-border object-contain"
           loading="lazy"
+          fetchPriority="low"
         />
       </Reveal>
     </Section>
@@ -367,6 +431,7 @@ function ProductStage({ product, active }: { product: Product; active: boolean }
         width={product.imageWidth}
         height={product.imageHeight}
         loading="lazy"
+        fetchPriority="low"
         className="animate-in fade-in zoom-in-95 duration-500 animate-float-slow relative h-[82%] w-auto object-contain drop-shadow-xl"
       />
     </div>
@@ -481,9 +546,13 @@ function OrderTitasSection() {
         />
 
         <Reveal delay={100} direction="right" distance={100} durationMs={400} easing="ease" replay>
-          <Suspense fallback={<VisualFallback className="mx-auto aspect-square w-full max-w-xs" />}>
-            <OrderingFlowVisual />
-          </Suspense>
+          <ResponsiveVisual fallbackClassName="mx-auto aspect-square w-full max-w-xs">
+            <Suspense
+              fallback={<VisualFallback className="mx-auto aspect-square w-full max-w-xs" />}
+            >
+              <OrderingFlowVisual />
+            </Suspense>
+          </ResponsiveVisual>
         </Reveal>
       </div>
     </Section>
@@ -554,13 +623,15 @@ function ServicesPreview() {
 
       {/* The real TiTAS services network artwork — radial on desktop,
           recomposed as a vertical flowing chain on mobile (handled inside). */}
-      <Suspense
-        fallback={
-          <VisualFallback className="mt-16 min-h-[40rem] md:mx-auto md:aspect-square md:max-w-2xl md:min-h-0" />
-        }
-      >
-        <ServicesNetworkVisual />
-      </Suspense>
+      <ResponsiveVisual fallbackClassName="mt-16 min-h-[40rem] md:mx-auto md:aspect-square md:max-w-2xl md:min-h-0">
+        <Suspense
+          fallback={
+            <VisualFallback className="mt-16 min-h-[40rem] md:mx-auto md:aspect-square md:max-w-2xl md:min-h-0" />
+          }
+        >
+          <ServicesNetworkVisual />
+        </Suspense>
+      </ResponsiveVisual>
     </Section>
   );
 }
@@ -647,6 +718,7 @@ function GalleryPreview() {
                 width={item.width}
                 height={item.height}
                 loading="lazy"
+                fetchPriority="low"
                 style={{ objectPosition: item.position }}
                 className={cn(
                   "size-full object-cover transition-transform duration-700 group-hover:scale-105",
@@ -701,6 +773,7 @@ function FinalCta() {
               width={doorstep.width}
               height={doorstep.height}
               loading="lazy"
+              fetchPriority="low"
               className="size-full object-cover object-center"
             />
           </div>
