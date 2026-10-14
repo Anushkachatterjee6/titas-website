@@ -1,8 +1,8 @@
-import range from "@/assets/titas/1000156792.jpg";
-import everyDrop from "@/assets/titas/1000156793.jpg";
-import studio from "@/assets/titas/1000156794.jpg";
-import lifestyle from "@/assets/titas/1000156796.jpg";
-import doorstep from "@/assets/titas/titas-slide-5-v2.png";
+import range from "@/assets/titas/1000156792.webp";
+import everyDrop from "@/assets/titas/1000156793.webp";
+import studio from "@/assets/titas/1000156794.webp";
+import lifestyle from "@/assets/titas/1000156796.webp";
+import doorstep from "@/assets/titas/titas-slide-5-v2.webp";
 // The original Logo (1).jpeg has a plain white square background baked in
 // (JPEGs can't carry transparency) — this is the same artwork, keyed and
 // cropped to a genuinely transparent PNG so it sits cleanly on any
@@ -10,12 +10,12 @@ import doorstep from "@/assets/titas/titas-slide-5-v2.png";
 import mark from "@/assets/titas/motion/titas-mark-transparent.png";
 import brandName from "@/assets/titas-brand-name.png.asset.json";
 import wordmark from "@/assets/titas-wordmark.png.asset.json";
-import bottle from "@/assets/titas/Demo TiTAS 1 L Bottle.png";
-import s1 from "@/assets/titas/titas-slide-1.jpg";
-import s2 from "@/assets/titas/titas-slide-2.jpg";
-import s3 from "@/assets/titas/titas-slide-3.jpg";
-import s4 from "@/assets/titas/titas-slide-4.jpg";
-import s5 from "@/assets/titas/titas-slide-5-v2.png";
+import bottle from "@/assets/titas/Demo TiTAS 1 L Bottle.webp";
+import s1 from "@/assets/titas/titas-slide-1.webp";
+import s2 from "@/assets/titas/titas-slide-2.webp";
+import s3 from "@/assets/titas/titas-slide-3.webp";
+import s4 from "@/assets/titas/titas-slide-4.webp";
+import s5 from "@/assets/titas/titas-slide-5-v2.webp";
 
 export const brandImages = {
   mark,
@@ -62,6 +62,8 @@ export const heroSlides = [
     alt: "A TiTAS delivery representative handing a pack of TiTAS 1 L bottles to a customer at her door",
     position: "50% 50%",
     mobilePosition: "62% 50%",
+    width: 1983,
+    height: 793,
   },
   {
     id: "every-drop",
@@ -100,12 +102,30 @@ export const galleryCategories = [
     items: [
       // Wide banner — the TiTAS wordmark sits in the upper-left third, not
       // the centre, so a centred square crop would cut it off.
-      { src: range, alt: "The full TiTAS pack range from 500 ml to 20 L", position: "22% 38%" },
+      {
+        src: range,
+        alt: "The full TiTAS pack range from 500 ml to 20 L",
+        position: "22% 38%",
+        width: 1600,
+        height: 639,
+      },
       // Portrait product shot, label already sits in the vertical middle —
       // the default centred crop already frames it correctly.
-      { src: studio, alt: "TiTAS 1 L bottle, studio photograph", position: "center" },
+      {
+        src: studio,
+        alt: "TiTAS 1 L bottle, studio photograph",
+        position: "center",
+        width: 1600,
+        height: 639,
+      },
       // Wide banner — wordmark sits right-of-centre, upper half.
-      { src: everyDrop, alt: "TiTAS 1 L bottle with water splash", position: "58% 38%" },
+      {
+        src: everyDrop,
+        alt: "TiTAS 1 L bottle with water splash",
+        position: "58% 38%",
+        width: 1600,
+        height: 639,
+      },
     ],
   },
   {
@@ -114,12 +134,20 @@ export const galleryCategories = [
     available: true,
     items: [
       // Tall bottle photo, label already centred — default crop is fine.
-      { src: bottle, alt: "TiTAS 1 L bottle showing the pack label", position: "center" },
+      {
+        src: bottle,
+        alt: "TiTAS 1 L bottle showing the pack label",
+        position: "center",
+        width: 1024,
+        height: 1536,
+      },
       // Wide banner — wordmark sits centred, upper third.
       {
         src: lifestyle,
         alt: "TiTAS packs photographed together with a traveller",
         position: "55% 32%",
+        width: 1600,
+        height: 639,
       },
     ],
   },
@@ -134,6 +162,8 @@ export const galleryCategories = [
         src: doorstep,
         alt: "TiTAS pack being handed over at a customer's door",
         position: "16% 22%",
+        width: 1983,
+        height: 793,
       },
     ],
   },

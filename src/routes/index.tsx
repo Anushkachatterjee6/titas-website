@@ -23,7 +23,7 @@ import {
   Waves,
 } from "lucide-react";
 import bottleImpactVideo from "@/assets/titas/motion/bottle-impact.mp4";
-import mineralCompositionImg from "@/assets/titas/motion/mineral-composition.png";
+import mineralCompositionImg from "@/assets/titas/motion/mineral-composition.webp";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { HeroSlideshow } from "@/components/site/HeroSlideshow";
@@ -60,7 +60,6 @@ function VisualFallback({ className }: { className?: string }) {
   return <div aria-hidden="true" className={className} />;
 }
 import { FAQAccordion } from "@/components/site/Blocks";
-import { DeliveryCoverageBanner } from "@/components/site/DeliveryCoverageBanner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { usePrefersReducedMotion } from "@/lib/hooks";
@@ -196,7 +195,6 @@ function BrandIntro() {
           />
         </Reveal>
       </div>
-      <DeliveryCoverageBanner className="relative mt-12 md:mt-16" />
     </Section>
   );
 }
@@ -366,6 +364,8 @@ function ProductStage({ product, active }: { product: Product; active: boolean }
         key={product.slug}
         src={product.image}
         alt={`${product.name} packaged drinking water`}
+        width={product.imageWidth}
+        height={product.imageHeight}
         loading="lazy"
         className="animate-in fade-in zoom-in-95 duration-500 animate-float-slow relative h-[82%] w-auto object-contain drop-shadow-xl"
       />
@@ -610,6 +610,8 @@ function GalleryPreview() {
           src: it.src as string,
           alt: it.alt as string,
           position: it.position as string,
+          width: it.width as number,
+          height: it.height as number,
         }))
       : [],
   );
@@ -642,6 +644,8 @@ function GalleryPreview() {
               <img
                 src={item.src}
                 alt={item.alt}
+                width={item.width}
+                height={item.height}
                 loading="lazy"
                 style={{ objectPosition: item.position }}
                 className={cn(
@@ -694,6 +698,8 @@ function FinalCta() {
             <img
               src={doorstep.src}
               alt={doorstep.alt}
+              width={doorstep.width}
+              height={doorstep.height}
               loading="lazy"
               className="size-full object-cover object-center"
             />

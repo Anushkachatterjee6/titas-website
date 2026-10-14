@@ -1,9 +1,9 @@
-import bottleAsset from "@/assets/titas/Demo TiTAS 1 L Bottle.png";
-import rangeAsset from "@/assets/titas/1000156792.jpg";
-import bottle500mlAsset from "@/assets/titas/motion/product-500ml.png";
-import bottle2lAsset from "@/assets/titas/motion/product-2l-v2.png";
-import bottle5lAsset from "@/assets/titas/motion/product-5l-v2.png";
-import bottle20lAsset from "@/assets/titas/motion/product-20l-new.png";
+import bottleAsset from "@/assets/titas/Demo TiTAS 1 L Bottle.webp";
+import rangeAsset from "@/assets/titas/1000156792.webp";
+import bottle500mlAsset from "@/assets/titas/motion/product-500ml.webp";
+import bottle2lAsset from "@/assets/titas/motion/product-2l-v2.webp";
+import bottle5lAsset from "@/assets/titas/motion/product-5l-v2.webp";
+import bottle20lAsset from "@/assets/titas/motion/product-20l-new.webp";
 
 /**
  * Product catalogue.
@@ -26,6 +26,10 @@ export type Product = {
   pricePerUnit: number;
   priceUnit: string;
   image: string;
+  /** Actual measured intrinsic size of `image` (not guessed) — lets the
+   *  browser reserve the right box before the bottle photo loads. */
+  imageWidth: number;
+  imageHeight: number;
   bestFor: string[];
 };
 
@@ -41,6 +45,8 @@ export const products: Product[] = [
     pricePerUnit: 160,
     priceUnit: "case of 24 bottles",
     image: bottle500mlAsset,
+    imageWidth: 1536,
+    imageHeight: 1024,
     bestFor: ["Travel & commuting", "Meetings & events", "Restaurants & cafés"],
   },
   {
@@ -48,13 +54,14 @@ export const products: Product[] = [
     size: "1 L",
     name: "TiTAS 1 L",
     headline: "Your Everyday Companion",
-    description:
-      "A practical everyday choice for home, work, travel and individual consumption.",
+    description: "A practical everyday choice for home, work, travel and individual consumption.",
     caseQty: 12,
     pricePerUnit: 135,
     priceUnit: "case of 12 bottles",
     /** The supplied studio photo is specifically the 1 L bottle. */
     image: bottleAsset,
+    imageWidth: 1024,
+    imageHeight: 1536,
     bestFor: ["Home & family use", "Workplace desks", "Day trips"],
   },
   {
@@ -68,6 +75,8 @@ export const products: Product[] = [
     pricePerUnit: 155,
     priceUnit: "case of 9 bottles",
     image: bottle2lAsset,
+    imageWidth: 1024,
+    imageHeight: 1536,
     bestFor: ["Family dining", "Shared consumption", "Long journeys"],
   },
   {
@@ -81,6 +90,8 @@ export const products: Product[] = [
     pricePerUnit: 45,
     priceUnit: "jar",
     image: bottle5lAsset,
+    imageWidth: 1024,
+    imageHeight: 1536,
     bestFor: ["Homes & kitchens", "Small gatherings", "Workplaces"],
   },
   {
@@ -94,14 +105,14 @@ export const products: Product[] = [
     pricePerUnit: 80,
     priceUnit: "jar",
     image: bottle20lAsset,
+    imageWidth: 724,
+    imageHeight: 1536,
     bestFor: ["Offices & institutions", "Commercial premises", "Scheduled supply"],
   },
 ];
 
 export const rangeImage = rangeAsset;
 
-export const getProduct = (slug: string) =>
-  products.find((p) => p.slug === slug.toLowerCase());
+export const getProduct = (slug: string) => products.find((p) => p.slug === slug.toLowerCase());
 
-export const formatPrice = (value: number) =>
-  `₹${value.toLocaleString("en-IN")}`;
+export const formatPrice = (value: number) => `₹${value.toLocaleString("en-IN")}`;

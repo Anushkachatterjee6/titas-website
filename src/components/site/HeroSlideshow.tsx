@@ -209,7 +209,19 @@ export function HeroSlideshow() {
                 alt={slide.alt}
                 width={slide.width}
                 height={slide.height}
+                // All slides stay eager — this carousel's non-active
+                // slides sit just outside the viewport (not display:none),
+                // so marking them loading="lazy" would make their fetch
+                // start time depend on the browser's own viewport-proximity
+                // heuristic. That can't be verified not to show a blank
+                // frame on a slow connection before autoplay reaches that
+                // slide, so eager is kept for all of them (matches the
+                // proven-safe prior behaviour) and only fetchPriority is
+                // used to hint the browser toward the slide that's
+                // actually visible at mount — a pure scheduling hint that
+                // never delays or skips a fetch.
                 loading="eager"
+                fetchPriority={i === 1 ? "high" : "low"}
                 decoding="async"
                 className="size-full object-cover object-center"
                 onError={() => {

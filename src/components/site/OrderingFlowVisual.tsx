@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import orderBrowseImg from "@/assets/titas/motion/TiTAS Water Marketplace Splash Showcase.png";
-import orderAddToCartImg from "@/assets/titas/motion/TiTAS Water Cart Splash (1).png";
-import orderCartReviewImg from "@/assets/titas/motion/TiTAS Water Cart Adventure.png";
-import orderConfirmedImg from "@/assets/titas/motion/TiTAS Order Confirmed 3D Scene.png";
-import orderDeliveryImg from "@/assets/titas/motion/TiTAS Water Delivery Tracking Graphic.png";
+import orderBrowseImg from "@/assets/titas/motion/TiTAS Water Marketplace Splash Showcase.webp";
+import orderAddToCartImg from "@/assets/titas/motion/TiTAS Water Cart Splash (1).webp";
+import orderCartReviewImg from "@/assets/titas/motion/TiTAS Water Cart Adventure.webp";
+import orderConfirmedImg from "@/assets/titas/motion/TiTAS Order Confirmed 3D Scene.webp";
+import orderDeliveryImg from "@/assets/titas/motion/TiTAS Water Delivery Tracking Graphic.webp";
 import { RoutePath } from "@/components/site/WaterMotion";
 import { usePrefersReducedMotion, useRevealOnce } from "@/lib/hooks";
 

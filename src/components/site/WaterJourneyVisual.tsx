@@ -1,8 +1,8 @@
-import sourceImg from "@/assets/titas/motion/source-3d.png";
-import purificationImg from "@/assets/titas/motion/purification-3d.png";
-import qualityImg from "@/assets/titas/motion/quality-3d.png";
-import bottleImg from "@/assets/titas/motion/bottle-3d.png";
-import deliveryImg from "@/assets/titas/motion/delivery-3d.png";
+import sourceImg from "@/assets/titas/motion/source-3d.webp";
+import purificationImg from "@/assets/titas/motion/purification-3d.webp";
+import qualityImg from "@/assets/titas/motion/quality-3d.webp";
+import bottleImg from "@/assets/titas/motion/bottle-3d.webp";
+import deliveryImg from "@/assets/titas/motion/delivery-3d.webp";
 import { usePrefersReducedMotion, useRevealOnce, useScrollProgress } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
