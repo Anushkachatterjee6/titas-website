@@ -314,6 +314,10 @@ function NetworkNode({
           aria-hidden="true"
           width={service.w}
           height={service.h}
+          // See WaterJourneyVisual.tsx for why this is needed: React's SSR
+          // renderer auto-preloads any <img> unless fetchPriority="low" is
+          // set, independent of this component's own lazy-loading.
+          fetchPriority="low"
           className="w-full select-none transition-[filter] duration-300"
           style={{
             filter: hovered
@@ -356,6 +360,7 @@ function ServicesNetworkMobile({
           alt="TiTAS"
           width={CENTER_IMG.w}
           height={CENTER_IMG.h}
+          fetchPriority="low"
           className="w-32 select-none drop-shadow-[0_16px_24px_rgba(10,40,70,0.22)]"
           draggable={false}
         />
@@ -436,6 +441,7 @@ function ServicesNetworkMobile({
                 aria-hidden="true"
                 width={s.w}
                 height={s.h}
+                fetchPriority="low"
                 className="w-28 select-none drop-shadow-[0_10px_16px_rgba(10,40,70,0.18)]"
                 draggable={false}
               />
@@ -513,6 +519,7 @@ export default function ServicesNetworkVisual() {
                 alt="TiTAS"
                 width={CENTER_IMG.w}
                 height={CENTER_IMG.h}
+                fetchPriority="low"
                 className="w-full select-none drop-shadow-[0_18px_26px_rgba(10,40,70,0.24)]"
                 draggable={false}
               />

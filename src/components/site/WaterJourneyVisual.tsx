@@ -103,6 +103,14 @@ function JourneyStageBox({
             aria-hidden="true"
             width={stage.w}
             height={stage.h}
+            // This component is lazy-loaded (see routes/index.tsx) and
+            // genuinely below the fold, but React's SSR renderer still
+            // auto-generates a <link rel="preload"> for any <img> it
+            // renders unless fetchPriority="low" is set — that happens
+            // independently of the JS-level code-splitting. Setting it
+            // here only affects preload-hint generation and relative
+            // fetch scheduling; it never defers or skips the fetch itself.
+            fetchPriority="low"
             className="relative h-full w-auto max-w-none select-none drop-shadow-[0_14px_18px_rgba(10,40,70,0.2)]"
             draggable={false}
           />

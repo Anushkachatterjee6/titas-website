@@ -1,4 +1,4 @@
-import wordmarkSrc from "@/assets/titas/motion/titas-wordmark.png";
+import wordmarkSrc from "@/assets/titas/motion/titas-wordmark.webp";
 import { cn } from "@/lib/utils";
 
 /**

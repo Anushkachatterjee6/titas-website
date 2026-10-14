@@ -100,6 +100,11 @@ export default function OrderingFlowVisual() {
                 alt={`TiTAS ordering flow — ${state.label} state`}
                 width={state.w}
                 height={state.h}
+                // See WaterJourneyVisual.tsx for why this is needed: React's
+                // SSR renderer auto-preloads any <img> unless
+                // fetchPriority="low" is set, independent of this
+                // component's own lazy-loading.
+                fetchPriority="low"
                 className="absolute inset-0 size-full select-none object-contain"
                 style={layerStyle}
                 draggable={false}
