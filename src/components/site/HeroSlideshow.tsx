@@ -206,6 +206,8 @@ export function HeroSlideshow() {
             >
               <img
                 src={slide.src}
+                srcSet={slide.srcSet}
+                sizes="100vw"
                 alt={slide.alt}
                 width={slide.width}
                 height={slide.height}
@@ -218,14 +220,14 @@ export function HeroSlideshow() {
                 // (not fetch timing) is what keeps them from competing
                 // with the visible LCP slide.
                 //
-                // The first visible slide also gets a sizes hint so the
-                // browser's preload scanner can estimate the correct
-                // rendered width (100 vw) rather than falling back to
-                // the image's intrinsic width as the fetch-size guess.
+                // srcSet/sizes give every slide — not just the critical
+                // one — a smaller candidate for narrow mobile viewports;
+                // React's SSR preload-hoisting carries srcSet/sizes
+                // through to the preloaded slide's <link> too, so the
+                // preload itself fetches the right-sized file.
                 loading="eager"
                 fetchPriority={i === 1 ? "high" : "low"}
                 decoding={i === 1 ? "sync" : "async"}
-                {...(i === 1 ? { sizes: "100vw" } : {})}
                 className="size-full object-cover object-center"
                 onError={() => {
                   // Never leave the hero showing a broken image — if the

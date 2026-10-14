@@ -16,6 +16,16 @@ import s2 from "@/assets/titas/titas-slide-2.webp";
 import s3 from "@/assets/titas/titas-slide-3.webp";
 import s4 from "@/assets/titas/titas-slide-4.webp";
 import s5 from "@/assets/titas/titas-slide-5-v2.webp";
+// 1200px-wide variants of the same crop/content, same encoder settings as
+// the full-size originals — used as the smaller `srcset` candidate so
+// narrow mobile viewports don't download the full 1600/1983px image. Same
+// visual framing, just fewer pixels; verified visually equivalent at
+// actual mobile render size before adding.
+import s1Mobile from "@/assets/titas/titas-slide-1-mobile.webp";
+import s2Mobile from "@/assets/titas/titas-slide-2-mobile.webp";
+import s3Mobile from "@/assets/titas/titas-slide-3-mobile.webp";
+import s4Mobile from "@/assets/titas/titas-slide-4-mobile.webp";
+import s5Mobile from "@/assets/titas/titas-slide-5-v2-mobile.webp";
 
 export const brandImages = {
   mark,
@@ -39,10 +49,16 @@ const APPROVED_SLIDE_DIMENSIONS = [
   { width: 1983, height: 793 },
 ];
 
+const APPROVED_SLIDE_MOBILE = [s1Mobile, s2Mobile, s3Mobile, s4Mobile, s5Mobile];
+
 /** The five APPROVED homepage slideshow images — use unmodified, full 16:9-style frame. */
 export const approvedSlides = [s1, s2, s3, s4, s5].map((src, i) => ({
   id: `slide-${i + 1}`,
   src,
+  // 1200w mobile candidate + the full-size original, same content/crop at
+  // both resolutions — lets narrow viewports fetch the smaller file
+  // instead of always downloading the ~1600-1983px original.
+  srcSet: `${APPROVED_SLIDE_MOBILE[i]} 1200w, ${src} ${APPROVED_SLIDE_DIMENSIONS[i]!.width}w`,
   alt: `TiTAS packaged drinking water — promotional image ${i + 1}`,
   ...APPROVED_SLIDE_DIMENSIONS[i]!,
 }));
