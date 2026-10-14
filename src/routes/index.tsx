@@ -166,7 +166,78 @@ function Index() {
   );
 }
 
+/**
+ * Decides when the decorative bottle-impact video is allowed to actually
+ * start fetching. `preload="none"` alone doesn't stop this: browsers (most
+ * notably Chromium) still buffer an `autoplay` video almost immediately
+ * regardless of the `preload` hint, since autoplay inherently needs some
+ * data buffered. That puts this 622 KB fetch in direct bandwidth
+ * contention with the hero LCP image on mobile.
+ *
+ * This waits for the hero slideshow's currently-visible slide (the one
+ * marked fetchPriority="high" — see HeroSlideshow.tsx) to finish loading,
+ * then flips `src` on. If that image already finished before this effect
+ * runs (`.complete`), it fires immediately rather than waiting on an event
+ * that already happened. If the hero image can't be found at all (e.g. a
+ * future markup change), it falls back to the browser's own idle
+ * scheduling instead of guessing with a fixed timer, so the video is never
+ * stuck waiting indefinitely.
+ */
+function useDeferredVideoSrc(src: string) {
+  const [videoSrc, setVideoSrc] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+    const activate = () => {
+      if (!cancelled) setVideoSrc(src);
+    };
+
+    const heroImg = document.querySelector<HTMLImageElement>(
+      '[aria-label="TiTAS highlights"] img[fetchpriority="high"]',
+    );
+
+    if (heroImg) {
+      if (heroImg.complete) {
+        activate();
+        return () => {
+          cancelled = true;
+        };
+      }
+      heroImg.addEventListener("load", activate, { once: true });
+      heroImg.addEventListener("error", activate, { once: true });
+      return () => {
+        cancelled = true;
+        heroImg.removeEventListener("load", activate);
+        heroImg.removeEventListener("error", activate);
+      };
+    }
+
+    if (typeof requestIdleCallback === "function") {
+      // Only reached if the hero image can't be found at all. Without an
+      // explicit timeout, requestIdleCallback has no guaranteed upper
+      // bound — on a continuously busy main thread it could defer
+      // indefinitely, leaving the video permanently without a source.
+      // This timeout is a safety bound on that fallback path, not a
+      // guessed primary delay.
+      const id = requestIdleCallback(activate, { timeout: 2000 });
+      return () => {
+        cancelled = true;
+        cancelIdleCallback(id);
+      };
+    }
+
+    activate();
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  return videoSrc;
+}
+
 function BrandIntro() {
+  const videoSrc = useDeferredVideoSrc(bottleImpactVideo);
+
   return (
     <Section className="relative overflow-hidden py-14 md:py-20">
       {/* Kept left, well clear of the video column on the right */}
@@ -234,17 +305,17 @@ function BrandIntro() {
           className="flex justify-center lg:justify-self-end"
         >
           <video
-            src={bottleImpactVideo}
+            {...(videoSrc ? { src: videoSrc } : {})}
             autoPlay
             muted
             loop
             playsInline
-            // preload="none" prevents the browser from buffering this 622 KB
-            // decorative video during initial page load. Without it, the browser
-            // starts fetching the video immediately, competing directly with the
-            // hero LCP image on mobile connections. autoPlay still works \u2014 the
-            // browser begins loading the video once it's ready to play, but only
-            // after higher-priority resources (CSS, JS, LCP image) are resolved.
+            // preload="none" is kept as a secondary hint, but the real
+            // guard is videoSrc itself: the element has no src attribute
+            // at all (not even an empty one, which can trigger its own
+            // unwanted request) until useDeferredVideoSrc flips it on
+            // after the hero image is done \u2014 see that hook for why
+            // preload="none" alone isn't sufficient for an autoplay video.
             preload="none"
             aria-hidden="true"
             className="h-auto w-full max-w-[15rem] object-contain md:max-w-xs"
