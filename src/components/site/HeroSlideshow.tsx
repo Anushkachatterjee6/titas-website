@@ -44,6 +44,33 @@ export function HeroSlideshow() {
   const touchX = useRef<number | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
 
+  // The LCP slide (extended index 1) keeps its src/srcSet unconditionally —
+  // the other 4 real slides (and their clone copies) start with NO src
+  // attribute at all, so the browser never discovers a fetchable URL for
+  // them until this flips true. That keeps their ~385KB combined weight
+  // from competing with the LCP slide's own fetch during the critical
+  // render window, without ever leaving an <img> with an empty src (which
+  // some browsers turn into a spurious request to the current page URL).
+  // A ref mirrors the state for synchronous reads inside go()/autoplay,
+  // since state itself isn't readable until the next render.
+  const [secondaryReady, setSecondaryReady] = useState(false);
+  const secondaryReadyRef = useRef(false);
+  const lcpImgRef = useRef<HTMLImageElement | null>(null);
+
+  const markSecondaryReady = useCallback(() => {
+    if (secondaryReadyRef.current) return;
+    secondaryReadyRef.current = true;
+    setSecondaryReady(true);
+  }, []);
+
+  // Handles the LCP image already being loaded from cache before this
+  // effect's onLoad/onError handlers were even attached — mirrors the same
+  // .complete check used by the decorative-video defer elsewhere on this
+  // page, for the same reason (the load event never fires a second time).
+  useEffect(() => {
+    if (lcpImgRef.current?.complete) markSecondaryReady();
+  }, [markSecondaryReady]);
+
   const realIndex = (((trackIndex - 1) % n) + n) % n;
 
   useEffect(() => {
@@ -79,6 +106,15 @@ export function HeroSlideshow() {
 
   const step = useCallback(
     (delta: number) => {
+      // Every path that can move the track — autoplay's tick, manual
+      // next/prev, keyboard, swipe — goes through this one function, so
+      // marking secondaries ready here (before setTrackIndex) covers all of
+      // them in one place, including a shortest-path jump that visually
+      // sweeps past slides between the old and new position. React 19
+      // batches this with the setTrackIndex call below into the same
+      // commit, so the images become fetchable in the same render as the
+      // transform that's about to reveal them — not after.
+      markSecondaryReady();
       setTransitionsOn(true);
       setTrackIndex((i) => {
         const next = i + delta;
@@ -93,7 +129,7 @@ export function HeroSlideshow() {
         return next;
       });
     },
-    [n],
+    [n, markSecondaryReady],
   );
 
   const go = useCallback(
@@ -198,46 +234,64 @@ export function HeroSlideshow() {
             ["--hero-ease" as string]: EASE,
           }}
         >
-          {extended.map((slide, i) => (
-            <figure
-              key={`${slide.id}-${i}`}
-              aria-hidden={i !== trackIndex}
-              className="relative aspect-[1600/639] w-full shrink-0 grow-0 basis-full"
-            >
-              <img
-                src={slide.src}
-                srcSet={slide.srcSet}
-                sizes="100vw"
-                alt={slide.alt}
-                width={slide.width}
-                height={slide.height}
-                // All slides stay eager — these carousel slides sit just
-                // outside the viewport via the track's transform (not
-                // display:none), with no scroll-proximity signal like a
-                // true below-the-fold element has, so loading="lazy" here
-                // can't be verified not to show a blank frame on a slow
-                // connection before autoplay reaches that slide. Priority
-                // (not fetch timing) is what keeps them from competing
-                // with the visible LCP slide.
-                //
-                // srcSet/sizes give every slide — not just the critical
-                // one — a smaller candidate for narrow mobile viewports;
-                // React's SSR preload-hoisting carries srcSet/sizes
-                // through to the preloaded slide's <link> too, so the
-                // preload itself fetches the right-sized file.
-                loading="eager"
-                fetchPriority={i === 1 ? "high" : "low"}
-                decoding={i === 1 ? "sync" : "async"}
-                className="size-full object-cover object-center"
-                onError={() => {
-                  // Never leave the hero showing a broken image — if the
-                  // slide currently on screen fails to load, move straight
-                  // past it instead of sitting on an invalid frame.
-                  if (i === trackIndex) step(1);
-                }}
-              />
-            </figure>
-          ))}
+          {extended.map((slide, i) => {
+            const isLcpSlide = i === 1;
+            // The LCP slide always has its src; every other slide (and its
+            // clone copy, which shares the same `slide` object) only gets
+            // one once markSecondaryReady() has fired — never an empty
+            // src/srcSet, which some browsers turn into a spurious request
+            // to the current page URL. width/height stay on every <img>
+            // regardless, so the aspect-ratio box is reserved identically
+            // either way — no layout shift from this.
+            const showReal = isLcpSlide || secondaryReady;
+            return (
+              <figure
+                key={`${slide.id}-${i}`}
+                aria-hidden={i !== trackIndex}
+                className="relative aspect-[1600/639] w-full shrink-0 grow-0 basis-full"
+              >
+                <img
+                  {...(showReal ? { src: slide.src, srcSet: slide.srcSet } : {})}
+                  sizes="100vw"
+                  alt={slide.alt}
+                  width={slide.width}
+                  height={slide.height}
+                  // All slides stay eager — these carousel slides sit just
+                  // outside the viewport via the track's transform (not
+                  // display:none), with no scroll-proximity signal like a
+                  // true below-the-fold element has, so loading="lazy" here
+                  // can't be verified not to show a blank frame on a slow
+                  // connection before autoplay reaches that slide. Priority
+                  // (not fetch timing) is what keeps them from competing
+                  // with the visible LCP slide. The src-deferral above (not
+                  // loading="lazy") is what actually keeps the other 4
+                  // slides' ~385KB out of the LCP slide's own fetch window.
+                  //
+                  // srcSet/sizes give every slide — not just the critical
+                  // one — a smaller candidate for narrow mobile viewports;
+                  // React's SSR preload-hoisting carries srcSet/sizes
+                  // through to the preloaded slide's <link> too, so the
+                  // preload itself fetches the right-sized file.
+                  loading="eager"
+                  fetchPriority={i === 1 ? "high" : "low"}
+                  decoding={i === 1 ? "sync" : "async"}
+                  className="size-full object-cover object-center"
+                  ref={isLcpSlide ? lcpImgRef : undefined}
+                  onLoad={isLcpSlide ? markSecondaryReady : undefined}
+                  onError={() => {
+                    // A failed LCP fetch must not permanently strand the
+                    // other 4 slides without a src — same bug class an
+                    // earlier round caught in the deferred-video hook.
+                    if (isLcpSlide) markSecondaryReady();
+                    // Never leave the hero showing a broken image — if the
+                    // slide currently on screen fails to load, move straight
+                    // past it instead of sitting on an invalid frame.
+                    if (i === trackIndex) step(1);
+                  }}
+                />
+              </figure>
+            );
+          })}
         </div>
 
         <HeroControl
