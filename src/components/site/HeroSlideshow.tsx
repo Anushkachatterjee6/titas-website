@@ -274,7 +274,7 @@ export function HeroSlideshow() {
                   // preload itself fetches the right-sized file.
                   loading="eager"
                   fetchPriority={i === 1 ? "high" : "low"}
-                  decoding={i === 1 ? "sync" : "async"}
+                  decoding="async"
                   className="size-full object-cover object-center"
                   ref={isLcpSlide ? lcpImgRef : undefined}
                   onLoad={isLcpSlide ? markSecondaryReady : undefined}
