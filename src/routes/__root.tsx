@@ -17,7 +17,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
 import { AuthProvider } from "../lib/auth";
 import { CartDrawer } from "../components/site/CartDrawer";
-import { ChatWidget } from "../components/site/ChatWidget";
+import { ChatLauncher } from "../components/site/ChatLauncher";
 import { WhatsAppButton } from "../components/site/WhatsAppButton";
 import { Toaster } from "../components/ui/sonner";
 
@@ -183,7 +183,7 @@ function RootComponent() {
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           <CartDrawer />
-          <ChatWidget />
+          <ChatLauncher />
           <WhatsAppButton />
           <Toaster position="bottom-center" />
         </CartProvider>

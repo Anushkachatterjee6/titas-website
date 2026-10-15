@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Droplet, Send, X } from "lucide-react";
+import { Droplet, Send } from "lucide-react";
 import { sendChatMessage, CHAT_MAX_MESSAGE_LENGTH, type ChatTurn } from "@/lib/chat";
 import { getScreenContent, type Screen, type ScreenButton } from "@/lib/chatWorkflows";
 import { useCart } from "@/lib/cart";
@@ -45,16 +45,26 @@ function welcomeMessage(): Message {
   };
 }
 
-/** Premium floating TiTAS Assistant — a water-inspired chat panel, open to
- *  every visitor regardless of login state. Deterministic guided workflows
- *  (see src/lib/chatWorkflows.ts) handle the quick-action buttons without
- *  any Gemini call; free-typed questions still go through the existing
- *  Gemini-backed Edge Function exactly as before — it's informational only
- *  and never touches account/order data either way. */
-export function ChatWidget() {
+/** Premium floating TiTAS Assistant panel — a water-inspired chat panel,
+ *  open to every visitor regardless of login state. Deterministic guided
+ *  workflows (see src/lib/chatWorkflows.ts) handle the quick-action buttons
+ *  without any Gemini call; free-typed questions still go through the
+ *  existing Gemini-backed Edge Function exactly as before — it's
+ *  informational only and never touches account/order data either way.
+ *
+ *  This is the heavy half of the chat experience — lazy-loaded by
+ *  ChatLauncher.tsx (which owns the always-visible floating trigger/close
+ *  buttons and `open` state) only once the visitor first opens the chat, so
+ *  this component's code — and its chatWorkflows/chat/cart/products
+ *  dependencies — never has to be fetched, parsed or executed on a page
+ *  load where the chat is never used. Once lazy-loaded, ChatLauncher keeps
+ *  this component mounted for the rest of the page's lifetime (toggling
+ *  `open` only), so `messages`/`screen` state below survives a close and
+ *  reopen exactly as it did when this was a single self-contained
+ *  component — see TiTAS mobile-performance investigation. */
+export default function ChatWidget({ open }: { open: boolean }) {
   const cart = useCart();
 
-  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([welcomeMessage()]);
   const [screen, setScreen] = useState<Screen>(MAIN_SCREEN);
   const [input, setInput] = useState("");
@@ -65,10 +75,6 @@ export function ChatWidget() {
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, sending]);
-
-  const handleToggle = () => {
-    setOpen((v) => !v);
-  };
 
   // --- Free-text (existing Gemini flow) — unchanged behaviour ---------------
   const submitMessage = async (text: string) => {
@@ -163,49 +169,8 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* Floating trigger row — a "Chat with TiTAS" pill beside the assistant
-          button, both wired to the same handleToggle. Hidden while the panel
-          is open so it never appears inside/behind the chat window. */}
-      {!open && (
-        <div className="fixed right-5 bottom-5 z-40 flex items-center gap-2.5 sm:right-7 sm:bottom-7">
-          <button
-            type="button"
-            onClick={handleToggle}
-            aria-label="Chat with TiTAS"
-            className="animate-in fade-in slide-in-from-right-1 rounded-full border border-border bg-card/95 px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-ink shadow-lift transition-transform duration-200 hover:-translate-y-0.5"
-          >
-            <span className="hidden sm:inline">Chat with TiTAS</span>
-            <span className="sm:hidden">Chat with us</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleToggle}
-            aria-label="Open TiTAS Assistant"
-            className="relative flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-float transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink"
-          >
-            <span
-              aria-hidden="true"
-              className="animate-ripple absolute inset-0 rounded-full border border-aqua/50"
-            />
-            <Droplet className="size-6" aria-hidden="true" />
-          </button>
-        </div>
-      )}
-
-      {/* Close trigger — replaces the row above while the panel is open. */}
-      {open && (
-        <button
-          type="button"
-          onClick={handleToggle}
-          aria-label="Close TiTAS Assistant"
-          className="fixed right-5 bottom-5 z-40 flex size-14 rotate-90 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-float transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink sm:right-7 sm:bottom-7"
-        >
-          <X className="size-5" aria-hidden="true" />
-        </button>
-      )}
-
-      {/* Panel */}
+      {/* Panel — the floating trigger/close buttons now live in
+          ChatLauncher.tsx, which controls `open`. */}
       {open && (
         <div
           role="dialog"
@@ -230,7 +195,10 @@ export function ChatWidget() {
           {/* Messages */}
           <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto bg-background px-4 py-4">
             {messages.map((m) => (
-              <div key={m.id} className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}>
+              <div
+                key={m.id}
+                className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}
+              >
                 <p
                   className={cn(
                     "max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-line",
@@ -275,7 +243,10 @@ export function ChatWidget() {
           </div>
 
           {/* Input */}
-          <form className="flex items-center gap-2 border-t border-border bg-card p-3" onSubmit={handleFormSubmit}>
+          <form
+            className="flex items-center gap-2 border-t border-border bg-card p-3"
+            onSubmit={handleFormSubmit}
+          >
             <input
               type="text"
               value={input}
@@ -287,7 +258,9 @@ export function ChatWidget() {
                   submitMessage(input);
                 }
               }}
-              placeholder={freeTextMode ? "Type your question…" : "Ask about products, delivery, orders…"}
+              placeholder={
+                freeTextMode ? "Type your question…" : "Ask about products, delivery, orders…"
+              }
               className="h-10 flex-1 rounded-full border border-border bg-background px-4 text-sm text-ink placeholder:text-muted-foreground focus:border-aqua focus:outline-none"
             />
             <button
