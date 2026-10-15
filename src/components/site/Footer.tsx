@@ -3,7 +3,7 @@ import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Logo } from "./Logo";
 import { SocialLinks } from "./SocialLinks";
 import { company, mailHref, telHref, whatsappHref } from "@/data/company";
-import pageSurfaceImg from "@/assets/titas/motion/page-surface-water-blue-v2.png";
+import pageSurfaceImg from "@/assets/titas/motion/page-surface-water-blue-v2.webp";
 
 const quickLinks = [
   { label: "Home", to: "/" },

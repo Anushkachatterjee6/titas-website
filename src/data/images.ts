@@ -5,9 +5,12 @@ import lifestyle from "@/assets/titas/1000156796.webp";
 import doorstep from "@/assets/titas/titas-slide-5-v2.webp";
 // The original Logo (1).jpeg has a plain white square background baked in
 // (JPEGs can't carry transparency) — this is the same artwork, keyed and
-// cropped to a genuinely transparent PNG so it sits cleanly on any
+// cropped to a genuinely transparent image so it sits cleanly on any
 // background without a white box or square corners behind the circular mark.
-import mark from "@/assets/titas/motion/titas-mark-transparent.png";
+// Served as a lossless WebP (titas-mark-transparent.png is the untouched
+// source, kept alongside it) — pixel-identical at every visible pixel,
+// verified directly against the PNG rather than assumed from "lossless".
+import mark from "@/assets/titas/motion/titas-mark-transparent.webp";
 import brandName from "@/assets/titas-brand-name.png.asset.json";
 import wordmark from "@/assets/titas-wordmark.png.asset.json";
 import bottle from "@/assets/titas/Demo TiTAS 1 L Bottle.webp";

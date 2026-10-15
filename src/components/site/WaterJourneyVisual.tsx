@@ -1,8 +1,8 @@
-import sourceImg from "@/assets/titas/motion/source-3d.webp";
-import purificationImg from "@/assets/titas/motion/purification-3d.webp";
-import qualityImg from "@/assets/titas/motion/quality-3d.webp";
-import bottleImg from "@/assets/titas/motion/bottle-3d.webp";
-import deliveryImg from "@/assets/titas/motion/delivery-3d.webp";
+import sourceImg from "@/assets/titas/motion/source-3d-560.webp";
+import purificationImg from "@/assets/titas/motion/purification-3d-560.webp";
+import qualityImg from "@/assets/titas/motion/quality-3d-560.webp";
+import bottleImg from "@/assets/titas/motion/bottle-3d-560.webp";
+import deliveryImg from "@/assets/titas/motion/delivery-3d-560.webp";
 import { usePrefersReducedMotion, useRevealOnce, useScrollProgress } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
@@ -20,16 +20,20 @@ import { cn } from "@/lib/utils";
 
 const REVEAL_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
 
-// w/h are each PNG's actual measured intrinsic size (not guessed) — used as
-// the <img> width/height attributes below so the browser can reserve the
+// w/h are each asset's actual measured intrinsic size (not guessed) — used
+// as the <img> width/height attributes below so the browser can reserve the
 // right aspect ratio before the image loads, without affecting the
-// CSS-driven display size (h-full w-auto).
+// CSS-driven display size (h-full w-auto). Downscaled to 560px tall (the
+// max CSS render height here is 144px — see JourneyStageBox below — so this
+// keeps ~3.9x headroom for high-DPI screens while cutting ~63% of bytes vs.
+// the original ~1150-1550px renders) — see TiTAS mobile-performance
+// investigation.
 const JOURNEY_STAGES = [
-  { key: "source", label: "Source", img: sourceImg, w: 1364, h: 1153 },
-  { key: "purification", label: "Purification", img: purificationImg, w: 1536, h: 1024 },
-  { key: "quality", label: "Quality", img: qualityImg, w: 1373, h: 1146 },
-  { key: "bottle", label: "Bottle", img: bottleImg, w: 1312, h: 1199 },
-  { key: "delivery", label: "Delivery", img: deliveryImg, w: 1536, h: 1024 },
+  { key: "source", label: "Source", img: sourceImg, w: 662, h: 560 },
+  { key: "purification", label: "Purification", img: purificationImg, w: 840, h: 560 },
+  { key: "quality", label: "Quality", img: qualityImg, w: 671, h: 560 },
+  { key: "bottle", label: "Bottle", img: bottleImg, w: 613, h: 560 },
+  { key: "delivery", label: "Delivery", img: deliveryImg, w: 840, h: 560 },
 ] as const;
 
 const JOURNEY_ENTER_MS = 650;

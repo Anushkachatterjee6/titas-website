@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { ScriptAccent } from "./TiTASWordmark";
 import { cn } from "@/lib/utils";
-import pageSurfaceImg from "@/assets/titas/motion/page-surface-water-blue-v2.png";
+import pageSurfaceImg from "@/assets/titas/motion/page-surface-water-blue-v2.webp";
 import type { HeroImage } from "@/data/heroImages";
 
 export function PageHero({
