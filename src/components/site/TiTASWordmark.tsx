@@ -1,4 +1,4 @@
-import wordmarkSrc from "@/assets/titas/motion/titas-wordmark.webp";
+import wordmarkSrc from "@/assets/titas/motion/titas-wordmark-800.webp";
 import { cn } from "@/lib/utils";
 
 /**
@@ -32,12 +32,15 @@ export function TiTASWordmark({
     <img
       src={wordmarkSrc}
       alt={title}
-      // Actual measured intrinsic size (2019x558) — every call site scales
-      // this via its own className (h-6, h-10, h-[0.8em]…), so these
-      // attributes only give the browser the real aspect ratio up front;
-      // they don't change how large the mark renders anywhere.
-      width={2019}
-      height={558}
+      // Actual measured intrinsic size of the 800px-wide asset (same
+      // artwork, downscaled losslessly — verified visually equivalent at
+      // every call site's actual max rendered size, the largest being
+      // PageHero's h1 heading at ~51px tall). Every call site scales this
+      // via its own className (h-6, h-10, h-[0.8em]…), so these attributes
+      // only give the browser the real aspect ratio up front; they don't
+      // change how large the mark renders anywhere.
+      width={800}
+      height={222}
       draggable={false}
       className={cn("h-6 w-auto object-contain select-none", className)}
     />
