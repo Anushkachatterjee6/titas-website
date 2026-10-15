@@ -29,6 +29,14 @@ import s2Mobile from "@/assets/titas/titas-slide-2-mobile.webp";
 import s3Mobile from "@/assets/titas/titas-slide-3-mobile.webp";
 import s4Mobile from "@/assets/titas/titas-slide-4-mobile.webp";
 import s5Mobile from "@/assets/titas/titas-slide-5-v2-mobile.webp";
+// Slide 1 only — this is the LCP candidate (fetchPriority="high" in
+// HeroSlideshow.tsx), so it's the one slide worth a third, smaller tier:
+// 960w, below the existing 1200w, for the ~2.0-2.3x DPR mobile devices
+// whose target resolution falls under 1200px. Verified visually equivalent
+// at actual mobile render size and under magnified inspection of the
+// TiTAS wordmark/text before adding — see TiTAS mobile-performance
+// investigation. The other four slides are unaffected.
+import s1Mobile960 from "@/assets/titas/titas-slide-1-mobile-960.webp";
 
 export const brandImages = {
   mark,
@@ -53,6 +61,8 @@ const APPROVED_SLIDE_DIMENSIONS = [
 ];
 
 const APPROVED_SLIDE_MOBILE = [s1Mobile, s2Mobile, s3Mobile, s4Mobile, s5Mobile];
+// Only slide 1 (index 0) has a 960w tier — see the import comment above.
+const APPROVED_SLIDE_MOBILE_960 = [s1Mobile960, undefined, undefined, undefined, undefined];
 
 /** The five APPROVED homepage slideshow images — use unmodified, full 16:9-style frame. */
 export const approvedSlides = [s1, s2, s3, s4, s5].map((src, i) => ({
@@ -60,8 +70,11 @@ export const approvedSlides = [s1, s2, s3, s4, s5].map((src, i) => ({
   src,
   // 1200w mobile candidate + the full-size original, same content/crop at
   // both resolutions — lets narrow viewports fetch the smaller file
-  // instead of always downloading the ~1600-1983px original.
-  srcSet: `${APPROVED_SLIDE_MOBILE[i]} 1200w, ${src} ${APPROVED_SLIDE_DIMENSIONS[i]!.width}w`,
+  // instead of always downloading the ~1600-1983px original. Slide 1 adds
+  // a 960w candidate below that, for the LCP's narrowest common targets.
+  srcSet: APPROVED_SLIDE_MOBILE_960[i]
+    ? `${APPROVED_SLIDE_MOBILE_960[i]} 960w, ${APPROVED_SLIDE_MOBILE[i]} 1200w, ${src} ${APPROVED_SLIDE_DIMENSIONS[i]!.width}w`
+    : `${APPROVED_SLIDE_MOBILE[i]} 1200w, ${src} ${APPROVED_SLIDE_DIMENSIONS[i]!.width}w`,
   alt: `TiTAS packaged drinking water — promotional image ${i + 1}`,
   ...APPROVED_SLIDE_DIMENSIONS[i]!,
 }));
