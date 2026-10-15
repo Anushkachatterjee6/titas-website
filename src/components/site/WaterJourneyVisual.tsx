@@ -3,6 +3,18 @@ import purificationImg from "@/assets/titas/motion/purification-3d-560.webp";
 import qualityImg from "@/assets/titas/motion/quality-3d-560.webp";
 import bottleImg from "@/assets/titas/motion/bottle-3d-560.webp";
 import deliveryImg from "@/assets/titas/motion/delivery-3d-560.webp";
+// Mobile-tier variants (~300px tall vs. the 560px desktop/high-DPI assets
+// above) — selected via a <picture><source media> breakpoint matching the
+// component's own md: CSS breakpoint below, not a plain srcSet/sizes pair:
+// these images are sized by CSS HEIGHT (h-full w-auto), and the srcSet/
+// sizes algorithm only resolves against width, so it can't express "give me
+// a smaller file under this rendered height" — <picture> with a media
+// query is the correct native mechanism for a height-constrained image.
+import sourceImgMobile from "@/assets/titas/motion/source-3d-mobile.webp";
+import purificationImgMobile from "@/assets/titas/motion/purification-3d-mobile.webp";
+import qualityImgMobile from "@/assets/titas/motion/quality-3d-mobile.webp";
+import bottleImgMobile from "@/assets/titas/motion/bottle-3d-mobile.webp";
+import deliveryImgMobile from "@/assets/titas/motion/delivery-3d-mobile.webp";
 import { usePrefersReducedMotion, useRevealOnce, useScrollProgress } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
@@ -29,11 +41,32 @@ const REVEAL_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
 // the original ~1150-1550px renders) — see TiTAS mobile-performance
 // investigation.
 const JOURNEY_STAGES = [
-  { key: "source", label: "Source", img: sourceImg, w: 662, h: 560 },
-  { key: "purification", label: "Purification", img: purificationImg, w: 840, h: 560 },
-  { key: "quality", label: "Quality", img: qualityImg, w: 671, h: 560 },
-  { key: "bottle", label: "Bottle", img: bottleImg, w: 613, h: 560 },
-  { key: "delivery", label: "Delivery", img: deliveryImg, w: 840, h: 560 },
+  { key: "source", label: "Source", img: sourceImg, imgMobile: sourceImgMobile, w: 662, h: 560 },
+  {
+    key: "purification",
+    label: "Purification",
+    img: purificationImg,
+    imgMobile: purificationImgMobile,
+    w: 840,
+    h: 560,
+  },
+  {
+    key: "quality",
+    label: "Quality",
+    img: qualityImg,
+    imgMobile: qualityImgMobile,
+    w: 671,
+    h: 560,
+  },
+  { key: "bottle", label: "Bottle", img: bottleImg, imgMobile: bottleImgMobile, w: 613, h: 560 },
+  {
+    key: "delivery",
+    label: "Delivery",
+    img: deliveryImg,
+    imgMobile: deliveryImgMobile,
+    w: 840,
+    h: 560,
+  },
 ] as const;
 
 const JOURNEY_ENTER_MS = 650;
@@ -101,23 +134,38 @@ function JourneyStageBox({
             aria-hidden="true"
             className="absolute inset-x-[10%] bottom-[2%] h-[14%] rounded-full bg-ink/25 blur-md"
           />
-          <img
-            src={stage.img}
-            alt=""
-            aria-hidden="true"
-            width={stage.w}
-            height={stage.h}
-            // This component is lazy-loaded (see routes/index.tsx) and
-            // genuinely below the fold, but React's SSR renderer still
-            // auto-generates a <link rel="preload"> for any <img> it
-            // renders unless fetchPriority="low" is set — that happens
-            // independently of the JS-level code-splitting. Setting it
-            // here only affects preload-hint generation and relative
-            // fetch scheduling; it never defers or skips the fetch itself.
-            fetchPriority="low"
-            className="relative h-full w-auto max-w-none select-none drop-shadow-[0_14px_18px_rgba(10,40,70,0.2)]"
-            draggable={false}
-          />
+          <picture>
+            {/* Mobile tier (~300px tall) below the component's own md:
+                breakpoint (768px, matching the h-[7.5rem]/sm:h-32 vs.
+                md:h-36 CSS sizing just above) — ~64-67% smaller than the
+                560px desktop/high-DPI asset the <img> falls back to.
+                <picture> + media, not srcSet/sizes: these images are sized
+                by CSS height (h-full w-auto), and the width-based srcSet/
+                sizes algorithm has no way to express "pick a smaller file
+                under this rendered height" — <picture> with a plain media
+                query is the correct native mechanism here, and it doesn't
+                add any box of its own, so the inner <img>'s existing
+                className still fully controls layout regardless of which
+                source wins. */}
+            <source media="(max-width: 767px)" srcSet={stage.imgMobile} />
+            <img
+              src={stage.img}
+              alt=""
+              aria-hidden="true"
+              width={stage.w}
+              height={stage.h}
+              // This component is lazy-loaded (see routes/index.tsx) and
+              // genuinely below the fold, but React's SSR renderer still
+              // auto-generates a <link rel="preload"> for any <img> it
+              // renders unless fetchPriority="low" is set — that happens
+              // independently of the JS-level code-splitting. Setting it
+              // here only affects preload-hint generation and relative
+              // fetch scheduling; it never defers or skips the fetch itself.
+              fetchPriority="low"
+              className="relative h-full w-auto max-w-none select-none drop-shadow-[0_14px_18px_rgba(10,40,70,0.2)]"
+              draggable={false}
+            />
+          </picture>
           {stage.key === "quality" && !reducedMotion && (
             <span
               aria-hidden="true"

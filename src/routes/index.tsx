@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import bottleImpactVideo from "@/assets/titas/motion/bottle-impact.mp4";
 import mineralCompositionImg from "@/assets/titas/motion/mineral-composition.webp";
+import mineralCompositionImgMobile from "@/assets/titas/motion/mineral-composition-mobile.webp";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { HeroSlideshow } from "@/components/site/HeroSlideshow";
@@ -448,6 +449,14 @@ function PurificationSteps() {
       <Reveal direction="up" delay={140} className="mt-6">
         <img
           src={mineralCompositionImg}
+          // This image is sized by CSS WIDTH (w-full, capped at max-w-3xl =
+          // 768px), unlike the journey illustrations above — so the
+          // standard width-descriptor srcSet/sizes mechanism applies
+          // directly here, same pattern already used for the hero slides.
+          // `sizes` mirrors the className's own cap: full viewport width
+          // until the 768px container cap takes over.
+          srcSet={`${mineralCompositionImgMobile} 948w, ${mineralCompositionImg} 1090w`}
+          sizes="(min-width: 768px) 768px, 100vw"
           alt="TiTAS mineral composition chart — calcium, magnesium, sodium, chlorine, pH and mineralisation levels in TiTAS packaged drinking water"
           width={1090}
           height={727}
